@@ -7,5 +7,7 @@ const internalOf = makeInternalOf<App, InternalApp>(InternalApp);
 export class App {
     public initialize = (options?: IAppOptions) => internalOf(this).initialize(options);
 
+    public dispose = () => internalOf(this).dispose();
+
     public get realm() { return internalOf(this).realm; }
 }
