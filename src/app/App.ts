@@ -1,5 +1,5 @@
-import { makeCheckThis } from "../util/binding";
-import { makeInternalOf } from "../util/internal";
+import { makeCheckThis } from "../utils/binding";
+import { makeInternalOf } from "../utils/internal";
 import { AppState } from "./AppState";
 import { IAppOptions } from "./IAppOptions";
 import { InternalApp } from "./InternalApp";

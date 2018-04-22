@@ -1,4 +1,4 @@
-import { LIB_NAME_LONG } from "../util/const";
+import { LIB_NAME_LONG } from "../utils/const";
 
 /**
  * Options for {@link App} instances

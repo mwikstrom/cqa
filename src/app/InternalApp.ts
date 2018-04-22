@@ -1,8 +1,8 @@
 import { observable } from "mobx";
 import { asyncAction } from "mobx-utils";
 
-import { demand } from "../util/demand";
-import { InternalOf } from "../util/internal";
+import { demand } from "../utils/demand";
+import { InternalOf } from "../utils/internal";
 import { App } from "./App";
 import { AppState } from "./AppState";
 import {
