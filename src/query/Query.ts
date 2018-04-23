@@ -1,7 +1,8 @@
-import { Result } from "./Result";
-import { ResultBuilder } from "./ResultBuilder";
+import { AsyncEnumerator } from "../async/AsyncEnumerator";
+import { CancelToken } from "../async/CancelToken";
+import { View } from "./View";
 
-export abstract class Query<TResult extends Result = Result> {
+export abstract class Query<TView extends View = View> {
     /**
      * Gets a unique normalized string that describe the current query.
      */
@@ -10,10 +11,15 @@ export abstract class Query<TResult extends Result = Result> {
     /**
      * Gets the result object for the current query.
      */
-    public get result(): TResult {
+    public get result(): TView {
         // TODO: Implement for real!
-        return this.createResultBuilder().result;
+        return this.createResult();
     }
 
-    protected abstract createResultBuilder(): ResultBuilder<TResult>;
+    public abstract deriveResultFromOtherQueries(
+        source: AsyncEnumerator<Query>,
+        token: CancelToken,
+    ): Promise<TView>;
+
+    protected abstract createResult(): TView;
 }
