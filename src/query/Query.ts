@@ -2,6 +2,9 @@ import { AsyncEnumerator } from "../async/AsyncEnumerator";
 import { CancelToken } from "../async/CancelToken";
 import { View } from "./View";
 
+/**
+ * Represents a query.
+ */
 export abstract class Query<TView extends View = View> {
     /**
      * Gets a unique normalized string that describe the current query.
@@ -9,17 +12,30 @@ export abstract class Query<TView extends View = View> {
     public abstract get canonicalQueryString(): string;
 
     /**
-     * Gets the result object for the current query.
+     * Gets the result view for the current query.
      */
     public get result(): TView {
         // TODO: Implement for real!
         return this.createResult();
     }
 
-    public abstract deriveResultFromOtherQueries(
+    /**
+     * Attempts to create an approximate result view derived from the results of other queries that are cached locally.
+     *
+     * @param source An enumerator of queries that are available locally.
+     * @param token  A cancel token to be observed while deriving a result. The token is cancelled in case
+     *               a server result is available before completion of this method.
+     *
+     * @returns A result view for the current query when it could be derived from the results of other queries;
+     *          or `undefined` otherwise.
+     */
+    public abstract approximateResultFromOtherQueries(
         source: AsyncEnumerator<Query>,
         token: CancelToken,
-    ): Promise<TView>;
+    ): Promise<TView | undefined>;
 
+    /**
+     * Creates a new hollow result view for the current query.
+     */
     protected abstract createResult(): TView;
 }
