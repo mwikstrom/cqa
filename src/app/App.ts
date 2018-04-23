@@ -1,6 +1,5 @@
 import { makeCheckThis } from "../utils/binding";
 import { makeInternalOf } from "../utils/internal";
-import { AppState } from "./AppState";
 import { IAppOptions } from "./IAppOptions";
 import { InternalApp } from "./InternalApp";
 
@@ -9,12 +8,17 @@ import { InternalApp } from "./InternalApp";
  */
 export class App {
     /**
-     * The App's current life cycle state. (Observable)
-     *
-     * @see {AppState}
+     * Determines whether the current {@link App} instance has been locked for further configuration. (Observable)
      */
-    public get state(): AppState {
-        return internalOf(this).state;
+    public get isConfigurationLocked(): boolean {
+        return internalOf(this).isConfigurationLocked;
+    }
+
+    /**
+     * Determines whether the current {@link App} instance has been disposed. (Observable)
+     */
+    public get isDisposed(): boolean {
+        return internalOf(this).isDisposed;
     }
 
     /**
@@ -29,25 +33,33 @@ export class App {
     }
 
     /**
-     * Initializes the current {@link App} instance.
+     * Configures the current {@link App} instance.
      *
-     * @param {IAppOptions} options Optional initialization options
+     * @param {IAppOptions} options Configuration options
+     *
+     * @throws {ObjectDisposedError} when {@link App#isDisposed} is `true`.
+     * @throws {ConfigurationLockedError} when {@link App#isConfigurationLocked} is `true`.
      */
-    public async initialize(
-        options?: IAppOptions,
-    ): Promise<this> {
-        await internalOf(this).initialize(options);
+    public configure(
+        options: IAppOptions,
+    ): this {
+        internalOf(this).configure(options);
         return this;
     }
 
     /**
-     * Diposes the current {@link App} instance and releases any resources that it currently holds, for example
-     * back end connections, local message channels and local storage objects.
-     *
-     * @see {App#isDisposed}
+     * Releases any resources held by the current {@link App} instances.
      */
-    public async dispose(): Promise<this> {
-        await internalOf(this).dispose();
+    public dispose(): this {
+        internalOf(this).dispose();
+        return this;
+    }
+
+    /**
+     * Prevents further configuration of the current {@link App} instance.
+     */
+    public lockConfiguration(): this {
+        internalOf(this).lockConfiguration();
         return this;
     }
 }

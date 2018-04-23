@@ -6,6 +6,6 @@ describe("demand", () => {
     });
 
     it("throws an error when condition is not met", () => {
-        expect(() => demand(false)).toThrowError("[cqa]: Invalid operation");
+        expect(() => demand(false)).toThrowError("Invalid operation");
     });
 });

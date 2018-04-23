@@ -1,17 +1,18 @@
-import { LIB_NAME_SHORT } from "./const";
-
-export interface IErrorClass {
-    new (message: string): Error;
+export interface IParamlessErrorClass {
+    new(): Error;
 }
 
 export const demand = (
     condition: boolean,
-    message: string = "Invalid operation",
-    errorClass: IErrorClass = Error,
-) => {
-    if (!condition) {
-        throw new errorClass(
-            `[${LIB_NAME_SHORT}]: ${message}`,
-        );
+    error: string | IParamlessErrorClass = "Invalid operation",
+): void => {
+    if (condition) {
+        return;
     }
+
+    if (typeof error === "string") {
+        throw new Error(error);
+    }
+
+    throw new error();
 };

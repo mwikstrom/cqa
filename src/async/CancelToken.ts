@@ -1,8 +1,8 @@
 import { when } from "mobx";
 
+import { CancelError } from "../error/CancelError";
 import { makeCheckThis } from "../utils/binding";
 import { makeInternalOf } from "../utils/internal";
-import { CancelError } from "./CancelError";
 import { InternalCancelToken } from "./InternalCancelToken";
 
 export class CancelToken {

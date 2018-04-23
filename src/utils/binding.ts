@@ -9,5 +9,4 @@ export const makeCheckThis = (
 ) => (thisArg: any) => demand(
     thisArg instanceof ExpectedClass,
     `Invalid 'this'-binding, expected instance of '${ExpectedClass.name}'`,
-    TypeError,
 );

@@ -1,10 +1,10 @@
 import { observable } from "mobx";
-import { asyncAction } from "mobx-utils";
+import { action } from "mobx";
 
+import { ConfigurationLockError, DisposeError } from "../error";
 import { demand } from "../utils/demand";
 import { InternalOf } from "../utils/internal";
 import { App } from "./App";
-import { AppState } from "./AppState";
 import {
     DEFAULT_REALM,
     IAppOptions,
@@ -12,67 +12,49 @@ import {
 
 export class InternalApp extends InternalOf<App> {
     @observable
-    private _realm?: string;
+    private _isConfigurationLocked = false;
 
     @observable
-    private _state: AppState = AppState.Uninitialized;
+    private _isDisposed = false;
 
-    public get realm() {
-        demand(this.state >= AppState.Initialized);
+    @observable
+    private _realm = DEFAULT_REALM;
+
+    public get isConfigurationLocked(): boolean {
+        return this._isConfigurationLocked;
+    }
+
+    public get isDisposed(): boolean {
+        return this._isDisposed;
+    }
+
+    public get realm(): string {
         return this._realm!;
     }
 
-    public get state() {
-        return this._state;
-    }
+    @action
+    public configure(
+        options: IAppOptions,
+    ): void {
+        demand(!this.isDisposed, DisposeError);
+        demand(!this.isConfigurationLocked, ConfigurationLockError);
 
-    @asyncAction
-    public * initialize(
-        options?: IAppOptions,
-    ) {
         const {
             realm = DEFAULT_REALM,
-        } = options || {};
+        } = options;
 
-        demand(
-            this._state === AppState.Uninitialized,
-            `${App.name} can only be initialized when in the uninitialized state`,
-        );
+        this._realm = realm;
+    }
 
-        try {
-            this._state = AppState.Initializing;
-
-            // TODO: Do async initialization stuff
-            yield 0;
-
-            this._realm = realm;
-            this._state = AppState.Initialized;
-        } catch (error) {
-            this._state = AppState.Uninitialized;
-            throw error;
+    @action
+    public dispose() {
+        if (!this.isDisposed) {
+            this._isDisposed = true;
         }
     }
 
-    @asyncAction
-    public * dispose() {
-        const stateBefore = this._state;
-
-        demand(
-            stateBefore === AppState.Uninitialized ||
-            stateBefore === AppState.Initialized,
-            `Attempt to dispose ${App.name} while initializing or already disposing`,
-        );
-
-        try {
-            this._state = AppState.Disposing;
-
-            // TODO: Do async stuff
-            yield 0;
-
-            this._state = AppState.Disposed;
-        } catch (error) {
-            this._state = stateBefore;
-            throw error;
-        }
+    @action
+    public lockConfiguration(): void {
+        this._isConfigurationLocked = true;
     }
 }

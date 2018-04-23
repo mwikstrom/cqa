@@ -1,39 +1,73 @@
-import { reaction } from "mobx";
+import { configure as confgiureMobx, reaction } from "mobx";
 
+import { ConfigurationLockError, DisposeError } from "../error";
 import { App } from "./App";
-import { AppState } from "./AppState";
 import { DEFAULT_REALM } from "./IAppOptions";
 
+confgiureMobx({
+    enforceActions: true,
+});
+
 describe("App", () => {
-    it("can be initialized with default options", async () => {
-        const app = await new App().initialize();
+    it("can be constructed without arguments", () => {
+        const app = new App();
+        expect(app).toBeInstanceOf(App);
+    });
+
+    it("has the default realm by default", () => {
+        const app = new App();
         expect(app.realm).toBe(DEFAULT_REALM);
-        await app.dispose();
     });
 
-    it("can be initialized with custom realm", async () => {
-        const app = await new App().initialize({ realm: "My Custom Realm" });
-        expect(app.realm).toBe("My Custom Realm");
-        await app.dispose();
+    it("can be configured with custom realm", () => {
+        const app = new App();
+        expect(app.configure({ realm: "My_Custom_Realm" })).toBe(app);
+        expect(app.realm).toBe("My_Custom_Realm");
     });
 
-    it("report all life cycle states", async () => {
-        const app = await new App();
-        const captured = [app.state];
+    it("provides an observable dispose flag", () => {
+        const app = new App();
+        let reacted = false;
 
         reaction(
-            () => app.state,
-            state => captured.push(state),
+            () => app.isDisposed,
+            () => reacted = true,
         );
 
-        await app.initialize();
-        await app.dispose();
+        expect(app.isDisposed).toBe(false);
+        expect(reacted).toBe(false);
 
-        expect(captured.length).toBe(5);
-        expect(captured[0]).toBe(AppState.Uninitialized);
-        expect(captured[1]).toBe(AppState.Initializing);
-        expect(captured[2]).toBe(AppState.Initialized);
-        expect(captured[3]).toBe(AppState.Disposing);
-        expect(captured[4]).toBe(AppState.Disposed);
+        expect(app.dispose()).toBe(app);
+
+        expect(app.isDisposed).toBe(true);
+        expect(reacted).toBe(true);
+    });
+
+    it("provides an observable configuration lock flag", () => {
+        const app = new App();
+        let reacted = false;
+
+        reaction(
+            () => app.isConfigurationLocked,
+            () => reacted = true,
+        );
+
+        expect(app.isConfigurationLocked).toBe(false);
+        expect(reacted).toBe(false);
+
+        expect(app.lockConfiguration()).toBe(app);
+
+        expect(app.isConfigurationLocked).toBe(true);
+        expect(reacted).toBe(true);
+    });
+
+    it("cannot be configured after lock", () => {
+        const app = new App().lockConfiguration();
+        expect(() => app.configure({})).toThrowError(ConfigurationLockError);
+    });
+
+    it("cannot be configured after dispose", () => {
+        const app = new App().dispose();
+        expect(() => app.configure({})).toThrowError(DisposeError);
     });
 });

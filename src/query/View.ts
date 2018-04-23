@@ -17,7 +17,7 @@ export abstract class View {
     /**
      * Applies the effect of the specified command to the current view.
      *
-     * WARNING: Do not call this method directly from your code. It shall only be invoked from the CQA framework.
+     * WARNING: Do not call this method directly from your code. It shall only be invoked from the app framework.
      *
      * @param command The command to be applied
      *
@@ -31,7 +31,7 @@ export abstract class View {
      * Applies the specified snapshot to the current view. It is assumed that information set provided by the current
      * view is completely reset by the specified snapshot.
      *
-     * WARNING: Do not call this method directly from your code. It shall only be invoked from the CQA framework.
+     * WARNING: Do not call this method directly from your code. It shall only be invoked from the app framework.
      *
      * @param data The snapshot data to be applied.
      */
@@ -42,7 +42,7 @@ export abstract class View {
     /**
      * Applies the specified update to the current view.
      *
-     * WARNING: Do not call this method directly from your code. It shall only be invoked from the CQA framework.
+     * WARNING: Do not call this method directly from your code. It shall only be invoked from the app framework.
      *
      * @param data The update data to be applied.
      */
