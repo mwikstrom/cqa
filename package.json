@@ -54,6 +54,7 @@
     "collectCoverageFrom": [
       "**/*.{ts,tsx}",
       "!**/index.ts",
+      "!src/utils/global.ts",
       "!**/dist/**",
       "!**/node_modules/**",
       "!**/*.d.ts",
