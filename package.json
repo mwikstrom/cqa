@@ -50,6 +50,14 @@
       "jsx",
       "json",
       "node"
+    ],
+    "collectCoverageFrom": [
+      "**/*.{ts,tsx}",
+      "!**/index.ts",
+      "!**/dist/**",
+      "!**/node_modules/**",
+      "!**/*.d.ts",
+      "!**/*.{test,spec}.{ts,tsx}"
     ]
   },
   "dependencies": {
