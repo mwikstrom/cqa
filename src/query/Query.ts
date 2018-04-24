@@ -22,7 +22,7 @@ export abstract class Query<TView extends View = View> {
      */
     public get result(): TView {
         // TODO: Implement for real!
-        return this.createResult();
+        return this.createHollowResult();
     }
 
     /**
@@ -43,5 +43,5 @@ export abstract class Query<TView extends View = View> {
     /**
      * Creates a new hollow result view for the current query.
      */
-    protected abstract createResult(): TView;
+    protected abstract createHollowResult(): TView;
 }

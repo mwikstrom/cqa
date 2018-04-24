@@ -7,8 +7,8 @@ export class UnknownCommand extends Command {
         unknownCommandDataMap.set(this, data);
     }
 
-    public get commandData() {
-        return unknownCommandDataMap.get(this);
+    public get commandData(): ReadonlyJsonValue {
+        return unknownCommandDataMap.get(this)!;
     }
 }
 

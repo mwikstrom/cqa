@@ -1,3 +1,16 @@
+import { demand } from "./demand";
+
+export interface INamedClass {
+    readonly name: string;
+}
+
+export const makeCheckThis = (
+    ExpectedClass: any,
+) => (thisArg: any) => demand(
+    thisArg instanceof ExpectedClass,
+    `Invalid 'this'-binding, expected instance of '${ExpectedClass.name}'`,
+);
+
 export interface IInternalClass<TPublic extends object, TInternal extends InternalOf<TPublic>> {
     new(pub: TPublic): TInternal;
 }
@@ -6,7 +19,7 @@ export type TInternalOf<TPublic, TInternal> = (
     instance: TPublic,
 ) => TInternal;
 
-export const makeInternalOf = <TPublic extends object, TInternal extends InternalOf<TPublic>>(
+export const makeUncheckedInternalOf = <TPublic extends object, TInternal extends InternalOf<TPublic>>(
     InternalClass: IInternalClass<TPublic, TInternal>,
 ): TInternalOf<TPublic, TInternal> => {
     const map = new WeakMap<TPublic, TInternal>();
@@ -18,6 +31,18 @@ export const makeInternalOf = <TPublic extends object, TInternal extends Interna
         }
 
         return internal;
+    };
+};
+
+export const makeInternalOf = <TPublic extends object, TInternal extends InternalOf<TPublic>>(
+    PublicClass: INamedClass,
+    InternalClass: IInternalClass<TPublic, TInternal>,
+): TInternalOf<TPublic, TInternal> => {
+    const checkThis = makeCheckThis(PublicClass);
+    const uncheckedInternalOf = makeUncheckedInternalOf(InternalClass);
+    return (pub: TPublic) => {
+        checkThis(pub);
+        return uncheckedInternalOf(pub);
     };
 };
 

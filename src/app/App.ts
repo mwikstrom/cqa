@@ -1,4 +1,3 @@
-import { makeCheckThis } from "../utils/binding";
 import { makeInternalOf } from "../utils/internal";
 import { IAppOptions } from "./IAppOptions";
 import { InternalApp } from "./InternalApp";
@@ -64,11 +63,4 @@ export class App {
     }
 }
 
-const checkThis = makeCheckThis(App);
-
-const uncheckedInternalOf = makeInternalOf<App, InternalApp>(InternalApp);
-
-const internalOf = (thisArg: App) => {
-    checkThis(thisArg);
-    return uncheckedInternalOf(thisArg);
-};
+const internalOf = makeInternalOf<App, InternalApp>(App, InternalApp);

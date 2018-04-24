@@ -1,8 +1,8 @@
 import { when } from "mobx";
 
 import { CancelError } from "../error/CancelError";
-import { makeCheckThis } from "../utils/binding";
-import { makeInternalOf } from "../utils/internal";
+import { demand } from "../utils/demand";
+import { makeCheckThis, makeInternalOf } from "../utils/internal";
 import { InternalCancelToken } from "./InternalCancelToken";
 
 export class CancelToken {
@@ -24,18 +24,10 @@ export class CancelToken {
 
     public throwIfCancelled(): void {
         checkThis(this);
-
-        if (this.isCancelled) {
-            throw new CancelError();
-        }
+        demand(!this.isCancelled, CancelError);
     }
 }
 
 const checkThis = makeCheckThis(CancelToken);
 
-const uncheckedInternalOf = makeInternalOf<CancelToken, InternalCancelToken>(InternalCancelToken);
-
-const internalOf = (thisArg: CancelToken) => {
-    checkThis(thisArg);
-    return uncheckedInternalOf(thisArg);
-};
+const internalOf = makeInternalOf<CancelToken, InternalCancelToken>(CancelToken, InternalCancelToken);
