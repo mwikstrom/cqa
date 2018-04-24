@@ -2,7 +2,7 @@ import { when } from "mobx";
 
 import { CancelError } from "../error/CancelError";
 import { demand } from "../utils/demand";
-import { makeCheckThis, makeInternalOf } from "../utils/internal";
+import { makeInternalOf } from "../utils/internal";
 import { InternalCancelToken } from "./InternalCancelToken";
 
 export class CancelToken {
@@ -14,7 +14,6 @@ export class CancelToken {
 
     public get rejectWhenCancelled(): Promise<never> {
         return new Promise<never>((_, reject) => {
-            checkThis(this);
             when(
                 () => this.isCancelled === true,
                 () => reject(new CancelError()),
@@ -23,11 +22,8 @@ export class CancelToken {
     }
 
     public throwIfCancelled(): void {
-        checkThis(this);
         demand(!this.isCancelled, CancelError);
     }
 }
-
-const checkThis = makeCheckThis(CancelToken);
 
 const internalOf = makeInternalOf<CancelToken, InternalCancelToken>(CancelToken, InternalCancelToken);

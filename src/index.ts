@@ -1,3 +1,5 @@
+import "./utils/global";
+
 export * from "./app";
 export * from "./async";
 export * from "./command";

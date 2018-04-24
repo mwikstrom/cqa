@@ -6,7 +6,7 @@ export interface INamedClass {
 
 export const makeCheckThis = (
     ExpectedClass: any,
-) => (thisArg: any) => demand(
+) => (thisArg: any) => process.env.NODE_ENV === "production" && demand(
     thisArg instanceof ExpectedClass,
     `Invalid 'this'-binding, expected instance of '${ExpectedClass.name}'`,
 );
