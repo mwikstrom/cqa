@@ -1,3 +1,4 @@
+import { App, AppObject } from "../app";
 import { AsyncEnumerator } from "../async/AsyncEnumerator";
 import { CancelToken } from "../async/CancelToken";
 import { ReadonlyJsonValue } from "../utils/json";
@@ -6,7 +7,7 @@ import { View } from "./View";
 /**
  * Represents a query.
  */
-export abstract class Query<TView extends View = View> {
+export abstract class Query<TView extends View = View, TApp extends App = App> extends AppObject<TApp> {
     /**
      * Gets a unique normalized key string for the current query.
      */
