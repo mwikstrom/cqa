@@ -39,11 +39,10 @@ export class InternalApp extends InternalOf<App> {
         demand(!this.isDisposed, DisposeError);
         demand(!this.isConfigurationLocked, ConfigurationLockError);
 
-        const {
-            realm = DEFAULT_REALM,
-        } = options;
-
-        this._realm = realm;
+        if (defined(options.realm)) {
+            // TODO: Validate options.realm (require non-empty and only url safe segment chars)
+            this._realm = options.realm;
+        }
     }
 
     @action
@@ -58,3 +57,7 @@ export class InternalApp extends InternalOf<App> {
         this._isConfigurationLocked = true;
     }
 }
+
+const defined = <T>(
+    arg: T | undefined,
+): arg is T => arg !== undefined;
