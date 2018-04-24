@@ -1,5 +1,6 @@
 import { AsyncEnumerator } from "../async/AsyncEnumerator";
 import { CancelToken } from "../async/CancelToken";
+import { ReadonlyJsonValue } from "../utils/json";
 import { View } from "./View";
 
 /**
@@ -7,9 +8,14 @@ import { View } from "./View";
  */
 export abstract class Query<TView extends View = View> {
     /**
-     * Gets a unique normalized string that describe the current query.
+     * Gets a unique normalized key string for the current query.
      */
-    public abstract get canonicalQueryString(): string;
+    public abstract get cacheKey(): string;
+
+    /**
+     * Gets a data object that completely describe the current query.
+     */
+    public abstract get queryData(): ReadonlyJsonValue;
 
     /**
      * Gets the result view for the current query.

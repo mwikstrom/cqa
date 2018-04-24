@@ -37,8 +37,8 @@ export class App {
      *
      * @param {IAppOptions} options Configuration options
      *
-     * @throws {ObjectDisposedError} when {@link App#isDisposed} is `true`.
-     * @throws {ConfigurationLockedError} when {@link App#isConfigurationLocked} is `true`.
+     * @throws {DisposeError} when {@link App#isDisposed} is `true`.
+     * @throws {ConfigurationLockError} when {@link App#isConfigurationLocked} is `true`.
      */
     public configure(
         options: IAppOptions,
