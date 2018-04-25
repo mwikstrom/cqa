@@ -1,5 +1,4 @@
 import { App, AppObject } from "../app";
-import { AsyncEnumerator } from "../async/AsyncEnumerator";
 import { CancelToken } from "../async/CancelToken";
 import { ReadonlyJsonValue } from "../utils/json";
 import { View } from "./View";
@@ -27,19 +26,18 @@ export abstract class Query<TView extends View = View, TApp extends App = App> e
     }
 
     /**
-     * Attempts to create an approximate result view derived from the results of other queries that are cached locally.
+     * Attempts to derive a result for the current query from other cached query results.
      *
-     * @param source An enumerator of queries that are available locally.
-     * @param token  A cancel token to be observed while deriving a result. The token is cancelled in case
-     *               a server result is available before completion of this method.
-     *
-     * @returns A result view for the current query when it could be derived from the results of other queries;
-     *          or `undefined` otherwise.
+     * @param onSnapshot The callback to invoke to apply a derived snapshot.
+     * @param onUpdate The callback to invoke to apply an update to a derived snapshot.
+     * @param token A cancel token to be observed while deriving a result. This token is cancelled in case a server
+     *              result is available before a local result is derived.
      */
-    public abstract approximateResultFromOtherQueries(
-        source: AsyncEnumerator<Query>,
+    public abstract deriveLocalResult(
+        onSnapshot: (data: ReadonlyJsonValue) => void,
+        onUpdate: (data: ReadonlyJsonValue) => void,
         token: CancelToken,
-    ): Promise<TView | undefined>;
+    ): Promise<void>;
 
     /**
      * Creates a new hollow result view for the current query.
