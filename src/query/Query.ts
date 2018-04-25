@@ -10,12 +10,12 @@ export abstract class Query<TView extends View = View, TApp extends App = App> e
     /**
      * Gets a unique normalized key string for the current query.
      */
-    public abstract get cacheKey(): string;
+    public abstract get key(): string;
 
     /**
      * Gets a data object that completely describe the current query.
      */
-    public abstract get queryData(): ReadonlyJsonValue;
+    public abstract get descriptor(): ReadonlyJsonValue;
 
     /**
      * Gets the result view for the current query.
