@@ -1,37 +1,29 @@
 import { App, AppObject } from "../app";
 import { CancelToken } from "../async/CancelToken";
+import { Command } from "../Command";
 import { ReadonlyJsonValue } from "../utils/json";
-import { View } from "./View";
 
 /**
- * Represents a query.
+ * Provides a base class for query objects.
  */
-export abstract class Query<TView extends View = View, TApp extends App = App> extends AppObject<TApp> {
+export abstract class Query<TApp extends App = App> extends AppObject<TApp> {
     /**
-     * Gets a unique normalized key string for the current query.
-     */
-    public abstract get key(): string;
-
-    /**
-     * Gets a data object that completely describe the current query.
+     * Gets a descriptor object that completely describe the current query object.
      */
     public abstract get descriptor(): ReadonlyJsonValue;
 
     /**
-     * Gets the result view for the current query.
+     * Gets a unique, and preferably normalized, key string for the current query object.
      */
-    public get result(): TView {
-        // TODO: Implement for real!
-        return this.createHollowResult();
-    }
+    public abstract get key(): string; // TODO: Provide default impl
 
     /**
-     * Attempts to derive a result for the current query from other cached query results.
+     * Attempts to derive a result for the current query from other cached queries.
      *
-     * @param onSnapshot The callback to invoke to apply a derived snapshot.
-     * @param onUpdate The callback to invoke to apply an update to a derived snapshot.
-     * @param token A cancel token to be observed while deriving a result. This token is cancelled in case a server
-     *              result is available before a local result is derived.
+     * @param onSnapshot    The callback to invoke to apply a derived snapshot.
+     * @param onUpdate      The callback to invoke to apply an update to a derived snapshot.
+     * @param token         A cancel token to be observed while deriving a result. This token is cancelled in case a
+     *                      server result is available before a local result is derived.
      */
     public abstract deriveLocalResult(
         onSnapshot: (data: ReadonlyJsonValue) => void,
@@ -40,7 +32,44 @@ export abstract class Query<TView extends View = View, TApp extends App = App> e
     ): Promise<void>;
 
     /**
-     * Creates a new hollow result view for the current query.
+     * Creates a readonly result data snapshot for the current query.
      */
-    protected abstract createHollowResult(): TView;
+    public abstract createSnapshot(): ReadonlyJsonValue;
+
+    /**
+     * Applies the effect of the specified command to the result of the current query.
+     *
+     * WARNING: Do not call this method directly from your code. It shall only be invoked from the app framework.
+     *
+     * @param command The command to be applied
+     *
+     * @returns `true` when the specified command did or may have an effect on the result of the current query;
+     *          otherwise `false`.
+     */
+    public abstract onCommand(
+        command: Command,
+    ): boolean;
+
+    /**
+     * Applies the specified snapshot to the current query result. It is assumed that the information set provided by
+     * the current query result is completely reset by the specified snapshot.
+     *
+     * WARNING: Do not call this method directly from your code. It shall only be invoked from the app framework.
+     *
+     * @param data The snapshot data to be applied.
+     */
+    public abstract onSnapshot(
+        data: ReadonlyJsonValue,
+    ): void;
+
+    /**
+     * Applies the specified update to the current query result.
+     *
+     * WARNING: Do not call this method directly from your code. It shall only be invoked from the app framework.
+     *
+     * @param data The update data to be applied.
+     */
+    public abstract onUpdate(
+        data: ReadonlyJsonValue,
+    ): void;
 }
