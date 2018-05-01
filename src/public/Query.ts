@@ -28,6 +28,13 @@ export abstract class Query<TApp extends App = App> extends AppObject<TApp> {
     }
 
     /**
+     * Determines whether the current query object supports incremental updates.
+     */
+    public get supportsIncrementalUpdates(): boolean {
+        return Query.prototype.onUpdate !== Object.getPrototypeOf(this).onUpdate;
+    }
+
+    /**
      * Attempts to derive a result for the current query from other cached queries.
      *
      * @param applySnapshot The callback to invoke to apply a derived snapshot.
