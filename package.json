@@ -53,11 +53,11 @@
     ],
     "collectCoverageFrom": [
       "**/*.{ts,tsx}",
-      "!**/index.ts",
-      "!src/utils/global.ts",
+      "!src/env.d.ts",
+      "!src/global.ts",
+      "!src/index.ts",
       "!**/dist/**",
       "!**/node_modules/**",
-      "!**/*.d.ts",
       "!**/*.{test,spec}.{ts,tsx}"
     ]
   },
