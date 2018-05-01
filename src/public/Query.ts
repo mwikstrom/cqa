@@ -1,7 +1,8 @@
-import { App, AppObject } from "../app";
-import { CancelToken } from "../async/CancelToken";
-import { Command } from "../Command";
-import { ReadonlyJsonValue } from "../utils/json";
+import { App } from "./App";
+import { AppObject } from "./AppObject";
+import { CancelToken } from "./CancelToken";
+import { Command } from "./Command";
+import { ReadonlyJsonValue } from "./Json";
 
 /**
  * Provides a base class for query objects.

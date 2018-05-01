@@ -1,7 +1,8 @@
-import { InternalOf } from "../utils/internal";
-import { CancelToken } from "./CancelToken";
-import { CancelTokenSource } from "./CancelTokenSource";
-import { InternalCancelToken } from "./InternalCancelToken";
+import { CancelToken } from "../public/CancelToken";
+import { CancelTokenSource } from "../public/CancelTokenSource";
+
+import { InternalCancelToken } from "../internal/InternalCancelToken";
+import { InternalOf } from "../internal/InternalOf";
 
 export class InternalCancelTokenSource extends InternalOf<CancelTokenSource> {
     private readonly _token = new InternalCancelToken();

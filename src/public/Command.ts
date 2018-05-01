@@ -1,5 +1,6 @@
-import { App, AppObject } from "../app";
-import { ReadonlyJsonValue } from "../utils/json";
+import { App } from "./App";
+import { AppObject } from "./AppObject";
+import { ReadonlyJsonValue } from "./Json";
 
 export abstract class Command<TApp extends App = App> extends AppObject<TApp> {
     /**

@@ -1,6 +1,7 @@
-import { makeInternalOf } from "../utils/internal";
+import { InternalCancelTokenSource } from "../internal/InternalCancelTokenSource";
+import { makeInternalOf } from "../internal/InternalOf";
+
 import { CancelToken } from "./CancelToken";
-import { InternalCancelTokenSource } from "./InternalCancelTokenSource";
 
 export class CancelTokenSource {
     public get token(): CancelToken {

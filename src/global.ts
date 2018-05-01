@@ -1,4 +1,4 @@
-import { LIB_NAME_SHORT } from "./const";
+import { LIB_NAME_SHORT } from "./internal/Constants";
 
 if (typeof process !== "object") {
     process = { env: { } };

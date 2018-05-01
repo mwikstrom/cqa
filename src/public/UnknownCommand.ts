@@ -1,5 +1,5 @@
-import { ReadonlyJsonValue } from "../utils/json";
 import { Command } from "./Command";
+import { ReadonlyJsonValue } from "./Json";
 
 export class UnknownCommand extends Command {
     constructor(data: ReadonlyJsonValue) {

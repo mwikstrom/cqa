@@ -1,4 +1,4 @@
-import { demand } from "./demand";
+import { demand } from "./Demand";
 
 export interface INamedClass {
     readonly name: string;

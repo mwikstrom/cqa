@@ -1,6 +1,7 @@
-import { makeInternalOf } from "../utils/internal";
+import { InternalApp } from "../internal/InternalApp";
+import { makeInternalOf } from "../internal/InternalOf";
+
 import { IAppOptions } from "./IAppOptions";
-import { InternalApp } from "./InternalApp";
 
 /**
  * Command Query App root object

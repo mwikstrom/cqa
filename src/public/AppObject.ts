@@ -1,6 +1,7 @@
-import { makeInternalOf } from "../utils/internal";
+import { InternalAppObject } from "../internal/InternalAppObject";
+import { makeInternalOf } from "../internal/InternalOf";
+
 import { App } from "./App";
-import { InternalAppObject } from "./InternalAppObject";
 
 export class AppObject<TApp extends App = App> {
     /**

@@ -1,4 +1,4 @@
-import { demand } from "./demand";
+import { demand } from "./Demand";
 
 describe("demand", () => {
     it("does nothing when condition is met", () => {

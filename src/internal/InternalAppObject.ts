@@ -1,10 +1,12 @@
 import { action, computed, observable } from "mobx";
 
-import { AlreadyAttachedError, NotAttachedError } from "../error";
-import { demand } from "../utils/demand";
-import { InternalOf } from "../utils/internal";
-import { App } from "./App";
-import { AppObject } from "./AppObject";
+import { AlreadyAttachedError } from "../public/AlreadyAttachedError";
+import { App } from "../public/App";
+import { AppObject } from "../public/AppObject";
+import { NotAttachedError } from "../public/NotAttachedError";
+
+import { demand } from "./Demand";
+import { InternalOf } from "./InternalOf";
 
 export class InternalAppObject extends InternalOf<AppObject> {
     @observable

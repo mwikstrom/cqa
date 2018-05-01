@@ -1,5 +1,3 @@
-import { LIB_NAME_LONG } from "../utils/const";
-
 /**
  * Options for {@link App} instances
  */
@@ -12,8 +10,3 @@ export interface IAppOptions {
      */
     realm?: string;
 }
-
-/**
- * The default {@link IAppOptions#realm} value
- */
-export const DEFAULT_REALM = LIB_NAME_LONG;

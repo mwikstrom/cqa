@@ -1,8 +1,10 @@
 import { configure as confgiureMobx, reaction } from "mobx";
 
-import { ConfigurationLockError, DisposeError } from "../error";
+import { DEFAULT_REALM } from "../internal/Constants";
+
 import { App } from "./App";
-import { DEFAULT_REALM } from "./IAppOptions";
+import { ConfigurationLockError } from "./ConfigurationLockError";
+import { DisposeError } from "./DisposeError";
 
 confgiureMobx({
     enforceActions: true,

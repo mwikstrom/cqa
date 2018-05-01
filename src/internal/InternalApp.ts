@@ -1,14 +1,14 @@
 import { observable } from "mobx";
 import { action } from "mobx";
 
-import { ConfigurationLockError, DisposeError } from "../error";
-import { demand } from "../utils/demand";
-import { InternalOf } from "../utils/internal";
-import { App } from "./App";
-import {
-    DEFAULT_REALM,
-    IAppOptions,
-} from "./IAppOptions";
+import { App } from "../public/App";
+import { ConfigurationLockError } from "../public/ConfigurationLockError";
+import { DisposeError } from "../public/DisposeError";
+import { IAppOptions } from "../public/IAppOptions";
+
+import { DEFAULT_REALM } from "./Constants";
+import { demand } from "./Demand";
+import { InternalOf } from "./InternalOf";
 
 export class InternalApp extends InternalOf<App> {
     @observable
