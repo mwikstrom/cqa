@@ -3,6 +3,7 @@ import { AppObject } from "./AppObject";
 import { CancelToken } from "./CancelToken";
 import { Command } from "./Command";
 import { ReadonlyJsonValue } from "./Json";
+import { NotSupportedError } from "./NotSupportedError";
 
 /**
  * Provides a base class for query objects.
@@ -21,16 +22,21 @@ export abstract class Query<TApp extends App = App> extends AppObject<TApp> {
     /**
      * Attempts to derive a result for the current query from other cached queries.
      *
-     * @param onSnapshot    The callback to invoke to apply a derived snapshot.
-     * @param onUpdate      The callback to invoke to apply an update to a derived snapshot.
+     * @param applySnapshot The callback to invoke to apply a derived snapshot.
+     * @param applyUpdate   The callback to invoke to apply an update to a derived snapshot.
      * @param token         A cancel token to be observed while deriving a result. This token is cancelled in case a
      *                      server result is available before a local result is derived.
      */
-    public abstract deriveLocalResult(
-        onSnapshot: (data: ReadonlyJsonValue) => void,
-        onUpdate: (data: ReadonlyJsonValue) => void,
+    public async deriveLocalResult(
+        // @ts-ignore: Parameter is declared but not used in the default implementation
+        applySnapshot: (data: ReadonlyJsonValue) => void,
+        // @ts-ignore: Parameter is declared but not used in the default implementation
+        applyUpdate: (data: ReadonlyJsonValue) => void,
+        // @ts-ignore: Parameter is declared but not used in the default implementation
         token: CancelToken,
-    ): Promise<void>;
+    ): Promise<void> {
+        // Default implementation is a no-op because we have no domain knowledge.
+    }
 
     /**
      * Creates a readonly result data snapshot for the current query.
@@ -47,9 +53,13 @@ export abstract class Query<TApp extends App = App> extends AppObject<TApp> {
      * @returns `true` when the specified command did or may have an effect on the result of the current query;
      *          otherwise `false`.
      */
-    public abstract onCommand(
+    public onCommand(
+        // @ts-ignore: Parameter is declared but not used in the default implementation
         command: Command,
-    ): boolean;
+    ): boolean {
+        // Default implementation is a no-op because we have no domain knowledge.
+        return false;
+    }
 
     /**
      * Applies the specified snapshot to the current query result. It is assumed that the information set provided by
@@ -70,7 +80,10 @@ export abstract class Query<TApp extends App = App> extends AppObject<TApp> {
      *
      * @param data The update data to be applied.
      */
-    public abstract onUpdate(
+    public onUpdate(
+        // @ts-ignore: Parameter is declared but not used in the default implementation
         data: ReadonlyJsonValue,
-    ): void;
+    ): void {
+        throw new NotSupportedError();
+    }
 }

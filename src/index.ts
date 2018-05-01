@@ -13,5 +13,6 @@ export * from "./public/DisposeError";
 export * from "./public/IAppOptions";
 export * from "./public/Json";
 export * from "./public/NotAttachedError";
+export * from "./public/NotSupportedError";
 export * from "./public/Query";
 export * from "./public/UnknownCommand";
