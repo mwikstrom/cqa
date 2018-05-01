@@ -1,3 +1,5 @@
+import { computed } from "mobx";
+
 import { App } from "./App";
 import { AppObject } from "./AppObject";
 import { CancelToken } from "./CancelToken";
@@ -12,12 +14,18 @@ export abstract class Query<TApp extends App = App> extends AppObject<TApp> {
     /**
      * Gets a descriptor object that completely describe the current query object.
      */
-    public abstract get descriptor(): ReadonlyJsonValue;
+    @computed
+    public get descriptor(): ReadonlyJsonValue {
+        return this.buildDescriptor();
+    }
 
     /**
      * Gets a unique, and preferably normalized, key string for the current query object.
      */
-    public abstract get key(): string; // TODO: Provide default impl
+    @computed
+    public get key(): string {
+        return this.buildKey();
+    }
 
     /**
      * Attempts to derive a result for the current query from other cached queries.
@@ -39,9 +47,21 @@ export abstract class Query<TApp extends App = App> extends AppObject<TApp> {
     }
 
     /**
+     * Creates a descriptor object that completely describe the current query object.
+     */
+    public abstract buildDescriptor(): ReadonlyJsonValue;
+
+    /**
+     * Creates a unique, and preferably normalized, key string for the current query object.
+     */
+    public buildKey(): string {
+        return "..."; // TODO: Implement Query#buildKey
+    }
+
+    /**
      * Creates a readonly result data snapshot for the current query.
      */
-    public abstract createSnapshot(): ReadonlyJsonValue;
+    public abstract buildSnapshot(): ReadonlyJsonValue;
 
     /**
      * Applies the effect of the specified command to the result of the current query.
