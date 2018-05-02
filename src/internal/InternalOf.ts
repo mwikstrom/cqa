@@ -19,33 +19,36 @@ export type TInternalOf<TPublic, TInternal> = (
     instance: TPublic,
 ) => TInternal;
 
-export const makeUncheckedInternalOf = <TPublic extends object, TInternal extends InternalOf<TPublic>>(
+export const makeInternalOf = <TPublic extends object, TInternal extends InternalOf<TPublic>>(
+    PublicClass: INamedClass,
     InternalClass: IInternalClass<TPublic, TInternal>,
 ): TInternalOf<TPublic, TInternal> => {
-    const map = new WeakMap<TPublic, TInternal>();
+    const checkThis = makeCheckThis(PublicClass);
+    let map = classMap.get(PublicClass) as WeakMap<TPublic, TInternal> | undefined;
+
+    if (map === undefined) {
+       classMap.set(PublicClass, map = new WeakMap<TPublic, TInternal>());
+    }
+
     return (pub: TPublic) => {
-        let internal = map.get(pub);
+        checkThis(pub);
+        let internal = map!.get(pub);
 
         if (internal === undefined) {
-            map.set(pub, internal = new InternalClass(pub));
+            map!.set(pub, internal = new InternalClass(pub));
+        } else if (process.env.NODE_ENV !== "production") {
+            demand(
+                internal instanceof InternalClass,
+                "Unexpected internal class",
+            );
         }
 
         return internal;
     };
 };
 
-export const makeInternalOf = <TPublic extends object, TInternal extends InternalOf<TPublic>>(
-    PublicClass: INamedClass,
-    InternalClass: IInternalClass<TPublic, TInternal>,
-): TInternalOf<TPublic, TInternal> => {
-    const checkThis = makeCheckThis(PublicClass);
-    const uncheckedInternalOf = makeUncheckedInternalOf(InternalClass);
-    return (pub: TPublic) => {
-        checkThis(pub);
-        return uncheckedInternalOf(pub);
-    };
-};
-
 export abstract class InternalOf<TPublic extends object> {
     constructor(public readonly pub: TPublic) {}
 }
+
+const classMap = new WeakMap<INamedClass, WeakMap<object, object>>();
