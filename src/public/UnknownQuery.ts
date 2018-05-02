@@ -11,21 +11,22 @@ export class UnknownQuery extends Query {
     }
 
     public buildDescriptor() {
-        return dataMap.get(this).descriptor;
+        return dataMap.get(this)!.descriptor;
     }
 
     public buildKey() {
-        return dataMap.get(this).key;
+        return dataMap.get(this)!.key;
     }
 
     public buildSnapshot() {
-        return dataMap.get(this).snapshot;
+        const snapshot = dataMap.get(this)!.snapshot;
+        return snapshot !== undefined ? snapshot : null;
     }
 
     public onSnapshot(
         data: ReadonlyJsonValue,
     ) {
-        dataMap.get(this).snapshot = data;
+        dataMap.get(this)!.snapshot = data;
     }
 }
 

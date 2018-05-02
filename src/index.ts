@@ -16,3 +16,5 @@ export * from "./public/NotAttachedError";
 export * from "./public/NotSupportedError";
 export * from "./public/Query";
 export * from "./public/UnknownCommand";
+export * from "./public/UnknownQuery";
+export * from "./public/Version";

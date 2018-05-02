@@ -9,7 +9,7 @@ import { demand } from "./Demand";
 import { InternalOf } from "./InternalOf";
 
 export class InternalAppObject extends InternalOf<AppObject> {
-    @observable
+    @observable.ref
     private _app: App | null = null;
 
     public get app(): App {
