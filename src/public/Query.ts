@@ -45,37 +45,6 @@ export abstract class Query<TApp extends App = App> extends AppObject<TApp> {
     }
 
     /**
-     * Applies the specified snapshot to the current query result. It is assumed that the information set provided by
-     * the current query result is completely reset by the specified snapshot.
-     *
-     * WARNING: Do not call this method directly from your code. It shall only be invoked from the app framework.
-     *
-     * @param data    The snapshot data to be applied.
-     * @param version The new version.
-     */
-    public applySnapshot(
-        data: ReadonlyJsonValue,
-        version: Version,
-    ): void {
-        internalOf(this).applySnapshot(data, version);
-    }
-
-    /**
-     * Applies the specified update to the current query result.
-     *
-     * WARNING: Do not call this method directly from your code. It shall only be invoked from the app framework.
-     *
-     * @param data    The update data to be applied.
-     * @param version The new version.
-     */
-    public applyUpdate(
-        data: ReadonlyJsonValue,
-        version: Version,
-    ): void {
-        internalOf(this).applyUpdate(data, version);
-    }
-
-    /**
      * Creates a descriptor object that completely describe the current query object.
      */
     public abstract buildDescriptor(): ReadonlyJsonValue;
@@ -97,8 +66,7 @@ export abstract class Query<TApp extends App = App> extends AppObject<TApp> {
      *
      * @param applySnapshot The callback to invoke to apply a derived snapshot.
      * @param applyUpdate   The callback to invoke to apply an update to a derived snapshot.
-     * @param token         A cancel token to be observed while deriving a result. This token is cancelled in case a
-     *                      server result is available before a local result is derived.
+     * @param token         A cancel token to be observed while deriving a result.
      */
     public async deriveLocalResult(
         // @ts-ignore: Parameter is declared but not used in the default implementation
