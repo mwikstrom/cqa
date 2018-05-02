@@ -1,4 +1,5 @@
 import { computed } from "mobx";
+import objectHash from "object-hash";
 
 import { App } from "./App";
 import { AppObject } from "./AppObject";
@@ -62,7 +63,7 @@ export abstract class Query<TApp extends App = App> extends AppObject<TApp> {
      * Creates a unique, and preferably normalized, key string for the current query object.
      */
     public buildKey(): string {
-        return "..."; // TODO: Implement Query#buildKey
+        return objectHash(this.descriptor);
     }
 
     /**
