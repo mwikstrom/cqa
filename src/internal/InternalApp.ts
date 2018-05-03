@@ -9,6 +9,7 @@ import { IAppOptions } from "../public/IAppOptions";
 import { DEFAULT_REALM } from "./Constants";
 import { demand } from "./Demand";
 import { InternalOf } from "./InternalOf";
+import { InternalQuery } from "./InternalQuery";
 
 export class InternalApp extends InternalOf<App> {
     @observable
@@ -55,6 +56,13 @@ export class InternalApp extends InternalOf<App> {
     @action
     public lockConfiguration(): void {
         this._isConfigurationLocked = true;
+    }
+
+    public registerObservedQuery(
+        _: InternalQuery,
+    ): () => void {
+        // TODO: Implement query subscription
+        return () => { /* no-op */ };
     }
 }
 

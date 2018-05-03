@@ -1,5 +1,7 @@
+import { reaction } from "mobx";
 import objectHash from "object-hash";
 
+import { InternalApp } from "../internal/InternalApp";
 import { makeInternalOf } from "../internal/InternalOf";
 import { InternalQuery } from "../internal/InternalQuery";
 
@@ -15,6 +17,25 @@ import { Version } from "./Version";
  * Provides a base class for query objects.
  */
 export abstract class Query<TApp extends App = App> extends AppObject<TApp> {
+    constructor() {
+        super();
+
+        let unregister: () => void;
+        reaction(
+            () => this.isAttached && this.isObserved,
+            active => {
+                const query = internalOf(this);
+                const app = internalAppOf(this);
+
+                if (active) {
+                    unregister = app.registerObservedQuery(query);
+                } else if (unregister !== undefined) {
+                    unregister();
+                }
+            },
+        );
+    }
+
     /**
      * Gets a descriptor object that completely describe the current query object.
      */
@@ -139,3 +160,7 @@ export abstract class Query<TApp extends App = App> extends AppObject<TApp> {
 }
 
 const internalOf = makeInternalOf(Query, InternalQuery);
+
+const appInternalOf = makeInternalOf(App, InternalApp);
+
+const internalAppOf = (pub: Query) => appInternalOf(pub.app);
