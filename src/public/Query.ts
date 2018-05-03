@@ -23,6 +23,13 @@ export abstract class Query<TApp extends App = App> extends AppObject<TApp> {
     }
 
     /**
+     * Determines whether the result of this query object is currently being observed in a reactive context.
+     */
+    public get isObserved(): boolean {
+        return internalOf(this).isObserved;
+    }
+
+    /**
      * Gets a unique, and preferably normalized, key string for the current query object.
      */
     public get key(): string {
@@ -121,6 +128,13 @@ export abstract class Query<TApp extends App = App> extends AppObject<TApp> {
         data: ReadonlyJsonValue,
     ): void {
         throw new NotSupportedError();
+    }
+
+    /**
+     * Registers that the result of this query is being observed by the current reactive context.
+     */
+    public reportObserved(): void {
+        internalOf(this).reportObserved();
     }
 }
 
