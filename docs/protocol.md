@@ -94,10 +94,40 @@ When the server detects that the current authorization credentials have expired 
 ### `Update_Query_Result`
 *TODO*
 
-### `Upgrade_Query_Result_Version`
+### `Upgrade_Query_Result`
 *TODO*
 
+## Status codes
 
+Code|Description
+----|---------------
+1002|Protocol Error
+1003|Unsupported Data
+1011|Internal Error
+4001|Invalid Authorization
+4002|Authorization Expired
+4003|Too many open queries
+4004|Unknown query
+
+## Error handling
+
+When a connection is *broken* (closed abnormally, i.e. the close operation was not initiated by the client) then the client SHOULD attempt to reconnect automatically and SHOULD re-execute pending commands and active queries. By doing so connection errors SHOULD be transparent to the application.
+
+Steps to perform by the client when connection is *broken*:
+
+1. Increment a global *Connection Broken Counter*. This counter is initially set to zero before the first connection attempt.
+
+2. Compute a *Backoff Time* based on the *Connection Broken Counter*. The backoff time should be larger for a larger *Connection Broken Counter* value and include a randomized portion. *Backoff Time* should be capped to 30 seconds.
+
+3. Wait for the computed *Backoff Time*
+
+4. Attempt to re-establish the connection. In case a new connection could not be established, then mark the App as *Offline* and restart at step 1.
+
+5. Otherwise, when a new connection is established; mark the App as *Online*.
+
+6. Re-execute all pending commands and active queries.
+
+7. When all pending commands have been either accepted or rejected and when all active queries have been either closed or updated then the reset the *Connection Broken Counter* back to zero.
 
 ## Message handling
 
@@ -118,17 +148,3 @@ Steps to perform when receiving a message:
 7. If *Payload* is not valid according to *Message Type* then close the connection with status `1002 Protocol Error` and abort these steps.
 
 8. Process the message. If an error occurs while processing then close the connection with status `1011 Internal Error`.
-
-
-
-## Status codes
-
-Code|Description
-----|---------------
-1002|Protocol Error
-1003|Unsupported Data
-1011|Internal Error
-4001|Invalid Authorization
-4002|Authorization Expired
-4003|Too many open queries
-4004|Unknown query
