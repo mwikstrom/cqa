@@ -6,7 +6,7 @@ The CQA backend communication protocol is a bi-directional websocket subprotocol
 
 Messages MUST be transmitted as stringified JSON arrays:
 
-```json
+```javascript
 [ "Message_Type", payload, ...ignored ]
 ```
 
@@ -48,7 +48,7 @@ Payload MUST be a string that provides the new authorization credentials, see [R
 Example:
 
 ```json
-[ "Set_Authorization", "Bearer eyJhbGciOiJIUzI1NiIXVCJ9..."]
+[ "Refresh_Authorization", "Bearer eyJhbGciOiJIUzI1NiIXVCJ9..."]
 ```
 
 In case server does not recognize the new authorization data, or if it does not authenticate the same user identity as was previously established on the current connection, then the server MUST close the connection with status `4001 Invalid Authorization`.
@@ -118,3 +118,17 @@ Steps to perform when receiving a message:
 7. If *Payload* is not valid according to *Message Type* then close the connection with status `1002 Protocol Error` and abort these steps.
 
 8. Process the message. If an error occurs while processing then close the connection with status `1011 Internal Error`.
+
+
+
+## Status codes
+
+Code|Description
+----|---------------
+1002|Protocol Error
+1003|Unsupported Data
+1011|Internal Error
+4001|Invalid Authorization
+4002|Authorization Expired
+4003|Too many open queries
+4004|Unknown query
