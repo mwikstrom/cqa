@@ -30,8 +30,8 @@ export class InternalQuery extends InternalOf<Query> {
 
         this._atom = createAtom(
             pub.constructor.name,
-            this.onBecomeObserved,
-            this.onBecomeUnobserved,
+            this._onBecomeObserved,
+            this._onBecomeUnobserved,
         );
     }
 
@@ -97,11 +97,11 @@ export class InternalQuery extends InternalOf<Query> {
         this._atom.reportObserved();
     }
 
-    private onBecomeObserved = () => {
+    private _onBecomeObserved = () => {
         this._isObserved = true;
     }
 
-    private onBecomeUnobserved = () => {
+    private _onBecomeUnobserved = () => {
         this._isObserved = false;
     }
 }

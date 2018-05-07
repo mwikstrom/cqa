@@ -25,6 +25,20 @@ export class CancelToken {
     public throwIfCancelled(): void {
         demand(!this.isCancelled, CancelError);
     }
+
+    public ignoreCancellation(promise: Promise<void>): Promise<void>;
+    public ignoreCancellation<T>(promise: Promise<T>, onCancel: T): Promise<T>;
+    public async ignoreCancellation<T>(promise: Promise<T>, onCancel?: T): Promise<T> {
+        try {
+            return await promise;
+        } catch (error) {
+            if (error instanceof CancelError && this.isCancelled) {
+                return onCancel!;
+            } else {
+                throw error;
+            }
+        }
+    }
 }
 
 const internalOf = makeInternalOf<CancelToken, InternalCancelToken>(CancelToken, InternalCancelToken);
