@@ -31,6 +31,9 @@ export class InternalApp extends InternalOf<App> {
             // TODO: Execute query on backend. Cancel token source when first snapshot arrives.
         }
 
+        // TODO: Must delay backend execution until query was populated locally so that we have a chance to get
+        //       catch-up deltas instead of a full initial snapshot.
+
         cts.token.ignoreCancellation(this._populateQueryLocally(query, cts.token));
 
         // Return the `registerUnobservedQuery` callback function
@@ -50,15 +53,20 @@ export class InternalApp extends InternalOf<App> {
         query: InternalQuery,
         token: CancelToken,
     ) {
+        // TODO: This should not be attempted when clone has unseen commits (from local commands)
         if (this._tryPopulateQueryFromClone(query)) {
             return;
         }
 
         if (await this._tryPopulateQueryFromStore(query, token)) {
+            // TODO: Apply pending and unseen committed commands.
             return;
         }
 
         if (!query.version) {
+            // TODO: This should not be attempted when there are unseen commits (from local commands)
+            //       or the derive function shall not be allowed to read from other queries that may
+            //       have unseen commits (from local commands).
             await this._deriveQueryResultFromOther(query, token);
         }
     }
