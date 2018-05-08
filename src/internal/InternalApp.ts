@@ -2,7 +2,7 @@ import { App } from "../public/App";
 import { CancelToken } from "../public/CancelToken";
 import { CancelTokenSource } from "../public/CancelTokenSource";
 
-import { demand } from "./Demand";
+import { invariant } from "./Demand";
 import { InternalOf } from "./InternalOf";
 import { InternalQuery } from "./InternalQuery";
 
@@ -18,9 +18,11 @@ export class InternalApp extends InternalOf<App> {
             this._observedQueries.set(query.key, instances = new Set<InternalQuery>());
         }
 
-        // Verify that each query instance is registered only once
         if (process.env.NODE_ENV !== "production") {
-            demand(!instances.has(query));
+            invariant(
+                !instances.has(query),
+                `Query instance already registered as observed`,
+            );
         }
 
         const cts = new CancelTokenSource();
@@ -34,7 +36,7 @@ export class InternalApp extends InternalOf<App> {
         // TODO: Must delay backend execution until query was populated locally so that we have a chance to get
         //       catch-up deltas instead of a full initial snapshot.
 
-        cts.token.ignoreCancellation(this._populateQueryLocally(query, cts.token));
+        cts.token.ignoreCancellation(this._populateQuery(query, cts.token));
 
         // Return the `registerUnobservedQuery` callback function
         return () => {
@@ -49,11 +51,11 @@ export class InternalApp extends InternalOf<App> {
         };
     }
 
-    private async _populateQueryLocally(
+    // TODO: Move to InternalQuery
+    private async _populateQuery(
         query: InternalQuery,
         token: CancelToken,
     ) {
-        // TODO: This should not be attempted when clone has unseen commits (from local commands)
         if (this._tryPopulateQueryFromClone(query)) {
             return;
         }
@@ -71,25 +73,35 @@ export class InternalApp extends InternalOf<App> {
         }
     }
 
+    // TODO: Move to InternalQuery
     private _tryPopulateQueryFromClone(
         query: InternalQuery,
     ) {
+        // Look for another observed query instance with the same key
         const source = this._findFirstQueryClone(query);
         if (!source) {
             return false;
         }
 
+        // Instances that does not have a version token are either hollow or are derived from other queries locally,
+        // we don't want to (and cannot) populate from such a clone.
         const version = source.version;
         if (!version) {
             return false;
         }
 
+        // TODO: This should not be attempted when clone has unseen commits (from local commands)
+        //       -or- we must support cloning of those commands
+
+        // Populate query with snapshot and version from clone
+        // TODO: `buildSnapshot` shall be optional and called `tryBuildSnapshot`.
+        //       Implementation required only for queries that support incremental updates.
         const snapshot = source.pub.buildSnapshot();
         query.applySnapshot(snapshot, version);
-
         return true;
     }
 
+    // TODO: Move to InternalQuery
     private _findFirstQueryClone(
         query: InternalQuery,
     ): InternalQuery | null {
@@ -104,6 +116,7 @@ export class InternalApp extends InternalOf<App> {
         return null;
     }
 
+    // TODO: Move to InternalQuery
     private async _tryPopulateQueryFromStore(
         query: InternalQuery,
         token: CancelToken,
@@ -112,6 +125,7 @@ export class InternalApp extends InternalOf<App> {
         return !!query && !!token; // dummy
     }
 
+    // TODO: Move to InternalQuery
     private async _deriveQueryResultFromOther(
         query: InternalQuery,
         token: CancelToken,
