@@ -20,15 +20,16 @@ export abstract class Query<TApp extends App = App> extends AppObject<TApp> {
     constructor() {
         super();
 
+        // Create a reaction that will automatically register and unregister this instance as active
         let unregister: () => void;
         reaction(
-            () => this.isAttached && this.isObserved,
+            () => this.isAttached && this.isObserved, // TODO: && !this.isBroken
             active => {
                 const query = internalOf(this);
                 const app = internalAppOf(this);
 
                 if (active) {
-                    unregister = app.registerObservedQuery(query);
+                    unregister = app.registerActiveQuery(query);
                 } else if (unregister !== undefined) {
                     unregister();
                 }

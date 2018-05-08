@@ -148,7 +148,7 @@ export class InternalQuery extends InternalOf<Query> {
     }
 
     private _findFirstClone(): InternalQuery | null {
-        for (const other of internalAppOf(this).getObservedQueries(this.key)) {
+        for (const other of internalAppOf(this).getActiveQueries(this.key)) {
             if (other !== this) {
                 return other;
             }
@@ -168,7 +168,7 @@ export class InternalQuery extends InternalOf<Query> {
     private async _populate(
         token: CancelToken,
     ): Promise<void> {
-        // The fastest way to populate a query is to copy from a clone, another observed query instance with the same
+        // The fastest way to populate a query is to copy from a clone, another active query instance with the same
         // key as this query instance. Attempting to do so is a synchronous operation.
         if (this._tryPopulateFromClone()) {
             return; // Done. Populated from a clone.
@@ -178,7 +178,7 @@ export class InternalQuery extends InternalOf<Query> {
 
         await this._tryPopulateFromStore(token);
 
-        internalAppOf(this).startQuerySubscription(this.key);
+        internalAppOf(this).ensureQuerySubscriptionStarted(this.key);
 
         if (!this.version) {
             await this._deriveFromOther(token);
@@ -186,7 +186,7 @@ export class InternalQuery extends InternalOf<Query> {
     }
 
     private _tryPopulateFromClone(): boolean {
-        // Look for another observed query instance with the same key
+        // Look for another active query instance with the same key
         const source = this._findFirstClone();
         if (!source) {
             return false;

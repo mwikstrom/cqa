@@ -6,38 +6,38 @@ import { InternalOf } from "./InternalOf";
 import { InternalQuery } from "./InternalQuery";
 
 export class InternalApp extends InternalOf<App> {
-    private _observedQueries = new Map<string, Set<InternalQuery>>();
+    private _activeQueries = new Map<string, Set<InternalQuery>>();
 
-    public getObservedQueries(key: string): Iterable<InternalQuery> {
-        return this._observedQueries.get(key) || [];
+    public getActiveQueries(key: string): Iterable<InternalQuery> {
+        return this._activeQueries.get(key) || [];
     }
 
-    public registerObservedQuery(
+    public registerActiveQuery(
         query: InternalQuery,
     ): () => void {
-        let instances = this._observedQueries.get(query.key);
+        let instances = this._activeQueries.get(query.key);
 
         if (!instances) {
-            this._observedQueries.set(query.key, instances = new Set<InternalQuery>());
+            this._activeQueries.set(query.key, instances = new Set<InternalQuery>());
         }
 
         if (process.env.NODE_ENV !== "production") {
             invariant(
                 !instances.has(query),
-                `Query instance already registered as observed`,
+                `Query instance already registered as active`,
             );
         }
 
-        // Create a cancel token to be observed while populating. It will be cancelled when the query is unobserved.
+        // Create a cancel token to be observed while populating. It will be cancelled when the query is deactivated
         const cts = new CancelTokenSource();
 
         // Add registered instance and start populating query in a background task
         instances.add(query);
         query.populateInBackground(cts.token);
 
-        // Return a callback function that shall be invoked when the query becomes unobserved
+        // Return a callback function that shall be invoked when the query is deactivated
         return () => {
-            // Cancel the populating background task when query become unobserved
+            // Cancel the populating background task when query is deactivated
             cts.cancel();
 
             // Remove registered instance and stop executing query on backend if it was the last instance
@@ -47,10 +47,11 @@ export class InternalApp extends InternalOf<App> {
         };
     }
 
-    public startQuerySubscription(
+    public ensureQuerySubscriptionStarted(
         key: string,
     ) {
-        // TODO: IMPLEMENT startQuerySubscription
+        // TODO: IMPLEMENT ensureQuerySubscriptionStarted
+        //       - No-op if subscription already started
         //       - Must verify that there is at least one instance for the specified key
         //       - All instances must agree to:
         //          a) use the same key
