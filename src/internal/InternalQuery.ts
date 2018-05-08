@@ -6,16 +6,21 @@ import {
     when,
 } from "mobx";
 
-import { App } from "../public/App";
-import { CancelToken } from "../public/CancelToken";
-import { CancelTokenSource } from "../public/CancelTokenSource";
-import { ReadonlyJsonValue } from "../public/Json";
-import { Query } from "../public/Query";
-import { Version } from "../public/Version";
+import {
+    App,
+    CancelToken,
+    CancelTokenSource,
+    Query,
+    ReadonlyJsonValue,
+    Version,
+} from "../api";
 
-import { demand } from "./Demand";
-import { InternalApp } from "./InternalApp";
-import { InternalOf, makeInternalOf } from "./InternalOf";
+import {
+    demand,
+    InternalApp,
+    InternalOf,
+    makeInternalOf,
+} from "../internal";
 
 export class InternalQuery extends InternalOf<Query> {
     private _atom: IAtom;

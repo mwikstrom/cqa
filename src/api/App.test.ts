@@ -1,6 +1,6 @@
 import { configure as confgiureMobx, reaction } from "mobx";
 
-import { App } from "./App";
+import { App } from "../api";
 
 confgiureMobx({
     enforceActions: true,

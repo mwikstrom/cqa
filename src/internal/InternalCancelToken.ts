@@ -1,8 +1,8 @@
 import { observable } from "mobx";
 
-import { CancelToken } from "../public/CancelToken";
+import { CancelToken } from "../api";
 
-import { InternalOf } from "./InternalOf";
+import { InternalOf } from "../internal";
 
 export class InternalCancelToken extends InternalOf<CancelToken> {
     @observable

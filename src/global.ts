@@ -1,4 +1,7 @@
-import { LIB_NAME_SHORT } from "./internal/Constants";
+import {
+    DEBUG,
+    LIB_NAME_SHORT,
+} from "./internal";
 
 if (typeof process !== "object") {
     process = { env: { } };
@@ -9,10 +12,7 @@ if (typeof process !== "object") {
 (() => {
     function this_name_shall_be_minified_in_production() { /* no-op */ }
 
-    if (
-        this_name_shall_be_minified_in_production.name !== "this_name_shall_be_minified_in_production" &&
-        process.env.NODE_ENV !== "production"
-    ) {
+    if (DEBUG && this_name_shall_be_minified_in_production.name !== "this_name_shall_be_minified_in_production") {
         /* tslint:disable-next-line */
         console.warn(`[${LIB_NAME_SHORT}]: you should set 'process.env.NODE_ENV' to 'production' in your bundler.`);
     }

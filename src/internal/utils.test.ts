@@ -1,4 +1,4 @@
-import { demand } from "./Demand";
+import { demand } from "../internal";
 
 describe("demand", () => {
     it("does nothing when condition is met", () => {

@@ -1,4 +1,35 @@
-import { demand } from "./Demand";
+export const DEBUG = process.env.NODE_ENV !== "production";
+
+export const LIB_NAME_SHORT = "cqa";
+
+export const LIB_NAME_LONG = "Command Query App";
+
+export interface IParamlessErrorClass {
+    new(): Error;
+}
+
+export const demand = (
+    condition: boolean,
+    error: string | IParamlessErrorClass = "Invalid operation",
+): void => {
+    if (condition) {
+        return;
+    }
+
+    if (typeof error === "string") {
+        throw new Error(error);
+    }
+
+    throw new error();
+};
+
+export const invariant = (
+    condition: boolean,
+    message: string,
+): void => demand(
+    condition,
+    `[${LIB_NAME_SHORT}] broken invariant: ${message}`,
+);
 
 export interface INamedClass {
     readonly name: string;
@@ -6,7 +37,7 @@ export interface INamedClass {
 
 export const makeCheckThis = (
     ExpectedClass: any,
-) => (thisArg: any) => process.env.NODE_ENV === "production" && demand(
+) => (thisArg: any) => DEBUG && demand(
     thisArg instanceof ExpectedClass,
     `Invalid 'this'-binding, expected instance of '${ExpectedClass.name}'`,
 );
@@ -36,7 +67,7 @@ export const makeInternalOf = <TPublic extends object, TInternal extends Interna
 
         if (internal === undefined) {
             map!.set(pub, internal = new InternalClass(pub));
-        } else if (process.env.NODE_ENV !== "production") {
+        } else if (DEBUG) {
             demand(
                 internal instanceof InternalClass,
                 "Unexpected internal class",

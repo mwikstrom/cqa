@@ -1,4 +1,4 @@
-import { AppError } from "./AppError";
+import { AppError } from "../api";
 
 export class AlreadyAttachedError extends AppError {
     constructor() {

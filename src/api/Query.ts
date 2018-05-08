@@ -1,17 +1,21 @@
 import { reaction } from "mobx";
 import objectHash from "object-hash";
 
-import { InternalApp } from "../internal/InternalApp";
-import { makeInternalOf } from "../internal/InternalOf";
-import { InternalQuery } from "../internal/InternalQuery";
+import {
+    App,
+    AppObject,
+    CancelToken,
+    Command,
+    NotSupportedError,
+    ReadonlyJsonValue,
+    Version,
+} from "../api";
 
-import { App } from "./App";
-import { AppObject } from "./AppObject";
-import { CancelToken } from "./CancelToken";
-import { Command } from "./Command";
-import { ReadonlyJsonValue } from "./Json";
-import { NotSupportedError } from "./NotSupportedError";
-import { Version } from "./Version";
+import {
+    InternalApp,
+    InternalQuery,
+    makeInternalOf,
+} from "../internal";
 
 /**
  * Provides a base class for query objects.

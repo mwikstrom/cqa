@@ -1,10 +1,12 @@
 import { when } from "mobx";
 
-import { demand } from "../internal/Demand";
-import { InternalCancelToken } from "../internal/InternalCancelToken";
-import { makeInternalOf } from "../internal/InternalOf";
+import { CancelError } from "../api";
 
-import { CancelError } from "./CancelError";
+import {
+    demand,
+    InternalCancelToken,
+    makeInternalOf,
+} from "../internal";
 
 export class CancelToken {
     public static readonly Never = Object.freeze(new CancelToken());

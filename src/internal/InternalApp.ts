@@ -1,9 +1,14 @@
-import { App } from "../public/App";
-import { CancelTokenSource } from "../public/CancelTokenSource";
+import {
+    App,
+    CancelTokenSource,
+} from "../api";
 
-import { invariant } from "./Demand";
-import { InternalOf } from "./InternalOf";
-import { InternalQuery } from "./InternalQuery";
+import {
+    DEBUG,
+    InternalOf,
+    InternalQuery,
+    invariant,
+} from "../internal";
 
 export class InternalApp extends InternalOf<App> {
     private _activeQueries = new Map<string, Set<InternalQuery>>();
@@ -21,7 +26,7 @@ export class InternalApp extends InternalOf<App> {
             this._activeQueries.set(query.key, instances = new Set<InternalQuery>());
         }
 
-        if (process.env.NODE_ENV !== "production") {
+        if (DEBUG) {
             invariant(
                 !instances.has(query),
                 `Query instance already registered as active`,
