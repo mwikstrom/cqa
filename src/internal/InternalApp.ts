@@ -93,10 +93,11 @@ export class InternalApp extends InternalOf<App> {
         // TODO: This should not be attempted when clone has unseen commits (from local commands)
         //       -or- we must support cloning of those commands
 
-        // Populate query with snapshot and version from clone
-        // TODO: `buildSnapshot` shall be optional and called `tryBuildSnapshot`.
-        //       Implementation required only for queries that support incremental updates.
-        const snapshot = source.pub.buildSnapshot();
+        const snapshot = source.pub.tryBuildSnapshot();
+        if (snapshot === undefined) {
+            return false;
+        }
+
         query.applySnapshot(snapshot, version);
         return true;
     }

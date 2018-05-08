@@ -18,9 +18,8 @@ export class UnknownQuery extends Query {
         return dataMap.get(this)!.key;
     }
 
-    public buildSnapshot() {
-        const snapshot = dataMap.get(this)!.snapshot;
-        return snapshot !== undefined ? snapshot : null;
+    public tryBuildSnapshot(): ReadonlyJsonValue | undefined {
+        return dataMap.get(this)!.snapshot;
     }
 
     public onSnapshot(

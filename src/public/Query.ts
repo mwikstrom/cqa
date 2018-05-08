@@ -59,9 +59,14 @@ export abstract class Query<TApp extends App = App> extends AppObject<TApp> {
 
     /**
      * Determines whether the current query object supports incremental updates.
+     *
+     * Both {@link Query#onUpdate} and {@link Query#tryBuildSnapshot} must be overridden to support incremental
+     * updates.
      */
     public get supportsIncrementalUpdates(): boolean {
-        return Query.prototype.onUpdate !== Object.getPrototypeOf(this).onUpdate;
+        const proto = Object.getPrototypeOf(this);
+        return Query.prototype.onUpdate !== proto.onUpdate &&
+               Query.prototype.tryBuildSnapshot !== proto.tryBuildSnapshot;
     }
 
     /**
@@ -83,11 +88,6 @@ export abstract class Query<TApp extends App = App> extends AppObject<TApp> {
     public buildKey(): string {
         return objectHash(this.descriptor);
     }
-
-    /**
-     * Creates a readonly result data snapshot for the current query.
-     */
-    public abstract buildSnapshot(): ReadonlyJsonValue;
 
     /**
      * Attempts to derive a result for the current query from other cached queries.
@@ -156,6 +156,14 @@ export abstract class Query<TApp extends App = App> extends AppObject<TApp> {
      */
     public reportObserved(): void {
         internalOf(this).reportObserved();
+    }
+
+    /**
+     * Attempts to create a readonly result data snapshot for the current query.
+     */
+    public tryBuildSnapshot(): ReadonlyJsonValue | undefined {
+        // Default implementation doesn't know how to build snapshots.
+        return undefined;
     }
 }
 
