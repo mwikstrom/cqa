@@ -120,21 +120,34 @@ export abstract class Query<TApp extends App = App> extends AppObject<TApp> {
     }
 
     /**
+     * Determines whether the specified command may effect the result of the current query.
+     *
+     * The app framework uses this function to determine which commands that must be tracked and applied by calling
+     * {@link Query.onCommand}.
+     *
+     * @param command The command to test
+     */
+    public mayAffectResult(
+        // @ts-ignore: Parameter is declared but not used in the default implementation
+        command: Command,
+    ): boolean {
+        // Default implementation has no domain knowledge so all commands are ignored.
+        return false;
+    }
+
+    /**
      * Applies the effect of the specified command to the result of the current query.
      *
      * WARNING: Do not call this method directly from your code. It shall only be invoked from the app framework.
      *
      * @param command The command to be applied
      *
-     * @returns `true` when the specified command did or may have an effect on the result of the current query;
-     *          otherwise `false`.
      */
     public onCommand(
         // @ts-ignore: Parameter is declared but not used in the default implementation
         command: Command,
-    ): boolean {
-        // Default implementation has no domain knowledge so all commands are ignored.
-        return false;
+    ): void {
+        throw new NotSupportedError();
     }
 
     /**
