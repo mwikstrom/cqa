@@ -27,7 +27,7 @@ export abstract class Query<TApp extends App = App> extends AppObject<TApp> {
         // Create a reaction that will automatically register and unregister this instance as active
         let unregister: () => void;
         reaction(
-            () => this.isAttached && this.isObserved, // TODO: && !this.isBroken
+            () => this.isAttached && this.isObserved && !this.isBroken,
             active => {
                 const query = internalOf(this);
                 const app = internalAppOf(this);
@@ -46,6 +46,13 @@ export abstract class Query<TApp extends App = App> extends AppObject<TApp> {
      */
     public get descriptor(): ReadonlyJsonValue {
         return internalOf(this).descriptor;
+    }
+
+    /**
+     * Determines whether the current query object is broken because an error occurred.
+     */
+    public get isBroken(): boolean {
+        return internalOf(this).isBroken;
     }
 
     /**

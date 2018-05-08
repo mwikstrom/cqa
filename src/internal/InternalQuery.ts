@@ -19,6 +19,7 @@ import {
     demand,
     InternalApp,
     InternalOf,
+    LIB_NAME_SHORT,
     makeInternalOf,
 } from "../internal";
 
@@ -26,6 +27,9 @@ export class InternalQuery extends InternalOf<Query> {
     private _atom: IAtom;
 
     private _descriptor?: ReadonlyJsonValue;
+
+    @observable
+    private _isBroken = false;
 
     @observable
     private _isObserved = false;
@@ -51,6 +55,10 @@ export class InternalQuery extends InternalOf<Query> {
         }
 
         return this._descriptor;
+    }
+
+    public get isBroken(): boolean {
+        return this._isBroken;
     }
 
     public get isObserved(): boolean {
@@ -107,9 +115,13 @@ export class InternalQuery extends InternalOf<Query> {
         token: CancelToken,
     ): void {
         token.ignoreCancellation(this._populate(token)).catch(reason => {
-            // TODO: Report error and mark query as broken
             // tslint:disable-next-line
-            console.error(reason); // report better!
+            console.error(
+                `[${LIB_NAME_SHORT}] Query could not be populated and will therefore be marked as broken.`,
+                reason,
+            );
+
+            this._markAsBroken();
         });
     }
 
@@ -160,6 +172,11 @@ export class InternalQuery extends InternalOf<Query> {
         }
 
         return null;
+    }
+
+    @action
+    private _markAsBroken(value = true): void {
+        this._isBroken = value;
     }
 
     private _onBecomeObserved = () => {
