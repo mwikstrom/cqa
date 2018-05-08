@@ -36,6 +36,7 @@ export class InternalApp extends InternalOf<App> {
         // TODO: Must delay backend execution until query was populated locally so that we have a chance to get
         //       catch-up deltas instead of a full initial snapshot.
 
+        // TODO: Handle non-cancellation exceptions too. Mark query as broken.
         cts.token.ignoreCancellation(this._populateQuery(query, cts.token));
 
         // Return the `registerUnobservedQuery` callback function
