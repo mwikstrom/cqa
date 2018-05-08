@@ -132,6 +132,9 @@ export class InternalQuery extends InternalOf<Query> {
                 this.pub.onUpdate(data);
             };
 
+            // TODO: It is important that user code does not cause new query subscriptions to open
+            //       when deriving local result. How to ensure that?
+
             return await cts.token.ignoreCancellation(
                 this.pub.deriveLocalResult(
                     applySnapshot,
