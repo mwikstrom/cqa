@@ -17,7 +17,7 @@ export class CancelToken {
     public get rejectWhenCancelled(): Promise<never> {
         return new Promise<never>((_, reject) => {
             when(
-                () => this.isCancelled === true,
+                () => this.isCancelled,
                 () => reject(new CancelError()),
             );
         });
