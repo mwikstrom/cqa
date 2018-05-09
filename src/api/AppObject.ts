@@ -4,7 +4,7 @@ import { internalOf } from "../internal";
 
 export class AppObject<TApp extends App = App> {
     /**
-     * Gets the {@link App} instance that the current object is attached to. (Observable)
+     * Gets the {@link App} instance that the current object is attached to.
      *
      * @throws {NotAttachedError} when {@link AppObject#isAttached} is `false`
      */
