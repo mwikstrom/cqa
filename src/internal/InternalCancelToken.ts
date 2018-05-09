@@ -2,9 +2,9 @@ import { observable } from "mobx";
 
 import { CancelToken } from "../api";
 
-import { InternalOf } from "../internal";
+import { InternalBase } from "../internal";
 
-export class InternalCancelToken extends InternalOf<CancelToken> {
+export class InternalCancelToken extends InternalBase<CancelToken> {
     @observable
     private _isCancelled = false;
 

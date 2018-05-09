@@ -4,14 +4,14 @@ import {
 } from "../api";
 
 export class UnknownCommand extends Command {
-    constructor(data: ReadonlyJsonValue) {
+    constructor(descriptor: ReadonlyJsonValue) {
         super();
-        unknownCommandDataMap.set(this, data);
+        descriptorMap.set(this, descriptor);
     }
 
-    public get commandData(): ReadonlyJsonValue {
-        return unknownCommandDataMap.get(this)!;
+    public get descriptor(): ReadonlyJsonValue {
+        return descriptorMap.get(this)!;
     }
 }
 
-const unknownCommandDataMap = new WeakMap<UnknownCommand, ReadonlyJsonValue>();
+const descriptorMap = new WeakMap<UnknownCommand, ReadonlyJsonValue>();

@@ -13,10 +13,10 @@ import {
 
 import {
     demand,
-    InternalOf,
+    InternalBase,
 } from "../internal";
 
-export class InternalAppObject extends InternalOf<AppObject> {
+export class InternalAppObject extends InternalBase<AppObject> {
     @observable.ref
     private _app: App | null = null;
 

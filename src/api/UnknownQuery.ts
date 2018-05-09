@@ -6,7 +6,7 @@ import {
 export class UnknownQuery extends Query {
     constructor(
         descriptor: ReadonlyJsonValue,
-        key: string,
+        key?: string,
     ) {
         super();
         dataMap.set(this, { descriptor, key });
@@ -17,7 +17,8 @@ export class UnknownQuery extends Query {
     }
 
     public buildKey() {
-        return dataMap.get(this)!.key;
+        const storedKey = dataMap.get(this)!.key;
+        return storedKey === undefined ? super.buildKey() : storedKey;
     }
 
     public tryBuildSnapshot(): ReadonlyJsonValue | undefined {
@@ -33,7 +34,7 @@ export class UnknownQuery extends Query {
 
 interface IUnknownQueryData {
     readonly descriptor: ReadonlyJsonValue;
-    readonly key: string;
+    readonly key?: string;
     snapshot?: ReadonlyJsonValue;
 }
 

@@ -1,17 +1,84 @@
+import objectHash from "object-hash";
+
 import {
     App,
     CancelTokenSource,
+    Command,
+    CommandFactory,
+    Query,
+    QueryFactory,
+    ReadonlyJsonValue,
+    UnknownCommand,
+    UnknownQuery,
 } from "../api";
 
 import {
     DEBUG,
-    InternalOf,
+    InternalBase,
     InternalQuery,
     invariant,
 } from "../internal";
 
-export class InternalApp extends InternalOf<App> {
+export class InternalApp extends InternalBase<App> {
     private _activeQueries = new Map<string, Set<InternalQuery>>();
+    private _commandFactories = new Set<CommandFactory>();
+    private _queryFactories = new Set<QueryFactory>();
+
+    public addCommandFactory(factory: CommandFactory): void {
+        this._commandFactories.add(factory);
+    }
+
+    public addQueryFactory(factory: QueryFactory): void {
+        this._queryFactories.add(factory);
+    }
+
+    public createCommand(
+        descriptor: ReadonlyJsonValue,
+    ): Command {
+        for (const factory of this._commandFactories) {
+            const result = factory(descriptor);
+            if (result !== undefined) {
+                if (DEBUG) {
+                    invariant(
+                        objectHash(descriptor) === objectHash(result.descriptor),
+                        "Constructed command has unexpected descriptor",
+                    );
+                }
+
+                return result.attachTo(this.pub);
+            }
+        }
+
+        return new UnknownCommand(descriptor).attachTo(this.pub);
+    }
+
+    public createQuery(
+        descriptor: ReadonlyJsonValue,
+        key?: string,
+    ): Query {
+        for (const factory of this._queryFactories) {
+            const result = factory(descriptor);
+            if (result !== undefined) {
+                if (DEBUG) {
+                    invariant(
+                        objectHash(descriptor) === objectHash(result.descriptor),
+                        "Constructed query has unexpected descriptor",
+                    );
+
+                    if (typeof key === "string") {
+                        invariant(
+                            key === result.key,
+                            "Constructed query has unexpected key",
+                        );
+                    }
+                }
+
+                return result.attachTo(this.pub);
+            }
+        }
+
+        return new UnknownQuery(descriptor, key).attachTo(this.pub);
+    }
 
     public getActiveQueries(key: string): Iterable<InternalQuery> {
         return this._activeQueries.get(key) || [];

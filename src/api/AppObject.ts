@@ -1,9 +1,6 @@
 import { App } from "../api";
 
-import {
-    InternalAppObject,
-    makeInternalOf,
-} from "../internal";
+import { internalOf } from "../internal";
 
 export class AppObject<TApp extends App = App> {
     /**
@@ -34,5 +31,3 @@ export class AppObject<TApp extends App = App> {
         return this;
     }
 }
-
-const internalOf = makeInternalOf<AppObject, InternalAppObject>(AppObject, InternalAppObject);

@@ -4,8 +4,7 @@ import { CancelError } from "../api";
 
 import {
     demand,
-    InternalCancelToken,
-    makeInternalOf,
+    internalOf,
 } from "../internal";
 
 export class CancelToken {
@@ -42,5 +41,3 @@ export class CancelToken {
         }
     }
 }
-
-const internalOf = makeInternalOf<CancelToken, InternalCancelToken>(CancelToken, InternalCancelToken);

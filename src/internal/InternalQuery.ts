@@ -7,7 +7,6 @@ import {
 } from "mobx";
 
 import {
-    App,
     CancelToken,
     CancelTokenSource,
     Query,
@@ -17,13 +16,12 @@ import {
 
 import {
     demand,
-    InternalApp,
-    InternalOf,
+    InternalBase,
+    internalOf,
     LIB_NAME_SHORT,
-    makeInternalOf,
 } from "../internal";
 
-export class InternalQuery extends InternalOf<Query> {
+export class InternalQuery extends InternalBase<Query> {
     private _atom: IAtom;
 
     private _descriptor?: ReadonlyJsonValue;
@@ -165,7 +163,7 @@ export class InternalQuery extends InternalOf<Query> {
     }
 
     private _findFirstClone(): InternalQuery | null {
-        for (const other of internalAppOf(this).getActiveQueries(this.key)) {
+        for (const other of internalOf(this.pub.app).getActiveQueries(this.key)) {
             if (other !== this) {
                 return other;
             }
@@ -200,7 +198,7 @@ export class InternalQuery extends InternalOf<Query> {
 
         await this._tryPopulateFromStore(token);
 
-        internalAppOf(this).ensureQuerySubscriptionStarted(this.key);
+        internalOf(this.pub.app).ensureQuerySubscriptionStarted(this.key);
 
         if (!this.version) {
             await this._deriveFromOther(token);
@@ -241,7 +239,3 @@ export class InternalQuery extends InternalOf<Query> {
         return !token; // dummy
     }
 }
-
-const appInternalOf = makeInternalOf(App, InternalApp);
-
-const internalAppOf = (query: InternalQuery) => appInternalOf(query.pub.app);

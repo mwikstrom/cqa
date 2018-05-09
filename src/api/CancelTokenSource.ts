@@ -1,9 +1,6 @@
 import { CancelToken } from "../api";
 
-import {
-    InternalCancelTokenSource,
-    makeInternalOf,
-} from "../internal";
+import { internalOf } from "../internal";
 
 export class CancelTokenSource {
     public get token(): CancelToken {
@@ -14,8 +11,3 @@ export class CancelTokenSource {
         internalOf(this).cancel();
     }
 }
-
-const internalOf = makeInternalOf<CancelTokenSource, InternalCancelTokenSource>(
-    CancelTokenSource,
-    InternalCancelTokenSource,
-);

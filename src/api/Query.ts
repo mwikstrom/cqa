@@ -11,11 +11,7 @@ import {
     Version,
 } from "../api";
 
-import {
-    InternalApp,
-    InternalQuery,
-    makeInternalOf,
-} from "../internal";
+import { internalOf } from "../internal";
 
 /**
  * Provides a base class for query objects.
@@ -30,13 +26,16 @@ export abstract class Query<TApp extends App = App> extends AppObject<TApp> {
             () => this.isAttached && this.isObserved && !this.isBroken,
             active => {
                 const query = internalOf(this);
-                const app = internalAppOf(this);
+                const app = internalOf(this.app);
 
                 if (active) {
                     unregister = app.registerActiveQuery(query);
                 } else if (unregister !== undefined) {
                     unregister();
                 }
+            },
+            {
+                name: "Track Active Query",
             },
         );
     }
@@ -191,9 +190,3 @@ export abstract class Query<TApp extends App = App> extends AppObject<TApp> {
         return undefined;
     }
 }
-
-const internalOf = makeInternalOf(Query, InternalQuery);
-
-const appInternalOf = makeInternalOf(App, InternalApp);
-
-const internalAppOf = (pub: Query) => appInternalOf(pub.app);

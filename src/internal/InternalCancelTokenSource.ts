@@ -4,11 +4,11 @@ import {
 } from "../api";
 
 import {
+    InternalBase,
     InternalCancelToken,
-    InternalOf,
 } from "../internal";
 
-export class InternalCancelTokenSource extends InternalOf<CancelTokenSource> {
+export class InternalCancelTokenSource extends InternalBase<CancelTokenSource> {
     private readonly _token = new InternalCancelToken();
 
     public get token(): CancelToken {
