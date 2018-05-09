@@ -5,17 +5,17 @@ import {
 
 import {
     InternalBase,
-    InternalCancelToken,
+    internalOf,
 } from "../internal";
 
 export class InternalCancelTokenSource extends InternalBase<CancelTokenSource> {
-    private readonly _token = new InternalCancelToken();
+    private readonly _token = new CancelToken();
 
     public get token(): CancelToken {
-        return this._token.pub;
+        return this._token;
     }
 
     public cancel(): void {
-        this._token.setCancelled();
+        internalOf(this._token).setCancelled();
     }
 }

@@ -7,7 +7,8 @@ export class CancelTokenSource {
         return internalOf(this).token;
     }
 
-    public cancel(): void {
+    public cancel(): this {
         internalOf(this).cancel();
+        return this;
     }
 }
