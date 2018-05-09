@@ -11,7 +11,6 @@ import {
     CancelTokenSource,
     Query,
     ReadonlyJsonValue,
-    Version,
 } from "../api";
 
 import {
@@ -35,8 +34,8 @@ export class InternalQuery extends InternalBase<Query> {
 
     private _key?: string;
 
-    @observable.ref
-    private _version: Version | null = null;
+    @observable
+    private _version: string | null = null;
 
     constructor(pub: Query) {
         super(pub);
@@ -72,7 +71,7 @@ export class InternalQuery extends InternalBase<Query> {
         return this._key;
     }
 
-    public get version(): Version | null {
+    public get version(): string | null {
         this.reportObserved();
         return this._version;
     }
@@ -80,10 +79,10 @@ export class InternalQuery extends InternalBase<Query> {
     @action
     public applySnapshot(
         data: ReadonlyJsonValue,
-        version: Version,
+        version: string,
     ): void {
         const before = this._version;
-        demand(before === null || version.isAfter(before));
+        demand(before === null || version > before);
         this.pub.onSnapshot(data);
         this._atom.reportChanged();
         this._version = version;
@@ -92,10 +91,10 @@ export class InternalQuery extends InternalBase<Query> {
     @action
     public applyUpdate(
         data: ReadonlyJsonValue,
-        version: Version,
+        version: string,
     ): void {
         const before = this._version;
-        demand(before === null || version.isAfter(before));
+        demand(before === null || version > before);
         this.pub.onUpdate(data);
         this._atom.reportChanged();
         this._version = version;
@@ -103,10 +102,10 @@ export class InternalQuery extends InternalBase<Query> {
 
     @action
     public applyVersion(
-        version: Version,
+        version: string,
     ): void {
         const before = this._version;
-        demand(before === null || version.isAfter(before));
+        demand(before === null || version > before);
         this._version = version;
     }
 

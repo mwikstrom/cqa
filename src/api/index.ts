@@ -5,7 +5,6 @@ export * from "./AppObject";
 export * from "./CancelToken";
 export * from "./CancelTokenSource";
 export * from "./Json";
-export * from "./Version";
 
 // Level 1 (classes extend level 0)
 export * from "./AlreadyAttachedError";

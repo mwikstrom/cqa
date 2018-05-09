@@ -8,7 +8,6 @@ import {
     Command,
     NotSupportedError,
     ReadonlyJsonValue,
-    Version,
 } from "../api";
 
 import { internalOf } from "../internal";
@@ -83,8 +82,11 @@ export abstract class Query<TApp extends App = App> extends AppObject<TApp> {
     /**
      * Gets the global version token of the current query result; or `null` when no result is available or when the
      * result is derived from other local queries.
+     *
+     * Version tokens can be compared lexicographically to determine casuality; whether one version 'happened before'
+     * another version. Other than this property, applications should consider version tokens to be opaque data.
      */
-    public get version(): Version | null {
+    public get version(): string | null {
         return internalOf(this).version;
     }
 
