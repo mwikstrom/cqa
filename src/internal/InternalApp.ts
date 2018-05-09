@@ -1,5 +1,3 @@
-import objectHash from "object-hash";
-
 import {
     App,
     CancelTokenSource,
@@ -14,6 +12,7 @@ import {
 
 import {
     DEBUG,
+    deepEquals,
     InternalBase,
     InternalQuery,
     invariant,
@@ -21,6 +20,7 @@ import {
 
 export class InternalApp extends InternalBase<App> {
     private _activeQueries = new Map<string, Set<InternalQuery>>();
+    private _activeSubscriptions = new Set<string>();
     private _commandFactories = new Set<CommandFactory>();
     private _queryFactories = new Set<QueryFactory>();
 
@@ -40,7 +40,7 @@ export class InternalApp extends InternalBase<App> {
             if (result !== undefined) {
                 if (DEBUG) {
                     invariant(
-                        objectHash(descriptor) === objectHash(result.descriptor),
+                        deepEquals(descriptor, result.descriptor),
                         "Constructed command has unexpected descriptor",
                     );
                 }
@@ -61,7 +61,7 @@ export class InternalApp extends InternalBase<App> {
             if (result !== undefined) {
                 if (DEBUG) {
                     invariant(
-                        objectHash(descriptor) === objectHash(result.descriptor),
+                        deepEquals(descriptor, result.descriptor),
                         "Constructed query has unexpected descriptor",
                     );
 
@@ -122,23 +122,43 @@ export class InternalApp extends InternalBase<App> {
     public ensureQuerySubscriptionStarted(
         key: string,
     ) {
-        // TODO: IMPLEMENT ensureQuerySubscriptionStarted
-        //       - No-op if subscription already started
-        //       - Must verify that there is at least one instance for the specified key
-        //       - All instances must agree to:
-        //          a) use the same key
-        //          b) use the same descriptor
-        //          c) support incremental updates
-        //          d) have the same current version
-        //          e) not be broken
-        throw key;
+        // No-op when subscription is already active
+        if (this._activeSubscriptions.has(key)) {
+            return;
+        }
+
+        // Use the first registered active query as specimen for query data.
+        const active = this._activeQueries.get(key);
+        let specimen: InternalQuery | null = null;
+        for (const query of (active || [])) {
+            if (!specimen) {
+                specimen = query;
+            } else if (DEBUG) {
+                // In non-production environment; ensure that all instances agree to use the same query data
+                invariant(
+                    query.hasCompatibleSubscriptionContract(specimen),
+                    "All same-key active queries must share a compatible subscription contract",
+                );
+            }
+        }
+
+        this._activeSubscriptions.add(key);
+        // TODO: Send `Start_Query` message to backend.
     }
 
     public stopQuerySubscription(
         key: string,
-    ) {
-        // TODO: Verify that there are instances for the specified key!
-        // TODO: IMPLEMENT stopQuerySubscription
-        throw key;
+    ): void {
+        if (DEBUG) {
+            const active = this._activeQueries.get(key);
+            invariant(
+                !active || active.size === 0,
+                "Cannot stop subscription while there are active instances",
+            );
+        }
+
+        if (this._activeSubscriptions.delete(key)) {
+            // TODO: Send `Stop_Query` message to backend
+        }
     }
 }

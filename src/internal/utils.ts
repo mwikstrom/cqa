@@ -1,3 +1,5 @@
+import objectHash from "object-hash";
+
 export const DEBUG = process.env.NODE_ENV !== "production";
 
 export const LIB_NAME_SHORT = "cqa";
@@ -30,3 +32,5 @@ export const invariant = (
     condition,
     `[${LIB_NAME_SHORT}] broken invariant: ${message}`,
 );
+
+export const deepEquals = <T>(first: T, second: T): boolean => objectHash(first) === objectHash(second);

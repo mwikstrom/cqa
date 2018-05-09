@@ -1,0 +1,14 @@
+{
+    "files.exclude": {
+        "**/.git": true,
+        "coverage": true,
+        "dist": true,
+        "node_modules": true,
+    },
+    "todohighlight.keywords": [
+        {
+            "text": "TODO:",
+            "backgroundColor": "#770",
+        }
+    ]
+}

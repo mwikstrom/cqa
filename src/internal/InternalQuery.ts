@@ -15,6 +15,7 @@ import {
 } from "../api";
 
 import {
+    deepEquals,
     demand,
     InternalBase,
     internalOf,
@@ -107,6 +108,13 @@ export class InternalQuery extends InternalBase<Query> {
         const before = this._version;
         demand(before === null || version.isAfter(before));
         this._version = version;
+    }
+
+    public hasCompatibleSubscriptionContract(other: InternalQuery) {
+        return this.key === other.key
+            && deepEquals(this.descriptor, other.descriptor)
+            && this.pub.supportsIncrementalUpdates === other.pub.supportsIncrementalUpdates
+            && this.version === other.version;
     }
 
     public populateInBackground(
