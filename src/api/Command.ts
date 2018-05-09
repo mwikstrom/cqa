@@ -11,5 +11,5 @@ export abstract class Command<TApp extends App = App> extends AppObject<TApp> {
     /**
      * Gets a data object that completely describe the current command.
      */
-    public abstract get descriptor(): ReadonlyJsonValue;
+    public abstract get descriptor(): ReadonlyJsonValue; // TODO: Use buildDescriptor (same as Query)
 }
