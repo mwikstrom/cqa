@@ -38,6 +38,7 @@ export class InternalApp extends InternalBase<App> {
         for (const factory of this._commandFactories) {
             const result = factory(descriptor);
             if (result !== undefined) {
+                // istanbul ignore else
                 if (DEBUG) {
                     invariant(
                         deepEquals(descriptor, result.descriptor),
@@ -59,6 +60,7 @@ export class InternalApp extends InternalBase<App> {
         for (const factory of this._queryFactories) {
             const result = factory(descriptor);
             if (result !== undefined) {
+                // istanbul ignore else
                 if (DEBUG) {
                     invariant(
                         deepEquals(descriptor, result.descriptor),

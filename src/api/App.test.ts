@@ -7,6 +7,10 @@ import {
     UnknownQuery,
 } from "../api";
 
+import {
+    internalOf,
+} from "../internal";
+
 describe("App", () => {
     it("can be constructed without arguments", () => {
         const app = new App();
@@ -18,6 +22,7 @@ describe("App", () => {
         const cmd = app.createCommand("hello world");
         expect(cmd).toBeInstanceOf(UnknownCommand);
         expect(cmd.descriptor).toBe("hello world");
+        expect(cmd.app).toBe(app);
     });
 
     it("will create unknown query instances by default", () => {
@@ -26,6 +31,7 @@ describe("App", () => {
         expect(query).toBeInstanceOf(UnknownQuery);
         expect(query.descriptor).toBe("hello world");
         expect(query.key).toMatch(/^[0-9a-f]{40}$/);
+        expect(query.app).toBe(app);
     });
 
     it("can be configured to create custom command instances", () => {
@@ -38,6 +44,7 @@ describe("App", () => {
         const cmd = app.createCommand("hello world");
         expect(cmd).toBeInstanceOf(CustomCommand);
         expect(cmd.descriptor).toBe("hello world");
+        expect(cmd.app).toBe(app);
     });
 
     it("can be configured to create custom query instances", () => {
@@ -52,5 +59,18 @@ describe("App", () => {
         const query = app.createQuery("hello world");
         expect(query).toBeInstanceOf(CustomQuery);
         expect(query.descriptor).toBe("hello world");
+        expect(query.app).toBe(app);
+    });
+
+    it("verifies that the constructed query has the expected descriptor", () => {
+        const app = new App();
+        // tslint:disable-next-line
+        class BadQuery extends Query {
+            constructor(private _descriptor: ReadonlyJsonValue) { super(); }
+            public buildDescriptor() { return "BAD"; }
+            public onSnapshot() { /* no-op */ }
+        }
+        app.addQueryFactory(descriptor => new BadQuery(descriptor));
+        expect(() => app.createQuery("GOOD")).toThrow("Constructed query has unexpected descriptor");
     });
 });
