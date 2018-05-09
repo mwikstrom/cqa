@@ -51,6 +51,8 @@ export class App {
     ): Query {
         return internalOf(this).createQuery(descriptor);
     }
+
+    // TODO: Add `public execute(command: Command)` function
 }
 
 /**
