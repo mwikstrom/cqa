@@ -21,9 +21,14 @@ export function internalOf(pub: App): InternalApp;
 export function internalOf(pub: CancelToken): InternalCancelToken;
 export function internalOf(pub: CancelTokenSource): InternalCancelTokenSource;
 export function internalOf(pub: Query): InternalQuery;
-export function internalOf(pub: AppObject): InternalAppObject;
-export function internalOf<T extends object>(pub: T): InternalBase<T> {
-    const internalCtor = getInternalCtor(pub.constructor);
+export function internalOf<TPublic extends object, TInternal extends InternalBase<TPublic>>(
+    pub: TPublic,
+    ctor: { new (pub: TPublic): TInternal },
+): TInternal;
+export function internalOf<T extends object>(
+    pub: T,
+    internalCtor: InternalConstructor = getInternalCtor(pub.constructor),
+): InternalBase<T> {
     const instanceMap = getInstanceMap<T>(internalCtor);
     let internal = instanceMap.get(pub);
 
@@ -41,6 +46,10 @@ export function internalOf<T extends object>(pub: T): InternalBase<T> {
     }
 
     return internal;
+}
+
+export function internalBaseOf(pub: AppObject): InternalAppObject {
+    return internalOf(pub, InternalAppObject);
 }
 
 // tslint:disable-next-line
