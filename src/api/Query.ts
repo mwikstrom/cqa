@@ -40,7 +40,7 @@ export abstract class Query<TApp extends App = App> extends AppObject<TApp> {
     }
 
     /**
-     * Gets a descriptor object that completely describe the current query object.
+     * Gets a descriptor (a json value) that describe this query object.
      */
     public get descriptor(): ReadonlyJsonValue {
         return internalOf(this).descriptor;
@@ -61,7 +61,7 @@ export abstract class Query<TApp extends App = App> extends AppObject<TApp> {
     }
 
     /**
-     * Gets a unique, and preferably normalized, key string for the current query object.
+     * Gets a unique key string for this query.
      */
     public get key(): string {
         return internalOf(this).key;
@@ -91,12 +91,14 @@ export abstract class Query<TApp extends App = App> extends AppObject<TApp> {
     }
 
     /**
-     * Creates a descriptor object that completely describe the current query object.
+     * Creates a descriptor (a json value) that describe this query object.
      */
     public abstract buildDescriptor(): ReadonlyJsonValue;
 
     /**
-     * Creates a unique, and preferably normalized, key string for the current query object.
+     * Creates a unique key string for this query.
+     *
+     * The default implementation creates a key based on the query descriptor.
      */
     public buildKey(): string {
         return objectHash(this.descriptor);

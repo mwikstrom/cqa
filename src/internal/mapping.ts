@@ -3,6 +3,7 @@ import {
     AppObject,
     CancelToken,
     CancelTokenSource,
+    Command,
     Query,
 } from "../api";
 
@@ -13,6 +14,7 @@ import {
     InternalBase,
     InternalCancelToken,
     InternalCancelTokenSource,
+    InternalCommand,
     InternalQuery,
     invariant,
 } from "../internal";
@@ -21,6 +23,7 @@ export function internalOf(pub: App): InternalApp;
 export function internalOf(pub: CancelToken): InternalCancelToken;
 export function internalOf(pub: CancelTokenSource): InternalCancelTokenSource;
 export function internalOf(pub: Query): InternalQuery;
+export function internalOf(pub: Command): InternalCommand;
 export function internalOf<TPublic extends object, TInternal extends InternalBase<TPublic>>(
     pub: TPublic,
     ctor: { new (pub: TPublic): TInternal },
@@ -67,6 +70,7 @@ const ensureInternalCtorMapInitialized = () => {
             .set(AppObject, InternalAppObject)
             .set(CancelToken, InternalCancelToken)
             .set(CancelTokenSource, InternalCancelTokenSource)
+            .set(Command, InternalCommand)
             .set(Query, InternalQuery);
     }
 };

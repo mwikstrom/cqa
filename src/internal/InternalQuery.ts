@@ -16,6 +16,7 @@ import {
 import {
     deepEquals,
     demand,
+    freezeDeep,
     InternalBase,
     internalOf,
     LIB_NAME_SHORT,
@@ -49,7 +50,7 @@ export class InternalQuery extends InternalBase<Query> {
 
     public get descriptor(): ReadonlyJsonValue {
         if (this._descriptor === undefined) {
-            this._descriptor = this.pub.buildDescriptor();
+            this._descriptor = freezeDeep(this.pub.buildDescriptor());
         }
 
         return this._descriptor;

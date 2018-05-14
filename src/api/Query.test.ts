@@ -20,7 +20,9 @@ describe("Query", () => {
 
     // tslint:disable-next-line
     class DummyCommand extends Command {
-        public readonly descriptor = null;
+        public buildDescriptor() {
+            return null;
+        }
     }
 
     // tslint:disable-next-line

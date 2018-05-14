@@ -9,7 +9,7 @@ export class UnknownCommand extends Command {
         descriptorMap.set(this, descriptor);
     }
 
-    public get descriptor(): ReadonlyJsonValue {
+    public buildDescriptor(): ReadonlyJsonValue {
         return descriptorMap.get(this)!;
     }
 }

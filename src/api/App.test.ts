@@ -37,9 +37,7 @@ describe("App", () => {
     it("can be configured to create custom command instances", () => {
         const app = new App();
         // tslint:disable-next-line
-        class CustomCommand extends Command {
-            constructor(public descriptor: ReadonlyJsonValue) { super(); }
-        }
+        class CustomCommand extends UnknownCommand {}
         app.addCommandFactory(descriptor => new CustomCommand(descriptor));
         const cmd = app.createCommand("hello world");
         expect(cmd).toBeInstanceOf(CustomCommand);
