@@ -151,6 +151,7 @@ export class InternalApp extends InternalBase<App> {
     public stopQuerySubscription(
         key: string,
     ): void {
+        // istanbul ignore else
         if (DEBUG) {
             const active = this._activeQueries.get(key);
             invariant(

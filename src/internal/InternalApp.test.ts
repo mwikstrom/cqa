@@ -21,4 +21,9 @@ describe("App", () => {
         app.addQueryFactory(descriptor => new BadQuery(descriptor));
         expect(() => app.createQuery("GOOD", "GOOD")).toThrow("Constructed query has unexpected key");
     });
+
+    it("can be told to stop non-existing query subscription without breaking", () => {
+        const app = internalOf(new App());
+        app.stopQuerySubscription("apa");
+    });
 });
