@@ -1,5 +1,4 @@
 import { reaction } from "mobx";
-import objectHash from "object-hash";
 
 import {
     App,
@@ -10,7 +9,10 @@ import {
     ReadonlyJsonValue,
 } from "../api";
 
-import { internalOf } from "../internal";
+import {
+    hashOf,
+    internalOf,
+} from "../internal";
 
 /**
  * Provides a base class for query objects.
@@ -101,7 +103,7 @@ export abstract class Query<TApp extends App = App> extends AppObject<TApp> {
      * The default implementation creates a key based on the query descriptor.
      */
     public buildKey(): string {
-        return objectHash(this.descriptor);
+        return hashOf(this.descriptor);
     }
 
     /**

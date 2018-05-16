@@ -42,8 +42,10 @@ export const invariant = (
     `[${LIB_NAME_SHORT}] broken invariant: ${message}`,
 );
 
-export const deepEquals = <T>(first: T, second: T): boolean =>
-    objectHash(first) === objectHash(second);
+export const deepEquals = (
+    first: JsonValue | ReadonlyJsonValue,
+    second: JsonValue | ReadonlyJsonValue,
+): boolean => hashOf(first) === hashOf(second);
 
 export const isPrimitive = (value: JsonValue | ReadonlyJsonValue): value is null | string | number | boolean =>
     value === null ||
@@ -79,4 +81,24 @@ export const freezeDeep = (value: JsonValue | ReadonlyJsonValue): ReadonlyJsonVa
     deepFrozenThings.add(frozen);
 
     return frozen;
+};
+
+const b64tob64ue = (str: string) =>
+    str.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+
+const computeHash = (value: any) =>
+    b64tob64ue(objectHash(value, { encoding: "base64" }));
+
+const deepFrozenHashes = new WeakMap<IReadonlyJsonArray | IReadonlyJsonObject, string>();
+export const hashOf = (value: JsonValue | ReadonlyJsonValue) => {
+    if (isPrimitive(value) || !deepFrozenThings.has(value)) {
+        return computeHash(value);
+    }
+
+    let frozenHash = deepFrozenHashes.get(value);
+    if (frozenHash === undefined) {
+        deepFrozenHashes.set(value, frozenHash = computeHash(value));
+    }
+
+    return frozenHash;
 };

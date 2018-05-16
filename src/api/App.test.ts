@@ -30,7 +30,7 @@ describe("App", () => {
         const query = app.createQuery("hello world");
         expect(query).toBeInstanceOf(UnknownQuery);
         expect(query.descriptor).toBe("hello world");
-        expect(query.key).toMatch(/^[0-9a-f]{40}$/);
+        expect(query.key).toMatch(/^[0-9a-zA-Z_-]{27}$/);
         expect(query.app).toBe(app);
     });
 
