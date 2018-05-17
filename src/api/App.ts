@@ -52,8 +52,21 @@ export class App {
         return internalOf(this).createQuery(descriptor);
     }
 
-    public execute(command: ReadonlyJsonValue): Command;
+    /**
+     * Begins executing the specified command
+     *
+     * @param descriptor A data object that describe the command to be executed.
+     * @returns The constructed command that is being executed
+     */
+    public execute(descriptor: ReadonlyJsonValue): Command;
+
+    /**
+     * Begins executing the specified command
+     *
+     * @param command The command to be executed
+     */
     public execute<T extends Command>(command: T): T;
+
     public execute(
         descriptorOrCommand: ReadonlyJsonValue | Command,
     ): Command {
