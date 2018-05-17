@@ -1,3 +1,5 @@
+import { autorun } from "mobx";
+
 import {
     App,
     Command,
@@ -38,6 +40,7 @@ describe("App", () => {
         const app = new App();
         // tslint:disable-next-line
         class CustomCommand extends UnknownCommand {}
+        app.addCommandFactory(_ => undefined); // shall be ignored
         app.addCommandFactory(descriptor => new CustomCommand(descriptor));
         const cmd = app.createCommand("hello world");
         expect(cmd).toBeInstanceOf(CustomCommand);
@@ -53,6 +56,7 @@ describe("App", () => {
             public buildDescriptor() { return this._descriptor; }
             public onSnapshot() { /* no-op */ }
         }
+        app.addQueryFactory(_ => undefined); // shall be ignored
         app.addQueryFactory(descriptor => new CustomQuery(descriptor));
         const query = app.createQuery("hello world");
         expect(query).toBeInstanceOf(CustomQuery);
@@ -89,5 +93,15 @@ describe("App", () => {
             expect(cmd.app).toBe(app);
             expect(ret).toBe(cmd);
         });
+    });
+
+    it("supports multiple active same-key query instances", () => {
+        const app = new App();
+        const q1 = app.createQuery("test");
+        const q2 = app.createQuery("test");
+        const stop1 = autorun(() => q1.reportObserved());
+        const stop2 = autorun(() => q2.reportObserved());
+        stop1();
+        stop2();
     });
 });
