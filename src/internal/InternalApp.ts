@@ -95,6 +95,7 @@ export class InternalApp extends InternalBase<App> {
             this._activeQueries.set(query.key, instances = new Set<InternalQuery>());
         }
 
+        // istanbul ignore else
         if (DEBUG) {
             invariant(
                 !instances.has(query),
@@ -124,28 +125,27 @@ export class InternalApp extends InternalBase<App> {
     public ensureQuerySubscriptionStarted(
         key: string,
     ) {
-        // No-op when subscription is already active
-        if (this._activeSubscriptions.has(key)) {
-            return;
-        }
-
-        // Use the first registered active query as specimen for query data.
-        const active = this._activeQueries.get(key);
-        let specimen: InternalQuery | null = null;
-        for (const query of (active || [])) {
-            if (!specimen) {
-                specimen = query;
-            } else if (DEBUG) {
-                // In non-production environment; ensure that all instances agree to use the same query data
-                invariant(
-                    query.hasCompatibleSubscriptionContract(specimen),
-                    "All same-key active queries must share a compatible subscription contract",
-                );
+        // In non-production environment; ensure that all instances agree to use the same subscription contract
+        // istanbul ignore else
+        if (DEBUG) {
+            const active = this._activeQueries.get(key);
+            let specimen: InternalQuery | null = null;
+            for (const query of (active || [])) {
+                if (!specimen) {
+                    specimen = query;
+                } else {
+                    invariant(
+                        query.hasCompatibleSubscriptionContract(specimen),
+                        "All same-key active queries must share a compatible subscription contract",
+                    );
+                }
             }
         }
 
-        this._activeSubscriptions.add(key);
-        // TODO: Send `Start_Query` message to backend.
+        if (!this._activeSubscriptions.has(key)) {
+            this._activeSubscriptions.add(key);
+            // TODO: Send `Start_Query` message to backend.
+        }
     }
 
     public stopQuerySubscription(
