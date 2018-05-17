@@ -1,8 +1,15 @@
+import { autorun } from "mobx";
+
 import {
+    App,
     Command,
     NotSupportedError,
     Query,
 } from "../api";
+
+import {
+    internalOf,
+} from "../internal";
 
 describe("Query", () => {
     it("can be extended to fake support for incremental updates", () => {
@@ -59,5 +66,45 @@ describe("Query", () => {
     it("is not broken", () => {
         const instance = new DummyQuery();
         expect(instance.isBroken).toBe(false);
+    });
+
+    it("it is automatically registered as active when attached", () => {
+        const instance = new DummyQuery();
+        const app = new App();
+        const stop = autorun(() => instance.reportObserved());
+
+        const before = Array.from(internalOf(app).getActiveQueries(instance.key));
+        expect(before.length).toBe(0);
+
+        instance.attachTo(app);
+
+        const during = Array.from(internalOf(app).getActiveQueries(instance.key));
+        expect(during.length).toBe(1);
+        expect(during[0]).toBe(internalOf(instance));
+
+        stop();
+
+        const after = Array.from(internalOf(app).getActiveQueries(instance.key));
+        expect(after.length).toBe(0);
+    });
+
+    it("it is automatically registered as active when observed", () => {
+        const instance = new DummyQuery();
+        const app = new App();
+        instance.attachTo(app);
+
+        const before = Array.from(internalOf(app).getActiveQueries(instance.key));
+        expect(before.length).toBe(0);
+
+        const stop = autorun(() => instance.reportObserved());
+
+        const during = Array.from(internalOf(app).getActiveQueries(instance.key));
+        expect(during.length).toBe(1);
+        expect(during[0]).toBe(internalOf(instance));
+
+        stop();
+
+        const after = Array.from(internalOf(app).getActiveQueries(instance.key));
+        expect(after.length).toBe(0);
     });
 });

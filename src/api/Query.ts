@@ -18,29 +18,6 @@ import {
  * Provides a base class for query objects.
  */
 export abstract class Query<TApp extends App = App> extends AppObject<TApp> {
-    constructor() {
-        super();
-
-        // Create a reaction that will automatically register and unregister this instance as active
-        let unregister: () => void;
-        reaction(
-            () => this.isAttached && this.isObserved && !this.isBroken,
-            active => {
-                const query = internalOf(this);
-                const app = internalOf(this.app);
-
-                if (active) {
-                    unregister = app.registerActiveQuery(query);
-                } else if (unregister !== undefined) {
-                    unregister();
-                }
-            },
-            {
-                name: "Track Active Query",
-            },
-        );
-    }
-
     /**
      * Gets a descriptor (a json value) that describe this query object.
      */
@@ -90,6 +67,30 @@ export abstract class Query<TApp extends App = App> extends AppObject<TApp> {
      */
     public get version(): string | null {
         return internalOf(this).version;
+    }
+
+    /** @inheritDoc */
+    public attachTo(app: TApp) {
+        super.attachTo(app);
+
+        // Create a reaction that will automatically register and unregister this instance as active
+        let unregister: () => void;
+        reaction(
+            () => this.isAttached && this.isObserved && !this.isBroken,
+            active => {
+                if (active) {
+                    unregister = internalOf(this.app).registerActiveQuery(internalOf(this));
+                } else if (unregister !== undefined) {
+                    unregister();
+                }
+            },
+            {
+                fireImmediately: true,
+                name: `Track active query (key=${this.key})`,
+            },
+        );
+
+        return this;
     }
 
     /**
@@ -184,8 +185,9 @@ export abstract class Query<TApp extends App = App> extends AppObject<TApp> {
     /**
      * Registers that the result of this query is being observed by the current reactive context.
      */
-    public reportObserved(): void {
+    public reportObserved(): this {
         internalOf(this).reportObserved();
+        return this;
     }
 
     /**
