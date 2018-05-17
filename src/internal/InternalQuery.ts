@@ -91,8 +91,12 @@ export class InternalQuery extends InternalBase<Query> {
         data: ReadonlyJsonValue,
         version: string,
     ): void {
-        const before = this._version;
-        demand(before === null || version > before);
+        // istanbul ignore else
+        if (DEBUG) {
+            const before = this._version;
+            demand(before === null || version > before);
+        }
+
         this.pub.onSnapshot(data);
         this._atom.reportChanged();
         this._version = version;
@@ -103,8 +107,12 @@ export class InternalQuery extends InternalBase<Query> {
         data: ReadonlyJsonValue,
         version: string,
     ): void {
-        const before = this._version;
-        demand(before === null || version > before);
+        // istanbul ignore else
+        if (DEBUG) {
+            const before = this._version;
+            demand(before === null || version > before);
+        }
+
         this.pub.onUpdate(data);
         this._atom.reportChanged();
         this._version = version;
@@ -114,8 +122,12 @@ export class InternalQuery extends InternalBase<Query> {
     public applyVersion(
         version: string,
     ): void {
-        const before = this._version;
-        demand(before === null || version > before);
+        // istanbul ignore else
+        if (DEBUG) {
+            const before = this._version;
+            demand(before === null || version > before);
+        }
+
         this._version = version;
     }
 
