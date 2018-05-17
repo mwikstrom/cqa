@@ -84,11 +84,11 @@ export const freezeDeep = (value: JsonValue | ReadonlyJsonValue): ReadonlyJsonVa
     return frozen;
 };
 
-const b64tob64ue = (str: string) =>
-    str.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+const urlEncodeBase64 = (base64: string) =>
+    base64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 
 const computeHash = (value: any) =>
-    b64tob64ue(objectHash(value, { encoding: "base64" }));
+    urlEncodeBase64(objectHash(value, { encoding: "base64" }));
 
 const deepFrozenHashes = new WeakMap<IReadonlyJsonArray | IReadonlyJsonObject, string>();
 export const hashOf = (value: JsonValue | ReadonlyJsonValue) => {
@@ -105,7 +105,7 @@ export const hashOf = (value: JsonValue | ReadonlyJsonValue) => {
 };
 
 export const createIdentifier = (byteLength: number = 16): string =>
-    b64tob64ue(
+    urlEncodeBase64(
         btoa(
             String.fromCharCode.apply(
                 null,
