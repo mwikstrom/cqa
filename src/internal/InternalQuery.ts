@@ -3,6 +3,7 @@ import {
     createAtom,
     IAtom,
     observable,
+    runInAction,
     when,
 } from "mobx";
 
@@ -14,6 +15,7 @@ import {
 } from "../api";
 
 import {
+    DEBUG,
     deepEquals,
     demand,
     freezeDeep,
@@ -32,6 +34,9 @@ export class InternalQuery extends InternalBase<Query> {
 
     @observable
     private _isObserved = false;
+
+    @observable
+    private _isPopulating = false;
 
     private _key?: string;
 
@@ -62,6 +67,10 @@ export class InternalQuery extends InternalBase<Query> {
 
     public get isObserved(): boolean {
         return this._isObserved;
+    }
+
+    public get isPopulating(): boolean {
+        return this._isPopulating;
     }
 
     public get key(): string {
@@ -196,20 +205,31 @@ export class InternalQuery extends InternalBase<Query> {
     private async _populate(
         token: CancelToken,
     ): Promise<void> {
-        // The fastest way to populate a query is to copy from a clone, another active query instance with the same
-        // key as this query instance. Attempting to do so is a synchronous operation.
-        if (this._tryPopulateFromClone()) {
-            return; // Done. Populated from a clone.
+        // istanbul ignore else
+        if (DEBUG) {
+            demand(!this._isPopulating);
         }
 
-        // TODO: Look for and register applicable pending and unseen committed commands.
+        try {
+            runInAction(() => this._isPopulating = true);
 
-        await this._tryPopulateFromStore(token);
+            // The fastest way to populate a query is to copy from a clone, another active query instance with the same
+            // key as this query instance. Attempting to do so is a synchronous operation.
+            if (this._tryPopulateFromClone()) {
+                return; // Done. Populated from a clone.
+            }
 
-        internalOf(this.pub.app).ensureQuerySubscriptionStarted(this.key);
+            // TODO: Look for and register applicable pending and unseen committed commands.
 
-        if (!this.version) {
-            await this._deriveFromOther(token);
+            await this._tryPopulateFromStore(token);
+
+            internalOf(this.pub.app).ensureQuerySubscriptionStarted(this.key);
+
+            if (!this.version) {
+                await this._deriveFromOther(token);
+            }
+        } finally {
+            runInAction(() => this._isPopulating = false);
         }
     }
 

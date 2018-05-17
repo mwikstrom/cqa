@@ -1,4 +1,7 @@
-import { autorun } from "mobx";
+import {
+    autorun,
+    when,
+} from "mobx";
 
 import {
     App,
@@ -68,7 +71,7 @@ describe("Query", () => {
         expect(instance.isBroken).toBe(false);
     });
 
-    it("it is automatically registered as active when attached", () => {
+    it("it is automatically registered as active when attached", async () => {
         const instance = new DummyQuery();
         const app = new App();
         const stop = autorun(() => instance.reportObserved());
@@ -76,7 +79,10 @@ describe("Query", () => {
         const before = Array.from(internalOf(app).getActiveQueries(instance.key));
         expect(before.length).toBe(0);
 
+        expect(instance.isPopulating).toBe(false);
         instance.attachTo(app);
+        expect(instance.isPopulating).toBe(true);
+        await when(() => !instance.isPopulating);
 
         const during = Array.from(internalOf(app).getActiveQueries(instance.key));
         expect(during.length).toBe(1);
@@ -88,7 +94,7 @@ describe("Query", () => {
         expect(after.length).toBe(0);
     });
 
-    it("it is automatically registered as active when observed", () => {
+    it("it is automatically registered as active when observed", async () => {
         const instance = new DummyQuery();
         const app = new App();
         instance.attachTo(app);
@@ -96,7 +102,10 @@ describe("Query", () => {
         const before = Array.from(internalOf(app).getActiveQueries(instance.key));
         expect(before.length).toBe(0);
 
+        expect(instance.isPopulating).toBe(false);
         const stop = autorun(() => instance.reportObserved());
+        expect(instance.isPopulating).toBe(true);
+        await when(() => !instance.isPopulating);
 
         const during = Array.from(internalOf(app).getActiveQueries(instance.key));
         expect(during.length).toBe(1);

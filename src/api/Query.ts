@@ -40,6 +40,13 @@ export abstract class Query<TApp extends App = App> extends AppObject<TApp> {
     }
 
     /**
+     * Determines whether the result of this query object is being populated.
+     */
+    public get isPopulating(): boolean {
+        return internalOf(this).isPopulating;
+    }
+
+    /**
      * Gets a unique key string for this query.
      */
     public get key(): string {

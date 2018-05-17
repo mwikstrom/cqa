@@ -129,15 +129,18 @@ export class InternalApp extends InternalBase<App> {
         // istanbul ignore else
         if (DEBUG) {
             const active = this._activeQueries.get(key);
-            let specimen: InternalQuery | null = null;
-            for (const query of (active || [])) {
-                if (!specimen) {
-                    specimen = query;
-                } else {
-                    invariant(
-                        query.hasCompatibleSubscriptionContract(specimen),
-                        "All same-key active queries must share a compatible subscription contract",
-                    );
+            // istanbul ignore else
+            if (active) {
+                let specimen: InternalQuery | null = null;
+                for (const query of active) {
+                    if (!specimen) {
+                        specimen = query;
+                    } else {
+                        invariant(
+                            query.hasCompatibleSubscriptionContract(specimen),
+                            "All same-key active queries must share a compatible subscription contract",
+                        );
+                    }
                 }
             }
         }

@@ -1,4 +1,7 @@
-import { autorun } from "mobx";
+import {
+    autorun,
+    when,
+} from "mobx";
 
 import {
     App,
@@ -95,12 +98,16 @@ describe("App", () => {
         });
     });
 
-    it("supports multiple active same-key query instances", () => {
+    it("supports multiple active same-key query instances", async () => {
         const app = new App();
         const q1 = app.createQuery("test");
         const q2 = app.createQuery("test");
         const stop1 = autorun(() => q1.reportObserved());
         const stop2 = autorun(() => q2.reportObserved());
+        await Promise.all([
+            when(() => !q1.isPopulating),
+            when(() => !q2.isPopulating),
+        ]);
         stop1();
         stop2();
     });
