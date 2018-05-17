@@ -38,6 +38,7 @@ export function internalOf<T extends object>(
     if (internal === undefined) {
         internal = new internalCtor(pub) as InternalBase<T>;
 
+        // istanbul ignore else
         if (DEBUG) {
             invariant(
                 internal instanceof InternalBase && internal.pub === pub,
