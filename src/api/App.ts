@@ -52,7 +52,22 @@ export class App {
         return internalOf(this).createQuery(descriptor);
     }
 
-    // TODO: Add `public execute(command: Command)` function
+    public execute(command: ReadonlyJsonValue): Command;
+    public execute<T extends Command>(command: T): T;
+    public execute(
+        descriptorOrCommand: ReadonlyJsonValue | Command,
+    ): Command {
+        const command =
+            descriptorOrCommand instanceof Command ?
+            descriptorOrCommand.attachTo(this) :
+            this.createCommand(descriptorOrCommand);
+
+        // TODO: Pushing a command; snapshot active queries. Apply locally. Store in local db. Broadcast (cross tabs).
+        //       Send to server. Track accept/reject. Views need to keep applying command until commit version is
+        //       reached.
+
+        return command;
+    }
 }
 
 /**
