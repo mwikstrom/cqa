@@ -71,4 +71,23 @@ describe("App", () => {
         app.addQueryFactory(descriptor => new BadQuery(descriptor));
         expect(() => app.createQuery("GOOD")).toThrow("Constructed query has unexpected descriptor");
     });
+
+    describe("execute", () => {
+        it("accepts descriptor and returns attached command instance", () => {
+            const descriptor = "test";
+            const app = new App();
+            const cmd = app.execute(descriptor);
+            expect(cmd.isAttached).toBe(true);
+            expect(cmd.app).toBe(app);
+        });
+
+        it("accepts unattached command and returns it after attaching", () => {
+            const cmd = new UnknownCommand("test");
+            const app = new App();
+            const ret = app.execute(cmd);
+            expect(cmd.isAttached).toBe(true);
+            expect(cmd.app).toBe(app);
+            expect(ret).toBe(cmd);
+        });
+    });
 });
