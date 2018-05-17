@@ -4,6 +4,7 @@ import {
 } from "./internal";
 
 if (typeof process !== "object") {
+    // @ts-ignore
     process = { env: { } };
 } else if (typeof process.env !== "object") {
     process.env = {};

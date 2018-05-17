@@ -20,6 +20,13 @@ export abstract class Command<TApp extends App = App> extends AppObject<TApp> {
     }
 
     /**
+     * Gets a unique command identifier.
+     */
+    public get id(): string {
+        return internalOf(this).id;
+    }
+
+    /**
      * Creates a descriptor (a json value) that describe this command object.
      */
     public abstract buildDescriptor(): ReadonlyJsonValue;

@@ -1,4 +1,5 @@
 import objectHash from "object-hash";
+import uuid from "uuid/v4";
 
 import {
     IJsonArray,
@@ -102,3 +103,16 @@ export const hashOf = (value: JsonValue | ReadonlyJsonValue) => {
 
     return frozenHash;
 };
+
+export const createIdentifier = (byteLength: number = 16): string =>
+    b64tob64ue(
+        btoa(
+            String.fromCharCode.apply(
+                null,
+                uuid(
+                    null,
+                    new Uint8Array(byteLength),
+                ),
+            ),
+        ),
+    );
