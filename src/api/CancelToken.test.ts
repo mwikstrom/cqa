@@ -45,4 +45,23 @@ describe("CancelToken", () => {
         };
         await expect(token.ignoreCancellation(callback())).rejects.toThrow(CancelError);
     });
+
+    it("supports binding with cancellation", () => {
+        const cts = new CancelTokenSource();
+        const token = cts.token;
+        class MyClass {
+            public value = 0;
+            public add(x: number, y: number, z: number) {
+                this.value += x + y + z;
+            }
+        }
+        const obj = new MyClass();
+        const bound = token.bind(obj.add, obj);
+
+        bound(1, 2, 3);
+        expect(obj.value).toBe(6);
+
+        cts.cancel();
+        expect(() => bound(1, 2, 3)).toThrow(CancelError);
+    });
 });
