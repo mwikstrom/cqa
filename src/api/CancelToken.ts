@@ -7,6 +7,9 @@ import {
     internalOf,
 } from "../internal";
 
+// tslint:disable-next-line
+export type Func = Function;
+
 export class CancelToken {
     public static readonly Never = Object.freeze(new CancelToken());
 
@@ -21,6 +24,16 @@ export class CancelToken {
                 () => reject(new CancelError()),
             );
         });
+    }
+
+    public bind<T extends Func>(
+        func: T,
+        thisArg?: any,
+    ): T {
+        return ((...argArray: any[]) => {
+            this.throwIfCancelled();
+            return func.apply(thisArg, argArray);
+        }) as Func as T;
     }
 
     public throwIfCancelled(): void {

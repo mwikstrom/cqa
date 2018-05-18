@@ -4,7 +4,6 @@ import {
     IAtom,
     observable,
     runInAction,
-    when,
 } from "mobx";
 
 import {
@@ -176,21 +175,11 @@ export class InternalQuery extends InternalBase<Query> {
         token: CancelToken,
     ): Promise<void> {
         const cts = new CancelTokenSource();
-        const disposeReaction = when(
-            () => token.isCancelled || this.version !== null,
-            () => cts.cancel(),
-        );
+        const dispose = cts.cancelWhen(() => token.isCancelled || this.version !== null);
 
         try {
-            const applySnapshot = (data: ReadonlyJsonValue) => {
-                cts.token.throwIfCancelled();
-                this.pub.onSnapshot(data);
-            };
-
-            const applyUpdate = (data: ReadonlyJsonValue) => {
-                cts.token.throwIfCancelled();
-                this.pub.onUpdate(data);
-            };
+            const applySnapshot = cts.token.bind(this.pub.onSnapshot, this.pub);
+            const applyUpdate = cts.token.bind(this.pub.onUpdate, this.pub);
 
             // TODO: It is important that user code does not cause new query subscriptions to open
             //       when deriving local result. How to ensure that?
@@ -203,7 +192,8 @@ export class InternalQuery extends InternalBase<Query> {
                 ),
             );
         } finally {
-            disposeReaction();
+            cts.cancel();
+            dispose();
         }
     }
 
