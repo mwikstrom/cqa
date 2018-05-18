@@ -93,8 +93,7 @@ export class InternalQuery extends InternalBase<Query> {
     ): void {
         // istanbul ignore else
         if (DEBUG) {
-            const before = this._version;
-            demand(before === null || version > before);
+            this._checkNextVersion(version);
         }
 
         this.pub.onSnapshot(data);
@@ -109,8 +108,7 @@ export class InternalQuery extends InternalBase<Query> {
     ): void {
         // istanbul ignore else
         if (DEBUG) {
-            const before = this._version;
-            demand(before === null || version > before);
+            this._checkNextVersion(version);
         }
 
         this.pub.onUpdate(data);
@@ -124,8 +122,7 @@ export class InternalQuery extends InternalBase<Query> {
     ): void {
         // istanbul ignore else
         if (DEBUG) {
-            const before = this._version;
-            demand(before === null || version > before);
+            this._checkNextVersion(version);
         }
 
         this._version = version;
@@ -154,6 +151,11 @@ export class InternalQuery extends InternalBase<Query> {
 
     public reportObserved() {
         this._atom.reportObserved();
+    }
+
+    private _checkNextVersion(next: string): void {
+        const before = this._version;
+        demand(before === null || next > before);
     }
 
     private async _deriveFromOther(

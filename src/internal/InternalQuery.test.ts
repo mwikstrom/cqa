@@ -27,5 +27,7 @@ describe("InternalQuery", () => {
         const instance = internalOf(new UnknownQuery(null));
         instance.applyVersion("v1");
         expect(instance.version).toBe("v1");
+        instance.applyVersion("v2");
+        expect(instance.version).toBe("v2");
     });
 });
