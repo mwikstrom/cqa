@@ -94,11 +94,11 @@ describe("InternalQuery", () => {
         // Resetting q2 will clear it's broken status, but it will become broken again
         // when a new attempt is made to populate it.
 
-        // TODO: Enable this testing code
-        // q2.pub.reset();
-        // expect(q2.pub.isBroken).toBe(false);
-        // await when(() => !q2.pub.isPopulating);
-        // expect(q2.pub.isBroken).toBe(true);
+        q2.pub.reset();
+        expect(q2.pub.isBroken).toBe(false);
+
+        await when(() => !q2.pub.isPopulating);
+        expect(q2.pub.isBroken).toBe(true);
 
         stop();
     });

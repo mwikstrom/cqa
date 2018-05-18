@@ -159,6 +159,14 @@ export class InternalQuery extends InternalBase<Query> {
         this._atom.reportObserved();
     }
 
+    @action
+    public reset() {
+        this.pub.onReset();
+        this._version = null;
+        this._markAsBroken(false);
+        this._atom.reportChanged();
+    }
+
     private _checkNextVersion(next: string): void {
         const before = this._version;
         demand(before === null || next > before);

@@ -164,6 +164,13 @@ export abstract class Query<TApp extends App = App> extends AppObject<TApp> {
     }
 
     /**
+     * Resets the result of the current query.
+     *
+     * WARNING: Do not call this method directly from your code. It shall only be invoked from the app framework.
+     */
+    public abstract onReset(): void;
+
+    /**
      * Applies the specified snapshot to the current query result. It is assumed that the information set provided by
      * the current query result is completely reset by the specified snapshot.
      *
@@ -194,6 +201,14 @@ export abstract class Query<TApp extends App = App> extends AppObject<TApp> {
      */
     public reportObserved(): this {
         internalOf(this).reportObserved();
+        return this;
+    }
+
+    /**
+     * Reset the result of the current query.
+     */
+    public reset(): this {
+        internalOf(this).reset();
         return this;
     }
 

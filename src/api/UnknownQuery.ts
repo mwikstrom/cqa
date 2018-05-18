@@ -30,6 +30,10 @@ export class UnknownQuery extends Query {
     ) {
         dataMap.get(this)!.snapshot = data;
     }
+
+    public onReset() {
+        dataMap.delete(this);
+    }
 }
 
 interface IUnknownQueryData {
