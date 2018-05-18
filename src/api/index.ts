@@ -4,6 +4,7 @@ export * from "./AppError";
 export * from "./AppObject";
 export * from "./CancelToken";
 export * from "./CancelTokenSource";
+export * from "./ISimpleConsole";
 export * from "./Json";
 
 // Level 1 (classes extend level 0)

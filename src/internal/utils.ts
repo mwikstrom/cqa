@@ -6,6 +6,7 @@ import {
     IJsonObject,
     IReadonlyJsonArray,
     IReadonlyJsonObject,
+    ISimpleConsole,
     JsonValue,
     ReadonlyJsonValue,
 } from "../api";
@@ -15,6 +16,10 @@ export const DEBUG = process.env.NODE_ENV !== "production";
 export const LIB_NAME_SHORT = "cqa";
 
 export const LIB_NAME_LONG = "Command Query App";
+
+export const SILENT_CONSOLE: ISimpleConsole = Object.freeze({
+    warn: () => { /* no-op */ },
+});
 
 export interface IParamlessErrorClass {
     new(): Error;

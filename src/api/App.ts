@@ -1,5 +1,6 @@
 import {
     Command,
+    ISimpleConsole,
     Query,
     ReadonlyJsonValue,
 } from "../api";
@@ -10,6 +11,20 @@ import { internalOf } from "../internal";
  * Command Query App root object
  */
 export class App {
+    /**
+     * Gets a console that the app use for diagnostic messages
+     */
+    public get console(): ISimpleConsole {
+        return internalOf(this).console;
+    }
+
+    /**
+     * Sets a console that the app shall use for diagnostic messages
+     */
+    public set console(value: ISimpleConsole) {
+        internalOf(this).console = value;
+    }
+
     /**
      * Registers that the specified factory function shall be used to construct {@link Command} instances.
      *

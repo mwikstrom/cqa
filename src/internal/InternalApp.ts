@@ -3,6 +3,7 @@ import {
     CancelTokenSource,
     Command,
     CommandFactory,
+    ISimpleConsole,
     Query,
     QueryFactory,
     ReadonlyJsonValue,
@@ -21,8 +22,17 @@ import {
 export class InternalApp extends InternalBase<App> {
     private _activeQueries = new Map<string, Set<InternalQuery>>();
     private _activeSubscriptions = new Set<string>();
+    private _console: ISimpleConsole = console;
     private _commandFactories = new Set<CommandFactory>();
     private _queryFactories = new Set<QueryFactory>();
+
+    public get console(): ISimpleConsole {
+        return this._console;
+    }
+
+    public set console(value: ISimpleConsole) {
+        this._console = value;
+    }
 
     public addCommandFactory(factory: CommandFactory): void {
         this._commandFactories.add(factory);

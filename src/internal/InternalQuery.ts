@@ -138,15 +138,21 @@ export class InternalQuery extends InternalBase<Query> {
     public populateInBackground(
         token: CancelToken,
     ): void {
+        // istanbul ignore else
+        if (DEBUG) {
+            demand(!this._isPopulating);
+        }
+
+        runInAction(() => this._isPopulating = true);
+
         token.ignoreCancellation(this._populate(token)).catch(reason => {
             // tslint:disable-next-line
-            console.error(
-                `[${LIB_NAME_SHORT}] Query could not be populated and will therefore be marked as broken.`,
-                reason,
+            this.pub.app.console.warn(
+                `[${LIB_NAME_SHORT}] Query could not be populated and will therefore be marked as broken. ${reason}`,
             );
 
             this._markAsBroken();
-        });
+        }).then(() => runInAction(() => this._isPopulating = false));
     }
 
     public reportObserved() {
@@ -219,31 +225,20 @@ export class InternalQuery extends InternalBase<Query> {
     private async _populate(
         token: CancelToken,
     ): Promise<void> {
-        // istanbul ignore else
-        if (DEBUG) {
-            demand(!this._isPopulating);
+        // The fastest way to populate a query is to copy from a clone, another active query instance with the same
+        // key as this query instance. Attempting to do so is a synchronous operation.
+        if (this._tryPopulateFromClone()) {
+            return; // Done. Populated from a clone.
         }
 
-        try {
-            runInAction(() => this._isPopulating = true);
+        // TODO: Look for and register applicable pending and unseen committed commands.
 
-            // The fastest way to populate a query is to copy from a clone, another active query instance with the same
-            // key as this query instance. Attempting to do so is a synchronous operation.
-            if (this._tryPopulateFromClone()) {
-                return; // Done. Populated from a clone.
-            }
+        await this._tryPopulateFromStore(token);
 
-            // TODO: Look for and register applicable pending and unseen committed commands.
+        internalOf(this.pub.app).ensureQuerySubscriptionStarted(this.key);
 
-            await this._tryPopulateFromStore(token);
-
-            internalOf(this.pub.app).ensureQuerySubscriptionStarted(this.key);
-
-            if (!this.version) {
-                await this._deriveFromOther(token);
-            }
-        } finally {
-            runInAction(() => this._isPopulating = false);
+        if (!this.version) {
+            await this._deriveFromOther(token);
         }
     }
 
