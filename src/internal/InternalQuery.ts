@@ -19,6 +19,7 @@ import {
     demand,
     freezeDeep,
     InternalBase,
+    InternalCommand,
     internalOf,
     LIB_NAME_SHORT,
 } from "../internal";
@@ -83,6 +84,47 @@ export class InternalQuery extends InternalBase<Query> {
     public get version(): string | null {
         this.reportObserved();
         return this._version;
+    }
+
+    @action
+    public applyCommand(
+        command: InternalCommand,
+    ): boolean {
+        // istanbul ignore else
+        if (DEBUG) {
+            // Command and query must be attached to the same app
+            demand(command.pub.isAttached);
+            demand(this.pub.isAttached);
+            demand(command.pub.app === this.pub.app);
+
+            // Rejected commands shall never be applied to queries
+            demand(!command.isRejected);
+        }
+
+        // Ignore committed commands with a version lower than or equal to the last seen query result version.
+        const committed = command.commitVersion;
+        const seen = this.version;
+        if (committed !== null && seen !== null && seen > committed) {
+            return false;
+        }
+
+        // TODO: Wrap remaining code in a try-catch. On exception; report (using app warn) and
+        //       mark query as faulted
+
+        // Ignore commands that may not affect result
+        if (!this.pub.mayAffectResult(command.pub)) {
+            return false;
+        }
+
+        // TODO: Defer applying command while populating
+
+        // TODO: Track command completion
+
+        // TODO: Ensure there is a pre-command snapshot
+
+        // Apply command to query result
+        this.pub.onCommand(command.pub);
+        return true;
     }
 
     @action

@@ -90,9 +90,7 @@ export class App {
             descriptorOrCommand.attachTo(this) :
             this.createCommand(descriptorOrCommand);
 
-        // TODO: Pushing a command; snapshot active queries. Apply locally. Store in local db. Broadcast (cross tabs).
-        //       Send to server. Track accept/reject. Views need to keep applying command until commit version is
-        //       reached.
+        internalOf(this).execute(internalOf(command));
 
         return command;
     }

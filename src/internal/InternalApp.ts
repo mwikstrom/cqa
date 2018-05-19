@@ -1,4 +1,8 @@
 import {
+    when,
+} from "mobx";
+
+import {
     App,
     CancelTokenSource,
     Command,
@@ -14,12 +18,15 @@ import {
 import {
     DEBUG,
     deepEquals,
+    demand,
     InternalBase,
+    InternalCommand,
     InternalQuery,
     invariant,
 } from "../internal";
 
 export class InternalApp extends InternalBase<App> {
+    private _activeCommands = new Map<string, InternalCommand>();
     private _activeQueries = new Map<string, Set<InternalQuery>>();
     private _activeSubscriptions = new Set<string>();
     private _console: ISimpleConsole = console;
@@ -158,6 +165,48 @@ export class InternalApp extends InternalBase<App> {
         if (!this._activeSubscriptions.has(key)) {
             this._activeSubscriptions.add(key);
             // TODO: Send `Start_Query` message to backend.
+        }
+    }
+
+    public async execute(command: InternalCommand): Promise<void> {
+        // Cannot re-execute commands
+        if (command.isCompleted) {
+            return; // Command already executed
+        }
+
+        // Register command as active
+        if (this._activeCommands.has(command.id)) {
+            if (DEBUG) {
+                demand(
+                    command === this._activeCommands.get(command.id),
+                    `Another command with the same id (${command.id}) is already active`,
+                );
+            }
+
+            return; // Command already active
+        }
+
+        try {
+            // Remove from the set of active commands when command is completed
+            when(
+                () => command.isCompleted,
+                () => this._activeCommands.delete(command.id),
+            );
+
+            // Apply command to all active queries
+            this._activeQueries.forEach(queries => queries.forEach(query => {
+                query.applyCommand(command);
+            }));
+
+            // TODO: Store command in local db
+
+            // TODO: Broadcast ´Command_Stored` message to all open tabs
+
+            // TODO: Send command to server
+
+        } catch (error) {
+            this.console.warn(`Failed to execute command (id=${command.id}). Marking it as faulted`);
+            command.markAsBroken();
         }
     }
 
