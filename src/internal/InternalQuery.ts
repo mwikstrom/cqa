@@ -90,41 +90,45 @@ export class InternalQuery extends InternalBase<Query> {
     public applyCommand(
         command: InternalCommand,
     ): boolean {
-        // istanbul ignore else
-        if (DEBUG) {
-            // Command and query must be attached to the same app
-            demand(command.pub.isAttached);
-            demand(this.pub.isAttached);
-            demand(command.pub.app === this.pub.app);
+        try {
+            // istanbul ignore else
+            if (DEBUG) {
+                // Command and query must be attached to the same app
+                demand(command.pub.isAttached);
+                demand(this.pub.isAttached);
+                demand(command.pub.app === this.pub.app);
 
-            // Rejected commands shall never be applied to queries
-            demand(!command.isRejected);
-        }
+                // Rejected commands shall never be applied to queries
+                demand(!command.isRejected);
+            }
 
-        // Ignore committed commands with a version lower than or equal to the last seen query result version.
-        const committed = command.commitVersion;
-        const seen = this.version;
-        if (committed !== null && seen !== null && seen > committed) {
+            // Ignore committed commands with a version lower than or equal to the last seen query result version.
+            const committed = command.commitVersion;
+            const seen = this.version;
+            if (committed !== null && seen !== null && seen > committed) {
+                return false;
+            }
+
+            // Ignore commands that may not affect result
+            if (!this.pub.mayAffectResult(command.pub)) {
+                return false;
+            }
+
+            // TODO: Defer applying command while populating
+
+            // TODO: Track command completion
+
+            // TODO: Ensure there is a pre-command snapshot
+
+            // Apply command to query result
+            this.pub.onCommand(command.pub);
+            this._atom.reportChanged();
+
+            return true;
+        } catch (error) {
+            this._onBreakingError("Failed to apply command", error);
             return false;
         }
-
-        // TODO: Wrap remaining code in a try-catch. On exception; report (using app warn) and
-        //       mark query as faulted
-
-        // Ignore commands that may not affect result
-        if (!this.pub.mayAffectResult(command.pub)) {
-            return false;
-        }
-
-        // TODO: Defer applying command while populating
-
-        // TODO: Track command completion
-
-        // TODO: Ensure there is a pre-command snapshot
-
-        // Apply command to query result
-        this.pub.onCommand(command.pub);
-        return true;
     }
 
     @action
@@ -132,14 +136,18 @@ export class InternalQuery extends InternalBase<Query> {
         data: ReadonlyJsonValue,
         version: string,
     ): void {
-        // istanbul ignore else
-        if (DEBUG) {
-            this._checkNextVersion(version);
-        }
+        try {
+            // istanbul ignore else
+            if (DEBUG) {
+                this._checkNextVersion(version);
+            }
 
-        this.pub.onSnapshot(data);
-        this._atom.reportChanged();
-        this._version = version;
+            this.pub.onSnapshot(data);
+            this._atom.reportChanged();
+            this._version = version;
+        } catch (error) {
+            this._onBreakingError("Failed to apply snapshot", error);
+        }
     }
 
     @action
@@ -147,26 +155,34 @@ export class InternalQuery extends InternalBase<Query> {
         data: ReadonlyJsonValue,
         version: string,
     ): void {
-        // istanbul ignore else
-        if (DEBUG) {
-            this._checkNextVersion(version);
-        }
+        try {
+            // istanbul ignore else
+            if (DEBUG) {
+                this._checkNextVersion(version);
+            }
 
-        this.pub.onUpdate(data);
-        this._atom.reportChanged();
-        this._version = version;
+            this.pub.onUpdate(data);
+            this._atom.reportChanged();
+            this._version = version;
+        } catch (error) {
+            this._onBreakingError("Failed to apply update", error);
+        }
     }
 
     @action
     public applyVersion(
         version: string,
     ): void {
-        // istanbul ignore else
-        if (DEBUG) {
-            this._checkNextVersion(version);
-        }
+        try {
+            // istanbul ignore else
+            if (DEBUG) {
+                this._checkNextVersion(version);
+            }
 
-        this._version = version;
+            this._version = version;
+        } catch (error) {
+            this._onBreakingError("Failed to apply version", error);
+        }
     }
 
     public hasCompatibleSubscriptionContract(other: InternalQuery) {
@@ -186,14 +202,13 @@ export class InternalQuery extends InternalBase<Query> {
 
         runInAction(() => this._isPopulating = true);
 
-        token.ignoreCancellation(this._populate(token)).catch(reason => {
-            // tslint:disable-next-line
-            this.pub.app.console.warn(
-                `[${LIB_NAME_SHORT}] Query could not be populated and will therefore be marked as broken. ${reason}`,
-            );
-
-            this._markAsBroken();
-        }).then(() => runInAction(() => this._isPopulating = false));
+        token.ignoreCancellation(
+            this._populate(token),
+        ).catch(reason =>
+            this._onBreakingError("Could not be populated", reason),
+        ).then(() =>
+            runInAction(() => this._isPopulating = false),
+        );
     }
 
     public reportObserved() {
@@ -202,10 +217,14 @@ export class InternalQuery extends InternalBase<Query> {
 
     @action
     public reset() {
-        this.pub.onReset();
-        this._version = null;
-        this._markAsBroken(false);
-        this._atom.reportChanged();
+        try {
+            this.pub.onReset();
+            this._version = null;
+            this._markAsBroken(false);
+            this._atom.reportChanged();
+        } catch (error) {
+            this._onBreakingError("Failed to reset", error);
+        }
     }
 
     private _checkNextVersion(next: string): void {
@@ -260,6 +279,15 @@ export class InternalQuery extends InternalBase<Query> {
 
     private _onBecomeUnobserved = () => {
         this._isObserved = false;
+    }
+
+    private _onBreakingError(cause: string, error: any): void {
+        this._markAsBroken();
+
+        // tslint:disable-next-line
+        this.pub.app.console.warn(
+            `[${LIB_NAME_SHORT}] Query is broken. ${cause}. ${error}`,
+        );
     }
 
     private async _populate(
