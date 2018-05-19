@@ -299,8 +299,6 @@ export class InternalQuery extends InternalBase<Query> {
             return; // Done. Populated from a clone.
         }
 
-        // TODO: Look for and register applicable pending and unseen committed commands.
-
         await this._tryPopulateFromStore(token);
 
         internalOf(this.pub.app).ensureQuerySubscriptionStarted(this.key);
@@ -324,14 +322,17 @@ export class InternalQuery extends InternalBase<Query> {
             return false;
         }
 
+        // Build current snapshot (including changes from tracked commands)
         const snapshot = source.pub.tryBuildSnapshot();
         if (snapshot === undefined) {
             return false;
         }
 
-        // TODO: Clone pending and unseen committed commands too! (but don't reapply them!)
-
+        // Apply current snapshot
         this.applySnapshot(snapshot, version);
+
+        // TODO: Copy tracked commands and pre-command snapshot (if any) too
+
         return true;
     }
 
@@ -340,7 +341,7 @@ export class InternalQuery extends InternalBase<Query> {
     ): Promise<boolean> {
         // TODO: IMPLEMENT
         //       - Beware that server snapshot or update might arrive while loading from store!
-        //       - Remember to re-apply pending and unseen committed commands too!
+        //       - Discover and re-apply active and unseen committed commands too!
         return !token; // dummy
     }
 }
