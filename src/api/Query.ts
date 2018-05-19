@@ -67,7 +67,7 @@ export abstract class Query<TApp extends App = App> extends AppObject<TApp> {
 
     /**
      * Gets the global version token of the current query result; or `null` when no result is available or when the
-     * result is derived from other local queries.
+     * result is computed locally.
      *
      * Version tokens can be compared lexicographically to determine casuality; whether one version 'happened before'
      * another version. Other than this property, applications should consider version tokens to be opaque data.
@@ -115,13 +115,14 @@ export abstract class Query<TApp extends App = App> extends AppObject<TApp> {
     }
 
     /**
-     * Attempts to derive a result for the current query from other cached queries.
+     * Attempts to compute a result for the current query from other cached queries and recently executed
+     * commands.
      *
-     * @param applySnapshot The callback to invoke to apply a derived snapshot.
-     * @param applyUpdate   The callback to invoke to apply an update to a derived snapshot.
+     * @param applySnapshot The callback to invoke to apply a computed snapshot.
+     * @param applyUpdate   The callback to invoke to apply an update to a computed snapshot.
      * @param token         A cancel token to be observed while deriving a result.
      */
-    public async deriveLocalResult(
+    public async compute(
         // @ts-ignore: Parameter is declared but not used in the default implementation
         applySnapshot: (data: ReadonlyJsonValue) => void,
         // @ts-ignore: Parameter is declared but not used in the default implementation

@@ -213,7 +213,7 @@ export class InternalQuery extends InternalBase<Query> {
         demand(before === null || next > before);
     }
 
-    private async _deriveFromOther(
+    private async _compute(
         token: CancelToken,
     ): Promise<void> {
         const cts = new CancelTokenSource();
@@ -227,7 +227,7 @@ export class InternalQuery extends InternalBase<Query> {
             //       when deriving local result. How to ensure that?
 
             return await cts.token.ignoreCancellation(
-                this.pub.deriveLocalResult(
+                this.pub.compute(
                     applySnapshot,
                     applyUpdate,
                     cts.token,
@@ -278,7 +278,7 @@ export class InternalQuery extends InternalBase<Query> {
         internalOf(this.pub.app).ensureQuerySubscriptionStarted(this.key);
 
         if (!this.version) {
-            await this._deriveFromOther(token);
+            await this._compute(token);
         }
     }
 
@@ -289,8 +289,8 @@ export class InternalQuery extends InternalBase<Query> {
             return false;
         }
 
-        // Instances that does not have a version token are either hollow or are derived from other queries locally,
-        // we don't want to (and cannot) populate from such a clone.
+        // Instances that does not have a version token are either hollow or computed locally.
+        // We don't want to (and cannot) populate from such a clone.
         const version = source.version;
         if (!version) {
             return false;
