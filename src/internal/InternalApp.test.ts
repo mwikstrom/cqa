@@ -17,6 +17,7 @@ describe("App", () => {
             public buildDescriptor() { return this._descriptor; }
             public buildKey() { return "BAD"; }
             public onSnapshot() { /* no-op */ }
+            public onReset() { /* no-op */ }
         }
         app.addQueryFactory(descriptor => new BadQuery(descriptor));
         expect(() => app.createQuery("GOOD", "GOOD")).toThrow("Constructed query has unexpected key");
