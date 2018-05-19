@@ -26,6 +26,15 @@ export abstract class Query<TApp extends App = App> extends AppObject<TApp> {
     }
 
     /**
+     * Determines whether the current query object is active.
+     *
+     * A query is active when it is attached to an app instance, observed and not broken.
+     */
+    public get isActive(): boolean {
+        return internalOf(this).isActive;
+    }
+
+    /**
      * Determines whether the current query object is broken because an error occurred.
      */
     public get isBroken(): boolean {
@@ -83,7 +92,7 @@ export abstract class Query<TApp extends App = App> extends AppObject<TApp> {
         // Create a reaction that will automatically register and unregister this instance as active
         let unregister: () => void;
         reaction(
-            () => this.isAttached && this.isObserved && !this.isBroken,
+            () => this.isActive,
             active => {
                 if (active) {
                     unregister = internalOf(this.app).registerActiveQuery(internalOf(this));

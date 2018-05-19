@@ -1,9 +1,11 @@
 import {
     action,
+    computed,
     createAtom,
     IAtom,
     observable,
     runInAction,
+    when,
 } from "mobx";
 
 import {
@@ -61,6 +63,11 @@ export class InternalQuery extends InternalBase<Query> {
         return this._descriptor;
     }
 
+    @computed
+    public get isActive(): boolean {
+        return this.pub.isAttached && this.isObserved && !this.isBroken;
+    }
+
     public get isBroken(): boolean {
         return this._isBroken;
     }
@@ -114,19 +121,26 @@ export class InternalQuery extends InternalBase<Query> {
                 return false;
             }
 
-            // TODO: Defer applying command while populating
+            // Defer applying command while populating
+            when(
+                () => !this.isPopulating,
+                () => {
+                    // TODO: Ensure there is a pre-command snapshot
 
-            // TODO: Track command completion
+                    // TODO: Track command completion
 
-            // TODO: Ensure there is a pre-command snapshot
-
-            // Apply command to query result
-            this.pub.onCommand(command.pub);
-            this._atom.reportChanged();
+                    // Apply command to query result
+                    this.pub.onCommand(command.pub);
+                    this._atom.reportChanged();
+                },
+                {
+                    onError: error => this._onBreakingError("Failed to pre-apply command", error),
+                },
+            );
 
             return true;
         } catch (error) {
-            this._onBreakingError("Failed to apply command", error);
+            this._onBreakingError("Failed to pre-apply command", error);
             return false;
         }
     }
@@ -143,8 +157,11 @@ export class InternalQuery extends InternalBase<Query> {
             }
 
             this.pub.onSnapshot(data);
-            this._atom.reportChanged();
             this._version = version;
+
+            // TODO: Re-apply tracked commands
+
+            this._atom.reportChanged();
         } catch (error) {
             this._onBreakingError("Failed to apply snapshot", error);
         }
@@ -162,8 +179,11 @@ export class InternalQuery extends InternalBase<Query> {
             }
 
             this.pub.onUpdate(data);
-            this._atom.reportChanged();
             this._version = version;
+
+            // TODO: Re-apply tracked commands
+
+            this._atom.reportChanged();
         } catch (error) {
             this._onBreakingError("Failed to apply update", error);
         }
@@ -197,7 +217,7 @@ export class InternalQuery extends InternalBase<Query> {
     ): void {
         // istanbul ignore else
         if (DEBUG) {
-            demand(!this._isPopulating);
+            demand(!this._isPopulating, "Query is already being populated");
         }
 
         runInAction(() => this._isPopulating = true);
@@ -217,11 +237,24 @@ export class InternalQuery extends InternalBase<Query> {
 
     @action
     public reset() {
+        demand(!this._isPopulating, "Cannot reset query while it is being populated");
+
         try {
             this.pub.onReset();
             this._version = null;
+
+            // TODO: Clear tracked commands
+
             this._markAsBroken(false);
             this._atom.reportChanged();
+
+            // Re-populate in background if active
+            if (this.isActive) {
+                const cts = new CancelTokenSource();
+                cts.cancelWhen(() => !this.isActive);
+                // TODO: FIX: This causes an error!
+                // this.populateInBackground(cts.token);
+            }
         } catch (error) {
             this._onBreakingError("Failed to reset", error);
         }
@@ -229,7 +262,10 @@ export class InternalQuery extends InternalBase<Query> {
 
     private _checkNextVersion(next: string): void {
         const before = this._version;
-        demand(before === null || next > before);
+        demand(
+            before === null || next > before,
+            `Cannot upgrade from version ${before} to ${next}`,
+        );
     }
 
     private async _compute(
