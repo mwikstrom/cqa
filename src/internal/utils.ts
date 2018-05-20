@@ -88,6 +88,8 @@ export const freezeDeep = (value: JsonValue | ReadonlyJsonValue): ReadonlyJsonVa
 
     return frozen;
 };
+export const freezeDeepIfDefined = (value: JsonValue | ReadonlyJsonValue | undefined): ReadonlyJsonValue | undefined =>
+    value === undefined ? value : freezeDeep(value);
 
 const urlEncodeBase64 = (base64: string) =>
     base64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");

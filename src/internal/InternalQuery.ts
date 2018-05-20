@@ -3,6 +3,7 @@ import {
     computed,
     createAtom,
     IAtom,
+    IReactionDisposer,
     observable,
     runInAction,
     when,
@@ -20,6 +21,7 @@ import {
     deepEquals,
     demand,
     freezeDeep,
+    freezeDeepIfDefined,
     InternalBase,
     InternalCommand,
     internalOf,
@@ -44,6 +46,12 @@ export class InternalQuery extends InternalBase<Query> {
 
     @observable
     private _version: string | null = null;
+
+    private _trackedCommands = new Set<InternalCommand>();
+
+    private _completionTrackerMap = new WeakMap<InternalCommand, IReactionDisposer>();
+
+    private _preCommandSnapshot?: ReadonlyJsonValue;
 
     constructor(pub: Query) {
         super(pub);
@@ -110,9 +118,7 @@ export class InternalQuery extends InternalBase<Query> {
             }
 
             // Ignore committed commands with a version lower than or equal to the last seen query result version.
-            const committed = command.commitVersion;
-            const seen = this.version;
-            if (committed !== null && seen !== null && seen > committed) {
+            if (this._hasSeenCommitOf(command)) {
                 return;
             }
 
@@ -125,9 +131,28 @@ export class InternalQuery extends InternalBase<Query> {
             when(
                 () => !this.isPopulating,
                 () => {
-                    // TODO: Ensure that there is a pre-command snapshot (when this is the first command to track)
+                    // Command may have been rejected by now. No need to track a rejected command.
+                    if (command.isRejected) {
+                        return;
+                    }
 
-                    // TODO: Track command completion
+                    // We may have seen the committed version by now. No need to track such a command.
+                    if (this._hasSeenCommitOf(command)) {
+                        return;
+                    }
+
+                    // Try to build a pre-command snapshot when this is the first command to track.
+                    if (this._trackedCommands.size === 0) {
+                        this._preCommandSnapshot = freezeDeepIfDefined(this.pub.tryBuildSnapshot());
+                    }
+
+                    // Add command to the set of tracked commands
+                    this._trackedCommands.add(command);
+
+                    // Track command completion unless it's already completed
+                    if (!command.isCompleted) {
+                        this._startCompletionTracker(command);
+                    }
 
                     // Apply command to query result
                     this.pub.onCommand(command.pub);
@@ -151,16 +176,17 @@ export class InternalQuery extends InternalBase<Query> {
         version: string,
     ): void {
         try {
-            // istanbul ignore else
-            if (DEBUG) {
-                this._checkNextVersion(version);
+            // Apply snapshot and upgrade version
+            this.pub.onSnapshot(data);
+            this._upgradeVersion(version);
+
+            // Update pre-command snapshot and re-apply tracked commands (if any)
+            if (this._trackedCommands.size > 0) {
+                this._preCommandSnapshot = data;
+                this._applyTrackedCommands();
             }
 
-            this.pub.onSnapshot(data);
-            this._version = version;
-
-            // TODO: Re-apply tracked commands
-
+            // Report that result changed (trigger reactions)
             this._atom.reportChanged();
         } catch (error) {
             this._onBreakingError("Failed to apply snapshot", error);
@@ -173,16 +199,33 @@ export class InternalQuery extends InternalBase<Query> {
         version: string,
     ): void {
         try {
-            // istanbul ignore else
-            if (DEBUG) {
-                this._checkNextVersion(version);
+            // Upgrade version first, this might cause some (or all) tracked commands to be resolved
+            // and no longer being tracked.
+            this._upgradeVersion(version);
+
+            // When there are tracked commands remaining we must roll back to the pre-command snapshot
+            // before applying the update and then re-apply the tracked commands.
+            if (this._trackedCommands.size === 0) {
+                // There are no tracked commands, just apply the update
+                this.pub.onUpdate(data);
+            } else {
+                // Ensure that there is a pre-command snapshot to roll back to
+                demand(
+                    this._preCommandSnapshot !== undefined,
+                    "Cannot apply update on a query with tracked commands without a pre-command snapshot",
+                );
+
+                // Apply the pre-command snapshot
+                this.pub.onSnapshot(this._preCommandSnapshot!);
+
+                // Then apply the update
+                this.pub.onUpdate(data);
+
+                // Finally re-apply the tracked commands
+                this._applyTrackedCommands();
             }
 
-            this.pub.onUpdate(data);
-            this._version = version;
-
-            // TODO: Re-apply tracked commands
-
+            // Report that result changed (trigger reactions)
             this._atom.reportChanged();
         } catch (error) {
             this._onBreakingError("Failed to apply update", error);
@@ -194,12 +237,7 @@ export class InternalQuery extends InternalBase<Query> {
         version: string,
     ): void {
         try {
-            // istanbul ignore else
-            if (DEBUG) {
-                this._checkNextVersion(version);
-            }
-
-            this._version = version;
+            this._upgradeVersion(version);
         } catch (error) {
             this._onBreakingError("Failed to apply version", error);
         }
@@ -240,16 +278,30 @@ export class InternalQuery extends InternalBase<Query> {
         demand(!this._isPopulating, "Cannot reset query while it is being populated");
 
         try {
+            // Let user code reset query result
             this.pub.onReset();
+
+            // Reset version
             this._version = null;
 
-            // TODO: Clear tracked commands
+            // Stop tracking commands
+            this._trackedCommands.forEach(tracked => this._stopCompletionTracker(tracked));
+            this._trackedCommands.clear();
+            this._preCommandSnapshot = undefined;
 
+            // Clear broken flag (if set)
             this._markAsBroken(false);
+
+            // Report that query result changed
             this._atom.reportChanged();
         } catch (error) {
             this._onBreakingError("Failed to reset", error);
         }
+    }
+
+    private _applyTrackedCommands(): void {
+        const pub = this.pub;
+        this._trackedCommands.forEach(tracked => pub.onCommand(tracked.pub));
     }
 
     private _checkNextVersion(next: string): void {
@@ -298,6 +350,12 @@ export class InternalQuery extends InternalBase<Query> {
         return null;
     }
 
+    private _hasSeenCommitOf(command: InternalCommand) {
+        const seen = this.version;
+        const committed = command.commitVersion;
+        return seen !== null && committed !== null && seen >= committed;
+    }
+
     @action
     private _markAsBroken(value = true): void {
         this._isBroken = value;
@@ -320,6 +378,77 @@ export class InternalQuery extends InternalBase<Query> {
         );
     }
 
+    private _onCommandCompletion(command: InternalCommand): void {
+        // istanbul ignore else
+        if (DEBUG) {
+            demand(command.isCompleted);
+            demand(this._trackedCommands.has(command));
+            demand(this._completionTrackerMap.has(command));
+        }
+
+        // Remove mapped disposer
+        this._completionTrackerMap.delete(command);
+
+        if (command.isRejected) {
+            this._onCommandRejected(command);
+        } else {
+            this._onCommandAccepted(command);
+        }
+    }
+
+    private _onCommandAccepted(command: InternalCommand): void {
+        // istanbul ignore else
+        if (DEBUG) {
+            demand(command.isCompleted);
+            demand(!command.isRejected);
+            demand(command.commitVersion !== null);
+        }
+
+        // If the committed version is already seen then we'll remove the command from the set
+        // of tracked commands; otherwise we'll keep tracking it until that version is seen.
+        if (this._hasSeenCommitOf(command)) {
+            this._trackedCommands.delete(command);
+
+            // Clear pre-command snapshot when there are no more remaining tracked commands
+            if (this._trackedCommands.size === 0) {
+                this._preCommandSnapshot = undefined;
+            }
+        }
+    }
+
+    @action
+    private _onCommandRejected(command: InternalCommand): void {
+        // istanbul ignore else
+        if (DEBUG) {
+            demand(command.isCompleted);
+            demand(command.isRejected);
+            demand(command.commitVersion === null);
+        }
+
+        // Remove from tracked command set
+        this._trackedCommands.delete(command);
+
+        // Assert that we have a pre-command snapshot
+        demand(
+            this._preCommandSnapshot !== undefined,
+            "Unable to handle command rejection without a pre-command snapshot",
+        );
+
+        // Rollback to the pre-command snapshot
+        this.pub.onSnapshot(this._preCommandSnapshot!);
+
+        // Apply any remaining tracked commands; otherwise, when there are no remaining tracked commands,
+        // clear the pre-command snapshot
+        if (this._trackedCommands.size > 0 ) {
+            this._applyTrackedCommands();
+        } else {
+            this._preCommandSnapshot = undefined;
+        }
+
+        // Report as changed
+        this._atom.reportChanged();
+    }
+
     private async _populate(
         token: CancelToken,
     ): Promise<void> {
@@ -335,6 +464,32 @@ export class InternalQuery extends InternalBase<Query> {
 
         if (!this.version) {
             await this._computeLocal(token);
+        }
+    }
+
+    private _startCompletionTracker(command: InternalCommand): void {
+        // istanbul ignore else
+        if (DEBUG) {
+            demand(!command.isCompleted);
+            demand(this._trackedCommands.has(command));
+            demand(!this._completionTrackerMap.has(command));
+        }
+
+        this._completionTrackerMap.set(command, when(
+            () => command.isCompleted,
+            () => this._onCommandCompletion(command),
+            {
+                onError: error => this._onBreakingError("Failed to handle command completion", error),
+            },
+        ));
+    }
+
+    private _stopCompletionTracker(command: InternalCommand): void {
+        const disposer = this._completionTrackerMap.get(command);
+
+        if (disposer) {
+            disposer();
+            this._completionTrackerMap.delete(command);
         }
     }
 
@@ -361,7 +516,14 @@ export class InternalQuery extends InternalBase<Query> {
         // Apply current snapshot
         this.applySnapshot(snapshot, version);
 
-        // TODO: Copy tracked commands and pre-command snapshot (if any) too
+        // Copy pre-command snapshot and tracked commands
+        this._preCommandSnapshot = source._preCommandSnapshot;
+        source._trackedCommands.forEach(tracked => {
+            this._trackedCommands.add(tracked);
+            if (!tracked.isCompleted) {
+                this._startCompletionTracker(tracked);
+            }
+        });
 
         return true;
     }
@@ -373,5 +535,27 @@ export class InternalQuery extends InternalBase<Query> {
         //       - Beware that server snapshot or update might arrive while loading from store!
         //       - Discover and re-apply active and unseen committed commands too!
         return !token; // dummy
+    }
+
+    private _upgradeVersion(next: string) {
+        // istanbul ignore else
+        if (DEBUG) {
+            this._checkNextVersion(next);
+        }
+
+        // Assign the new version
+        this._version = next;
+
+        // Purge tracked commands that were committed in a previous version (we've seen their effect now)
+        this._trackedCommands.forEach(tracked => {
+            if (this._hasSeenCommitOf(tracked)) {
+                this._trackedCommands.delete(tracked);
+            }
+        });
+
+        // Clear pre-command snapshot when there are no more remaining tracked commands
+        if (this._trackedCommands.size === 0) {
+            this._preCommandSnapshot = undefined;
+        }
     }
 }
