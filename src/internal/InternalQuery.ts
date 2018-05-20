@@ -96,7 +96,7 @@ export class InternalQuery extends InternalBase<Query> {
     @action
     public applyCommand(
         command: InternalCommand,
-    ): boolean {
+    ): void {
         try {
             // istanbul ignore else
             if (DEBUG) {
@@ -113,19 +113,19 @@ export class InternalQuery extends InternalBase<Query> {
             const committed = command.commitVersion;
             const seen = this.version;
             if (committed !== null && seen !== null && seen > committed) {
-                return false;
+                return;
             }
 
             // Ignore commands that may not affect result
             if (!this.pub.mayAffectResult(command.pub)) {
-                return false;
+                return;
             }
 
             // Defer applying command while populating
             when(
                 () => !this.isPopulating,
                 () => {
-                    // TODO: Ensure there is a pre-command snapshot
+                    // TODO: Ensure that there is a pre-command snapshot (when this is the first command to track)
 
                     // TODO: Track command completion
 
@@ -134,14 +134,14 @@ export class InternalQuery extends InternalBase<Query> {
                     this._atom.reportChanged();
                 },
                 {
-                    onError: error => this._onBreakingError("Failed to pre-apply command", error),
+                    onError: error => this._onBreakingError("Failed to apply command", error),
                 },
             );
 
-            return true;
+            return;
         } catch (error) {
             this._onBreakingError("Failed to pre-apply command", error);
-            return false;
+            return;
         }
     }
 
@@ -268,7 +268,7 @@ export class InternalQuery extends InternalBase<Query> {
         );
     }
 
-    private async _compute(
+    private async _computeLocal(
         token: CancelToken,
     ): Promise<void> {
         const cts = new CancelTokenSource();
@@ -279,10 +279,12 @@ export class InternalQuery extends InternalBase<Query> {
             const applyUpdate = cts.token.bind(this.pub.onUpdate, this.pub);
 
             // TODO: It is important that user code does not cause new query subscriptions to open
-            //       when deriving local result. How to ensure that?
+            //       when deriving local result. It is also important that user codes does not
+            //       compute from other queries that are being populated. Must wait for population
+            //       to complete BUT NOT cause server query subscription to start.
 
             return await cts.token.ignoreCancellation(
-                this.pub.compute(
+                this.pub.computeLocal(
                     applySnapshot,
                     applyUpdate,
                     cts.token,
@@ -340,7 +342,7 @@ export class InternalQuery extends InternalBase<Query> {
         internalOf(this.pub.app).ensureQuerySubscriptionStarted(this.key);
 
         if (!this.version) {
-            await this._compute(token);
+            await this._computeLocal(token);
         }
     }
 

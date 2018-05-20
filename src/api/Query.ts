@@ -131,7 +131,7 @@ export abstract class Query<TApp extends App = App> extends AppObject<TApp> {
      * @param applyUpdate   The callback to invoke to apply an update to a computed snapshot.
      * @param token         A cancel token to be observed while deriving a result.
      */
-    public async compute(
+    public async computeLocal(
         // @ts-ignore: Parameter is declared but not used in the default implementation
         applySnapshot: (data: ReadonlyJsonValue) => void,
         // @ts-ignore: Parameter is declared but not used in the default implementation
