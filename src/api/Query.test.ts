@@ -21,6 +21,7 @@ describe("Query", () => {
             public buildDescriptor() { return null; }
             public tryBuildSnapshot() { return null; }
             public onSnapshot() { /* no-op */ }
+            public onReset() { /* no-op */ }
             public onUpdate() { /* no-op */ }
         }
 
@@ -39,6 +40,7 @@ describe("Query", () => {
     class DummyQuery extends Query {
         public buildDescriptor() { return null; }
         public onSnapshot() { /* no-op */ }
+        public onReset() { /* no-op */ }
     }
 
     it("throws when applying command", () => {

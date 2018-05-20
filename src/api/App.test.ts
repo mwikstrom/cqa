@@ -58,6 +58,7 @@ describe("App", () => {
             constructor(private _descriptor: ReadonlyJsonValue) { super(); }
             public buildDescriptor() { return this._descriptor; }
             public onSnapshot() { /* no-op */ }
+            public onReset() { /* no-op */ }
         }
         app.addQueryFactory(_ => undefined); // shall be ignored
         app.addQueryFactory(descriptor => new CustomQuery(descriptor));
@@ -74,6 +75,7 @@ describe("App", () => {
             constructor(private _descriptor: ReadonlyJsonValue) { super(); }
             public buildDescriptor() { return "BAD"; }
             public onSnapshot() { /* no-op */ }
+            public onReset() { /* no-op */ }
         }
         app.addQueryFactory(descriptor => new BadQuery(descriptor));
         expect(() => app.createQuery("GOOD")).toThrow("Constructed query has unexpected descriptor");
