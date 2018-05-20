@@ -247,14 +247,6 @@ export class InternalQuery extends InternalBase<Query> {
 
             this._markAsBroken(false);
             this._atom.reportChanged();
-
-            // Re-populate in background if active
-            if (this.isActive) {
-                const cts = new CancelTokenSource();
-                cts.cancelWhen(() => !this.isActive);
-                // TODO: FIX: This causes an error!
-                // this.populateInBackground(cts.token);
-            }
         } catch (error) {
             this._onBreakingError("Failed to reset", error);
         }
