@@ -13,13 +13,54 @@ import {
 } from "../api";
 
 import {
-    internalOf,
+    internalOf, LIB_NAME_SHORT,
 } from "../internal";
 
 describe("App", () => {
     it("can be constructed without arguments", () => {
         const app = new App();
         expect(app).toBeInstanceOf(App);
+    });
+
+    it("instances expose unique identifiers", () => {
+        const a = new App();
+        const b = new App();
+
+        expect(a.id).toMatch(/^[0-9a-zA-Z_-]{22}$/);
+        expect(b.id).toMatch(/^[0-9a-zA-Z_-]{22}$/);
+        expect(a.id).not.toBe(b.id);
+    });
+
+    it("has the expected default local realm", () => {
+        const app = new App();
+        expect(app.localRealm).toBe(LIB_NAME_SHORT);
+    });
+
+    it("can change local realm", () => {
+        const app = new App().withLocalRealm("test-123");
+        expect(app.localRealm).toBe("test-123");
+        app.localRealm = LIB_NAME_SHORT;
+        expect(app.localRealm).toBe(LIB_NAME_SHORT);
+    });
+
+    it("can lock local realm (alt a)", () => {
+        const app = new App().withLockedLocalRealm("test-123");
+        expect(app.isLocalRealmLocked).toBe(true);
+        expect(app.localRealm).toBe("test-123");
+        expect(() => app.localRealm = "apa").toThrow("The local realm value is locked and cannot be changed");
+    });
+
+    it("can lock local realm (alt b)", () => {
+        const app = new App();
+        app.lockedLocalRealm = "test-123";
+        expect(app.lockedLocalRealm).toBe("test-123");
+        expect(app.isLocalRealmLocked).toBe(true);
+        expect(() => app.localRealm = "apa").toThrow("The local realm value is locked and cannot be changed");
+    });
+
+    it("cannot be assigned invalid local realm value", () => {
+        const app = new App();
+        expect(() => app.localRealm = "B A D").toThrow("Invalid local realm value: B A D");
     });
 
     it("will create unknown command instances by default", () => {

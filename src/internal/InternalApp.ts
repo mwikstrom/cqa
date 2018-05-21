@@ -16,6 +16,7 @@ import {
 } from "../api";
 
 import {
+    createIdentifier,
     DEBUG,
     deepEquals,
     demand,
@@ -23,6 +24,7 @@ import {
     InternalCommand,
     InternalQuery,
     invariant,
+    LIB_NAME_SHORT,
 } from "../internal";
 
 export class InternalApp extends InternalBase<App> {
@@ -31,6 +33,9 @@ export class InternalApp extends InternalBase<App> {
     private _activeSubscriptions = new Set<string>();
     private _console: ISimpleConsole = console;
     private _commandFactories = new Set<CommandFactory>();
+    private readonly _id = createIdentifier();
+    private _isLocalRealmLocked = false;
+    private _localRealm = LIB_NAME_SHORT;
     private _queryFactories = new Set<QueryFactory>();
 
     public get console(): ISimpleConsole {
@@ -39,6 +44,34 @@ export class InternalApp extends InternalBase<App> {
 
     public set console(value: ISimpleConsole) {
         this._console = value;
+    }
+
+    public get id() {
+        return this._id;
+    }
+
+    public get isLocalRealmLocked(): boolean {
+        return this._isLocalRealmLocked;
+    }
+
+    public get localRealm(): string {
+        return this._localRealm;
+    }
+
+    public set localRealm(value: string) {
+        demand(!this._isLocalRealmLocked, "The local realm value is locked and cannot be changed");
+        demand(/^[a-z0-9-]{1,50}$$/.test(value), `Invalid local realm value: ${value}`);
+        this._localRealm = value;
+    }
+
+    public get lockedLocalRealm(): string {
+        this._isLocalRealmLocked = true;
+        return this._localRealm;
+    }
+
+    public set lockedLocalRealm(value: string) {
+        this.localRealm = value;
+        this._isLocalRealmLocked = true;
     }
 
     public addCommandFactory(factory: CommandFactory): void {

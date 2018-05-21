@@ -26,6 +26,56 @@ export class App {
     }
 
     /**
+     * Gets a unique command identifier.
+     */
+    public get id(): string {
+        return internalOf(this).id;
+    }
+
+    /**
+     * Determines whether the local realm value is locked.
+     */
+    public get isLocalRealmLocked() {
+        return internalOf(this).isLocalRealmLocked;
+    }
+
+    /**
+     * Gets the local realm of the current app instance.
+     *
+     * The local realm is a string that provides a namespace for locally shared resources.
+     */
+    public get localRealm(): string {
+        return internalOf(this).localRealm;
+    }
+
+    /**
+     * Sets the local realm of the current app instance.
+     *
+     * The local realm is a string that provides a namespace for locally shared resources.
+     */
+    public set localRealm(value: string) {
+        internalOf(this).localRealm = value;
+    }
+
+    /**
+     * Locks the local realm of the current app instance and returns the locked value.
+     *
+     * The local realm is a string that provides a namespace for locally shared resources.
+     */
+    public get lockedLocalRealm(): string {
+        return internalOf(this).lockedLocalRealm;
+    }
+
+    /**
+     * Sets the local realm of the current app instance and locks it.
+     *
+     * The local realm is a string that provides a namespace for locally shared resources.
+     */
+    public set lockedLocalRealm(value: string) {
+        internalOf(this).lockedLocalRealm = value;
+    }
+
+    /**
      * Registers that the specified factory function shall be used to construct {@link Command} instances.
      *
      * @param factory The factory function to be registered
@@ -93,6 +143,22 @@ export class App {
         internalOf(this).execute(internalOf(command));
 
         return command;
+    }
+
+    /**
+     * Sets the local realm value and returns the current instance.
+     */
+    public withLocalRealm(value: string): this {
+        this.localRealm = value;
+        return this;
+    }
+
+    /**
+     * Locks and sets the local realm value and returns the current instance.
+     */
+    public withLockedLocalRealm(value: string): this {
+        this.lockedLocalRealm = value;
+        return this;
     }
 }
 
