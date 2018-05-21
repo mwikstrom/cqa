@@ -531,7 +531,7 @@ export class InternalQuery extends InternalBase<Query> {
     private async _tryPopulateFromStore(
         token: CancelToken,
     ): Promise<boolean> {
-        // TODO: IMPLEMENT
+        // TODO: Implement tryPopulateFromStore
         //       - Beware that server snapshot or update might arrive while loading from store!
         //       - Discover and re-apply active and unseen committed commands too!
         return !token; // dummy
