@@ -75,7 +75,7 @@ export abstract class Query<TApp extends App = App> extends AppObject<TApp> {
      * result is computed locally.
      *
      * Version tokens can be compared lexicographically to determine casuality; whether one version 'happened before'
-     * another version. Other than this property, applications should consider version tokens to be opaque data.
+     * another version. In all other aspects version tokens should be considered as opaque data.
      */
     public get version(): string | null {
         return internalOf(this).version;

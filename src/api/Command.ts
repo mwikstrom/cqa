@@ -14,7 +14,7 @@ export abstract class Command<TApp extends App = App> extends AppObject<TApp> {
      * the command is not accepted.
      *
      * Version tokens can be compared lexicographically to determine casuality; whether one version 'happened before'
-     * another version. Other than this property, applications should consider version tokens to be opaque data.
+     * another version. In all other aspects version tokens should be considered as opaque data.
      */
     public get commitVersion(): string | null {
         return internalOf(this).commitVersion;
