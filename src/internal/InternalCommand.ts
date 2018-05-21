@@ -57,7 +57,7 @@ export class InternalCommand extends InternalBase<Command> {
 
     @computed
     public get isCompleted(): boolean {
-        return this._commitVersion === null && !this._isRejected;
+        return this._commitVersion !== null || this._isRejected;
     }
 
     public get isRejected(): boolean {

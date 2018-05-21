@@ -107,6 +107,8 @@ export abstract class Query<TApp extends App = App> extends AppObject<TApp> {
 
     /**
      * Creates a descriptor (a json value) that describe this query object.
+     *
+     * WARNING: Do not call this method directly from your code. It shall only be invoked from the app framework.
      */
     public abstract buildDescriptor(): ReadonlyJsonValue;
 
@@ -114,6 +116,8 @@ export abstract class Query<TApp extends App = App> extends AppObject<TApp> {
      * Creates a unique key string for this query.
      *
      * The default implementation creates a key based on the query descriptor.
+     *
+     * WARNING: Do not call this method directly from your code. It shall only be invoked from the app framework.
      */
     public buildKey(): string {
         return hashOf(this.descriptor);

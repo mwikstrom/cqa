@@ -250,7 +250,7 @@ export class InternalApp extends InternalBase<App> {
             //       `Command_Stored` and send to server.
 
         } catch (error) {
-            this.console.warn(`Failed to execute command (id=${command.id}). Marking it as faulted`);
+            this.console.warn(`Failed to execute command (id=${command.id}). Marking it as broken`);
             command.markAsBroken();
         }
     }
