@@ -28,7 +28,10 @@ export abstract class Query<TApp extends App = App> extends AppObject<TApp> {
     /**
      * Determines whether the current query object is active.
      *
-     * A query is active when it is attached to an app instance, observed and not broken.
+     * A query is active when it is attached to an app instance not broken and observed in a reactive context.
+     *
+     * When a query is activated it is automatically populated in a background task; and when it's later deactivated
+     * it is reset. Active queries are kept in sync with the backend while app is online.
      */
     public get isActive(): boolean {
         return internalOf(this).isActive;
@@ -39,13 +42,6 @@ export abstract class Query<TApp extends App = App> extends AppObject<TApp> {
      */
     public get isBroken(): boolean {
         return internalOf(this).isBroken;
-    }
-
-    /**
-     * Determines whether the result of this query object is currently being observed in a reactive context.
-     */
-    public get isObserved(): boolean {
-        return internalOf(this).isObserved;
     }
 
     /**
