@@ -172,7 +172,7 @@ export class InternalApp extends InternalBase<App> {
 
         if (!this._activeSubscriptions.has(key)) {
             this._activeSubscriptions.add(key);
-            // TODO: Send `Start_Query` message to backend.
+            // TODO: Send `Start_Query` message to backend when master; otherwise broadcast on ipc
         }
     }
 
@@ -208,9 +208,10 @@ export class InternalApp extends InternalBase<App> {
 
             // TODO: Store command in local db
 
-            // TODO: Broadcast ´Command_Stored` message to all open tabs
+            // TODO: Broadcast ´Command_Stored` message on ipc channel
 
-            // TODO: Send command to server
+            // TODO: Send command to server when master; otherwise other master will intercept
+            //       `Command_Stored` and send to server.
 
         } catch (error) {
             this.console.warn(`Failed to execute command (id=${command.id}). Marking it as faulted`);
@@ -231,7 +232,30 @@ export class InternalApp extends InternalBase<App> {
         }
 
         if (this._activeSubscriptions.delete(key)) {
-            // TODO: Send `Stop_Query` message to backend
+            // TODO: Send `Stop_Query` message to backend when master; otherwise broadcast on ipc
         }
     }
+
+    // TODO: Add backend connection management
+    //       - with transparent backoff and reconnection
+    //       - with timeout management for active commands
+    //       - with timeout management for active queries
+
+    // TODO: Add backend message handler for Command_Accepted (apply and broadcast)
+
+    // TODO: Add backend message handler for Command_Rejected (apply and broadcast)
+
+    // TODO: Add backend message handler for Set_Query_Result
+    //       (apply, store and broadcast; or Stop_Query if not active)
+
+    // TODO: Add backend message handler for Update_Query_Result
+    //       (apply, store and broadcast; or Stop_Query if not active)
+
+    // TODO: Add backend message handler for Upgrade_Query_Result
+    //       (apply, store and broadcast; or Stop_Query if not active)
+
+    // TODO: Add backend message handler for Reset_Query_Result
+    //       (apply and broadcast; or Stop_Query if not active)
+
+    // TODO: Add IPC message handlers
 }
