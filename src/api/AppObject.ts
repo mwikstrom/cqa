@@ -2,6 +2,9 @@ import { App } from "../api";
 
 import { internalBaseOf } from "../internal";
 
+/**
+ * The base class for object that are attached to app instances.
+ */
 export class AppObject<TApp extends App = App> {
     /**
      * Gets the {@link App} instance that the current object is attached to.

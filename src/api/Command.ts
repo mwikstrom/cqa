@@ -8,6 +8,9 @@ import {
     internalOf,
 } from "../internal";
 
+/**
+ * Provides a base class for commands
+ */
 export abstract class Command<TApp extends App = App> extends AppObject<TApp> {
     /**
      * Gets the committed version token that was assigned by the backend when this command was accepted; or null when
