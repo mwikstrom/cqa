@@ -103,8 +103,6 @@ export class InternalApp extends InternalBase<App> {
         return this._activeQueries.get(key) || [];
     }
 
-    // TODO: IMPORTANT: Handle case when query is re-activated after being partially or fully populated!
-    //       Safe (but expensive and ugly) way to handle this is to RESET query when it is deactivated.
     public registerActiveQuery(
         query: InternalQuery,
     ): () => void {
@@ -138,6 +136,14 @@ export class InternalApp extends InternalBase<App> {
             if (instances!.delete(query) && instances!.size === 0) {
                 this.stopQuerySubscription(query.key);
             }
+
+            // We are currently resetting query results when the query is deactivated. This is to ensure that we don't
+            // end up with partially populated query results and more importantly because the code that populate a query
+            // currently assume that we start populating from scratch.
+            when(
+                () => !query.isPopulating,
+                () => query.reset(),
+            );
         };
     }
 
