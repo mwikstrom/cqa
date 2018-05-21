@@ -123,6 +123,10 @@ export class InternalApp extends InternalBase<App> {
         // Create a cancel token to be observed while populating. It will be cancelled when the query is deactivated
         const cts = new CancelTokenSource();
 
+        // TODO: IMPORTANT: Query might be activated, deactivated and then activated again fast enough to keep the
+        //                  initial population task running. We must therefore wait for a pending population task
+        //                  to complete before starting a new!
+
         // Add registered instance and start populating query in a background task
         instances.add(query);
         query.populateInBackground(cts.token);
@@ -140,10 +144,11 @@ export class InternalApp extends InternalBase<App> {
             // We are currently resetting query results when the query is deactivated. This is to ensure that we don't
             // end up with partially populated query results and more importantly because the code that populate a query
             // currently assume that we start populating from scratch.
-            when(
+            // TODO: IMPORTANT: THIS DIDN'T WORK. TEST RUN NEVER COMPLETES.
+            /*when(
                 () => !query.isPopulating,
                 () => query.reset(),
-            );
+            );*/
         };
     }
 
