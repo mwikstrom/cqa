@@ -112,7 +112,7 @@ export class InternalApp extends InternalBase<App> {
         key?: string,
     ): Query {
         for (const factory of this._queryFactories) {
-            const result = factory(descriptor);
+            const result = factory(descriptor, key);
             if (result !== undefined) {
                 // istanbul ignore else
                 if (DEBUG) {
