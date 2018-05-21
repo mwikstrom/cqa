@@ -26,6 +26,7 @@ import {
     InternalCommand,
     internalOf,
     LIB_NAME_SHORT,
+    RESOLVED,
 } from "../internal";
 
 export class InternalQuery extends InternalBase<Query> {
@@ -253,16 +254,37 @@ export class InternalQuery extends InternalBase<Query> {
     public populateInBackground(
         token: CancelToken,
     ): void {
-        // istanbul ignore else
-        if (DEBUG) {
-            demand(!this._isPopulating, "Query is already being populated");
+        let start: Promise<any>;
+
+        // Check if there already is running population task
+        if (this.isPopulating) {
+            // It's already being populated. We must wait until that task is completed before starting over.
+            // NOTE: We are assuming that the other task is being cancelled. This is true because
+            // `populateInBackground` is only ever called from `registerActiveQuery` and that function
+            // will cancel previous task as soon as the query is unregistered.
+            start = when(
+                () => !this.isPopulating,
+            ).then(
+                () => runInAction(() => this._isPopulating = true),
+            );
+        } else {
+            // Starting from idle.
+            start = RESOLVED;
+            runInAction(() => this._isPopulating = true);
         }
 
-        runInAction(() => this._isPopulating = true);
-
-        token.ignoreCancellation(
-            this._populate(token),
-        ).catch(reason =>
+        // Await the starting condition (from above) then
+        start.then(
+            // Do the actual population while observing the provided cancellation token
+            () => token.ignoreCancellation(
+                this._populate(token),
+            ),
+        ).then(() => {
+            // Automatically reset query result when population task was cancelled, unless query is broken.
+            if (token.isCancelled && !this.isBroken) {
+                this._reset();
+            }
+        }).catch(reason =>
             this._onBreakingError("Could not be populated", reason),
         ).then(() =>
             runInAction(() => this._isPopulating = false),
@@ -273,27 +295,10 @@ export class InternalQuery extends InternalBase<Query> {
         this._atom.reportObserved();
     }
 
-    @action
     public reset() {
-        demand(!this._isPopulating, "Cannot reset query while it is being populated");
-
         try {
-            // Let user code reset query result
-            this.pub.onReset();
-
-            // Reset version
-            this._version = null;
-
-            // Stop tracking commands
-            this._trackedCommands.forEach(tracked => this._stopCompletionTracker(tracked));
-            this._trackedCommands.clear();
-            this._preCommandSnapshot = undefined;
-
-            // Clear broken flag (if set)
-            this._markAsBroken(false);
-
-            // Report that query result changed
-            this._atom.reportChanged();
+            demand(!this._isPopulating, "Cannot reset query while it is being populated");
+            this._reset();
         } catch (error) {
             this._onBreakingError("Failed to reset", error);
         }
@@ -465,6 +470,26 @@ export class InternalQuery extends InternalBase<Query> {
         if (!this.version) {
             await this._computeLocal(token);
         }
+    }
+
+    @action
+    private _reset(): void {
+        // Let user code reset query result
+        this.pub.onReset();
+
+        // Reset version
+        this._version = null;
+
+        // Stop tracking commands
+        this._trackedCommands.forEach(tracked => this._stopCompletionTracker(tracked));
+        this._trackedCommands.clear();
+        this._preCommandSnapshot = undefined;
+
+        // Clear broken flag (if set)
+        this._markAsBroken(false);
+
+        // Report that query result changed
+        this._atom.reportChanged();
     }
 
     private _startCompletionTracker(command: InternalCommand): void {

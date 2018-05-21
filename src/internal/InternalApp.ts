@@ -123,10 +123,6 @@ export class InternalApp extends InternalBase<App> {
         // Create a cancel token to be observed while populating. It will be cancelled when the query is deactivated
         const cts = new CancelTokenSource();
 
-        // TODO: IMPORTANT: Query might be activated, deactivated and then activated again fast enough to keep the
-        //                  initial population task running. We must therefore wait for a pending population task
-        //                  to complete before starting a new!
-
         // Add registered instance and start populating query in a background task
         instances.add(query);
         query.populateInBackground(cts.token);
@@ -141,14 +137,16 @@ export class InternalApp extends InternalBase<App> {
                 this.stopQuerySubscription(query.key);
             }
 
-            // We are currently resetting query results when the query is deactivated. This is to ensure that we don't
-            // end up with partially populated query results and more importantly because the code that populate a query
-            // currently assume that we start populating from scratch.
-            // TODO: IMPORTANT: THIS DIDN'T WORK. TEST RUN NEVER COMPLETES.
-            /*when(
-                () => !query.isPopulating,
-                () => query.reset(),
-            );*/
+            // We are currently resetting query results when the query is deactivated and not broken. This is to ensure
+            // that we don't end up with partially populated query results and more importantly because the code that
+            // populate a query currently assume that we start populating from scratch.
+            //
+            // It is not possible to reset while query is still being populated. However, the `populateInBackground`
+            // function will automatically reset the query when the provided cancellation token is signalled on
+            // completion.
+            if (!query.isPopulating && !query.isBroken) {
+                query.reset();
+            }
         };
     }
 

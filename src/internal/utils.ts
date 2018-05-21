@@ -21,6 +21,8 @@ export const SILENT_CONSOLE: ISimpleConsole = Object.freeze({
     warn: () => { /* no-op */ },
 });
 
+export const RESOLVED = new Promise(resolve => resolve());
+
 export interface IParamlessErrorClass {
     new(): Error;
 }
