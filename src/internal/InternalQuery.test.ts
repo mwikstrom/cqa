@@ -68,7 +68,7 @@ describe("InternalQuery", () => {
 
         const q1 = internalOf(new NoSnapshotQuery(null));
         const q2 = internalOf(new UnknownQuery(null));
-        const app = new App();
+        const app = new App({ console: SILENT_CONSOLE });
         const stop = autorun(() => {
             q1.reportObserved();
             q2.reportObserved();
@@ -78,7 +78,6 @@ describe("InternalQuery", () => {
         q1.pub.attachTo(app);
         await when(() => !q1.isPopulating);
 
-        app.console = SILENT_CONSOLE;
         q2.pub.attachTo(app);
         await when(() => !q2.isPopulating);
 

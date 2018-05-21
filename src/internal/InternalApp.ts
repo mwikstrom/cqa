@@ -37,6 +37,7 @@ export class InternalApp extends InternalBase<App> {
 
     private _activeSubscriptions = new Set<string>();
 
+    @observable.ref
     private _console: ISimpleConsole = console;
 
     private _commandFactories = new Set<CommandFactory>();
@@ -50,10 +51,6 @@ export class InternalApp extends InternalBase<App> {
 
     public get console(): ISimpleConsole {
         return this._console;
-    }
-
-    public set console(value: ISimpleConsole) {
-        this._console = value;
     }
 
     public get id() {
@@ -75,8 +72,13 @@ export class InternalApp extends InternalBase<App> {
     @action
     public configure(options: IAppOptions) {
         const {
+            console,
             localRealm,
         } = options;
+
+        if (console !== undefined) {
+            this._console = console;
+        }
 
         if (localRealm !== undefined) {
             demand(/^[a-z0-9-]{1,50}$$/.test(localRealm), `Invalid local realm value: ${localRealm}`);

@@ -24,17 +24,10 @@ export class App {
     }
 
     /**
-     * Gets a console that the app use for diagnostic messages
+     * Gets the console that the app uses for diagnostic messages
      */
     public get console(): ISimpleConsole {
         return internalOf(this).console;
-    }
-
-    /**
-     * Sets a console that the app shall use for diagnostic messages
-     */
-    public set console(value: ISimpleConsole) {
-        internalOf(this).console = value;
     }
 
     /**
