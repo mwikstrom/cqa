@@ -29,6 +29,8 @@ export abstract class Command<TApp extends App = App> extends AppObject<TApp> {
 
     /**
      * Gets a unique command identifier.
+     *
+     * The identifier is auto-generated and immutable.
      */
     public get id(): string {
         return internalOf(this).id;

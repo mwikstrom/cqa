@@ -36,31 +36,31 @@ describe("App", () => {
         expect(app.localRealm).toBe(LIB_NAME_SHORT);
     });
 
-    it("can change local realm", () => {
-        const app = new App().withLocalRealm("test-123");
+    it("can be initialized with custom local realm", () => {
+        const app = new App({ localRealm: "test-123" });
         expect(app.localRealm).toBe("test-123");
-        app.localRealm = LIB_NAME_SHORT;
-        expect(app.localRealm).toBe(LIB_NAME_SHORT);
     });
 
-    it("can lock local realm (alt a)", () => {
-        const app = new App().withLockedLocalRealm("test-123");
-        expect(app.isLocalRealmLocked).toBe(true);
+    it("can be assigned a new local realm value after creation", () => {
+        const app = new App();
+        app.configure({ localRealm: "test-123" });
         expect(app.localRealm).toBe("test-123");
-        expect(() => app.localRealm = "apa").toThrow("The local realm value is locked and cannot be changed");
     });
 
-    it("can lock local realm (alt b)", () => {
-        const app = new App();
-        app.lockedLocalRealm = "test-123";
-        expect(app.lockedLocalRealm).toBe("test-123");
-        expect(app.isLocalRealmLocked).toBe(true);
-        expect(() => app.localRealm = "apa").toThrow("The local realm value is locked and cannot be changed");
+    it("can be assigned a new local realm value after creation", () => {
+        const app = new App().configure({ localRealm: "test-123" });
+        expect(app.localRealm).toBe("test-123");
     });
 
-    it("cannot be assigned invalid local realm value", () => {
+    it("can be configured without changing local realm", () => {
+        const app = new App({ localRealm: "test-123" });
+        app.configure({});
+        expect(app.localRealm).toBe("test-123");
+    });
+
+    it("cannot be assigned an invalid local realm value", () => {
         const app = new App();
-        expect(() => app.localRealm = "B A D").toThrow("Invalid local realm value: B A D");
+        expect(() => app.configure({ localRealm: "B A D" })).toThrow("Invalid local realm value: B A D");
     });
 
     it("will create unknown command instances by default", () => {

@@ -4,6 +4,7 @@ export * from "./AppError";
 export * from "./AppObject";
 export * from "./CancelToken";
 export * from "./CancelTokenSource";
+export * from "./IAppOptions";
 export * from "./ISimpleConsole";
 export * from "./Json";
 

@@ -1,4 +1,6 @@
 import {
+    action,
+    observable,
     when,
 } from "mobx";
 
@@ -7,6 +9,7 @@ import {
     CancelTokenSource,
     Command,
     CommandFactory,
+    IAppOptions,
     ISimpleConsole,
     Query,
     QueryFactory,
@@ -29,13 +32,20 @@ import {
 
 export class InternalApp extends InternalBase<App> {
     private _activeCommands = new Map<string, InternalCommand>();
+
     private _activeQueries = new Map<string, Set<InternalQuery>>();
+
     private _activeSubscriptions = new Set<string>();
+
     private _console: ISimpleConsole = console;
+
     private _commandFactories = new Set<CommandFactory>();
+
     private readonly _id = createIdentifier();
-    private _isLocalRealmLocked = false;
+
+    @observable
     private _localRealm = LIB_NAME_SHORT;
+
     private _queryFactories = new Set<QueryFactory>();
 
     public get console(): ISimpleConsole {
@@ -50,28 +60,8 @@ export class InternalApp extends InternalBase<App> {
         return this._id;
     }
 
-    public get isLocalRealmLocked(): boolean {
-        return this._isLocalRealmLocked;
-    }
-
     public get localRealm(): string {
         return this._localRealm;
-    }
-
-    public set localRealm(value: string) {
-        demand(!this._isLocalRealmLocked, "The local realm value is locked and cannot be changed");
-        demand(/^[a-z0-9-]{1,50}$$/.test(value), `Invalid local realm value: ${value}`);
-        this._localRealm = value;
-    }
-
-    public get lockedLocalRealm(): string {
-        this._isLocalRealmLocked = true;
-        return this._localRealm;
-    }
-
-    public set lockedLocalRealm(value: string) {
-        this.localRealm = value;
-        this._isLocalRealmLocked = true;
     }
 
     public addCommandFactory(factory: CommandFactory): void {
@@ -80,6 +70,18 @@ export class InternalApp extends InternalBase<App> {
 
     public addQueryFactory(factory: QueryFactory): void {
         this._queryFactories.add(factory);
+    }
+
+    @action
+    public configure(options: IAppOptions) {
+        const {
+            localRealm,
+        } = options;
+
+        if (localRealm !== undefined) {
+            demand(/^[a-z0-9-]{1,50}$$/.test(localRealm), `Invalid local realm value: ${localRealm}`);
+            this._localRealm = localRealm;
+        }
     }
 
     public createCommand(

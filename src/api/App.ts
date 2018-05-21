@@ -1,5 +1,6 @@
 import {
     Command,
+    IAppOptions,
     ISimpleConsole,
     Query,
     ReadonlyJsonValue,
@@ -11,6 +12,17 @@ import { internalOf } from "../internal";
  * Command Query App root object
  */
 export class App {
+    /**
+     * Initializes a new app instance.
+     *
+     * @param options Optional configuration options to be applied to the new instance.
+     */
+    constructor(options?: IAppOptions) {
+        if (options) {
+            this.configure(options);
+        }
+    }
+
     /**
      * Gets a console that the app use for diagnostic messages
      */
@@ -26,17 +38,12 @@ export class App {
     }
 
     /**
-     * Gets a unique command identifier.
+     * Gets a unique app identifier.
+     *
+     * The identifier is auto-generated and immutable.
      */
     public get id(): string {
         return internalOf(this).id;
-    }
-
-    /**
-     * Determines whether the local realm value is locked.
-     */
-    public get isLocalRealmLocked() {
-        return internalOf(this).isLocalRealmLocked;
     }
 
     /**
@@ -46,33 +53,6 @@ export class App {
      */
     public get localRealm(): string {
         return internalOf(this).localRealm;
-    }
-
-    /**
-     * Sets the local realm of the current app instance.
-     *
-     * The local realm is a string that provides a namespace for locally shared resources.
-     */
-    public set localRealm(value: string) {
-        internalOf(this).localRealm = value;
-    }
-
-    /**
-     * Locks the local realm of the current app instance and returns the locked value.
-     *
-     * The local realm is a string that provides a namespace for locally shared resources.
-     */
-    public get lockedLocalRealm(): string {
-        return internalOf(this).lockedLocalRealm;
-    }
-
-    /**
-     * Sets the local realm of the current app instance and locks it.
-     *
-     * The local realm is a string that provides a namespace for locally shared resources.
-     */
-    public set lockedLocalRealm(value: string) {
-        internalOf(this).lockedLocalRealm = value;
     }
 
     /**
@@ -92,6 +72,14 @@ export class App {
      */
     public addQueryFactory(factory: QueryFactory): this {
         internalOf(this).addQueryFactory(factory);
+        return this;
+    }
+
+    /**
+     * Applies the specified configuration options to the current app instance.
+     */
+    public configure(options: IAppOptions): this {
+        internalOf(this).configure(options);
         return this;
     }
 
@@ -143,22 +131,6 @@ export class App {
         internalOf(this).execute(internalOf(command));
 
         return command;
-    }
-
-    /**
-     * Sets the local realm value and returns the current instance.
-     */
-    public withLocalRealm(value: string): this {
-        this.localRealm = value;
-        return this;
-    }
-
-    /**
-     * Locks and sets the local realm value and returns the current instance.
-     */
-    public withLockedLocalRealm(value: string): this {
-        this.lockedLocalRealm = value;
-        return this;
     }
 }
 
