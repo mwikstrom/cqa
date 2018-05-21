@@ -10,5 +10,3 @@
 ## Documentation
 
  * [The CQA protocol](docs/protocol.md)
-
- (test2)
