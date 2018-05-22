@@ -1,6 +1,7 @@
 export * from "./utils";
 
 export * from "./InternalBase";
+export * from "./StoreBase";
 
 export * from "./InternalAppObject";
 

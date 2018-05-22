@@ -27,20 +27,28 @@ export interface IParamlessErrorClass {
     new(): Error;
 }
 
-export const demand = (
-    condition: boolean,
+export const fail = (
     error: string | IParamlessErrorClass = "Invalid operation",
-): void => {
-    if (condition) {
-        return;
-    }
-
+): never => {
     if (typeof error === "string") {
         throw new Error(error);
     }
 
     throw new error();
 };
+
+export const demand = (
+    condition: boolean,
+    error?: string | IParamlessErrorClass,
+): void => {
+    if (!condition) {
+        fail(error);
+    }
+};
+
+export const reject = <T>(
+    error?: string | IParamlessErrorClass,
+): Promise<T> => new Promise<T>(() => fail(error));
 
 export const invariant = (
     condition: boolean,
