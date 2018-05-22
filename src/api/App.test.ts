@@ -26,9 +26,9 @@ describe("App", () => {
         const a = new App();
         const b = new App();
 
-        expect(a.id).toMatch(/^[0-9a-zA-Z_-]{22}$/);
-        expect(b.id).toMatch(/^[0-9a-zA-Z_-]{22}$/);
-        expect(a.id).not.toBe(b.id);
+        expect(a.instanceId).toMatch(/^[0-9a-zA-Z_-]{22}$/);
+        expect(b.instanceId).toMatch(/^[0-9a-zA-Z_-]{22}$/);
+        expect(a.instanceId).not.toBe(b.instanceId);
     });
 
     it("has the expected default local realm", () => {

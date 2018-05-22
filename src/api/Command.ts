@@ -31,12 +31,24 @@ export abstract class Command<TApp extends App = App> extends AppObject<TApp> {
     }
 
     /**
-     * Gets a unique command identifier.
+     * Gets a globally unique identifier for this command instance.
      *
-     * The identifier is auto-generated and immutable.
+     * The global identifier is auto-generated and immutable.
      */
-    public get id(): string {
-        return internalOf(this).id;
+    public get globalId(): string {
+        return internalOf(this).globalId;
+    }
+
+    /**
+     * Gets a local identifier for this command instance; or null when the command has not been stored locally.
+     *
+     * The local identifier is assigned automatically when the command is executed and thereby stored locally.
+     * Local identifiers are unique among all app instances that use the same qualified local realm and are incremented
+     * whenever a new command is stored. Therefore it is possible to use the local identifiers of two command instances
+     * to determine the order in which they were executed.
+     */
+    public get localId(): number | null {
+        return internalOf(this).localId;
     }
 
     /**

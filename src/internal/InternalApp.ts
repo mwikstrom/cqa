@@ -42,7 +42,7 @@ export class InternalApp extends InternalBase<App> {
 
     private _commandFactories = new Set<CommandFactory>();
 
-    private readonly _id = createIdentifier();
+    private readonly _instanceId = createIdentifier();
 
     @observable
     private _localRealm = LIB_NAME_SHORT;
@@ -53,8 +53,8 @@ export class InternalApp extends InternalBase<App> {
         return this._console;
     }
 
-    public get id() {
-        return this._id;
+    public get instanceId() {
+        return this._instanceId;
     }
 
     public get localRealm(): string {
@@ -223,11 +223,11 @@ export class InternalApp extends InternalBase<App> {
         }
 
         // Register command as active
-        if (this._activeCommands.has(command.id)) {
+        if (this._activeCommands.has(command.globalId)) {
             if (DEBUG) {
                 demand(
-                    command === this._activeCommands.get(command.id),
-                    `Another command with the same id (${command.id}) is already active`,
+                    command === this._activeCommands.get(command.globalId),
+                    `Another command with the same id (${command.globalId}) is already active`,
                 );
             }
 
@@ -238,7 +238,7 @@ export class InternalApp extends InternalBase<App> {
             // Remove from the set of active commands when command is completed
             when(
                 () => command.isCompleted,
-                () => this._activeCommands.delete(command.id),
+                () => this._activeCommands.delete(command.globalId),
             );
 
             // Apply command to all active queries
@@ -254,7 +254,7 @@ export class InternalApp extends InternalBase<App> {
             //       `Command_Stored` and send to server.
 
         } catch (error) {
-            this.console.warn(`Failed to execute command (id=${command.id}). Marking it as broken`);
+            this.console.warn(`Failed to execute command (id=${command.globalId}). Marking it as broken`);
             command.markAsBroken();
         }
     }

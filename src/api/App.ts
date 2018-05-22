@@ -31,12 +31,12 @@ export class App {
     }
 
     /**
-     * Gets a unique app identifier.
+     * Gets a unique app instance identifier.
      *
      * The identifier is auto-generated and immutable.
      */
-    public get id(): string {
-        return internalOf(this).id;
+    public get instanceId(): string {
+        return internalOf(this).instanceId;
     }
 
     /**

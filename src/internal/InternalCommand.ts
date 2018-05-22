@@ -19,11 +19,11 @@ import {
 
 export class InternalCommand extends InternalBase<Command> {
     @observable
-    private _commitVersion: null | string = null;
+    private _commitVersion?: string;
 
     private _descriptor?: ReadonlyJsonValue;
 
-    private _id?: string;
+    private _globalId?: string;
 
     @observable
     private _isBroken = false;
@@ -31,8 +31,12 @@ export class InternalCommand extends InternalBase<Command> {
     @observable
     private _isRejected = false;
 
+    @observable
+    private _localId?: number;
+
     public get commitVersion(): null | string {
-        return this._commitVersion;
+        const value = this._commitVersion;
+        return value === undefined ? null : value;
     }
 
     public get descriptor(): ReadonlyJsonValue {
@@ -43,12 +47,17 @@ export class InternalCommand extends InternalBase<Command> {
         return this._descriptor;
     }
 
-    public get id(): string {
-        if (this._id === undefined) {
-            this._id = createIdentifier();
+    public get globalId(): string {
+        if (this._globalId === undefined) {
+            this._globalId = createIdentifier();
         }
 
-        return this._id;
+        return this._globalId;
+    }
+
+    public get localId(): number | null {
+        const value = this._localId;
+        return value === undefined ? null : value;
     }
 
     public get isBroken(): boolean {
@@ -57,7 +66,7 @@ export class InternalCommand extends InternalBase<Command> {
 
     @computed
     public get isCompleted(): boolean {
-        return this._commitVersion !== null || this._isRejected;
+        return this._commitVersion !== undefined || this._isRejected;
     }
 
     public get isRejected(): boolean {
@@ -91,5 +100,17 @@ export class InternalCommand extends InternalBase<Command> {
 
         this.markAsBroken(false);
         this._isRejected = true;
+    }
+
+    @action
+    public onStored(
+        localId: number,
+    ) {
+        // instanbul ignore else
+        if (DEBUG) {
+            demand(this._localId === undefined);
+        }
+
+        this._localId = localId;
     }
 }
