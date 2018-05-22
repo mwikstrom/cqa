@@ -63,12 +63,20 @@ export class InternalApp extends InternalBase<App> {
         return this._localRealm;
     }
 
+    // TODO: Add localStore property. Any open local store must be closed when local realm changes.
+
+    // TODO: When qualified realm changes; all commands attached to this app must be considered broken (unqualified),
+    // TODO: When qualified realm changes; all active commands shall be cleared (they're broken),
+    // TODO: When qualified realm changes; all active queries shall be reset,
+    // TODO: When qualified realm changes; active subscriptions shall be cleared.
     @computed
     public get qualifiedRealm(): string {
         // TODO: Implement qualified realm
         // return `${this.localRealm}:${this.realmQualifier}`;
         return `${this.localRealm}:todo_qualifier`;
     }
+
+    // TODO: Add qualifiedStore property. Any open qualified store must be closed when qualified realm changes.
 
     public addCommandFactory(factory: CommandFactory): void {
         this._commandFactories.add(factory);
