@@ -33,7 +33,7 @@ export abstract class StoreBase {
         if (DEBUG) {
             demand(
                 !this._isClosed,
-                `[${LIB_NAME_SHORT}] Data store "${this._name} has been closed`,
+                `[${LIB_NAME_SHORT}] Data store "${this._name}" has been closed`,
             );
         }
 
@@ -46,6 +46,10 @@ export abstract class StoreBase {
         }
 
         return this._dbPromise;
+    }
+
+    protected get name(): string {
+        return this._name;
     }
 
     public close(): void {

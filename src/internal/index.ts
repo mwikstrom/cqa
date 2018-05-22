@@ -4,6 +4,7 @@ export * from "./InternalBase";
 export * from "./StoreBase";
 
 export * from "./InternalAppObject";
+export * from "./QualifiedStore";
 
 export * from "./InternalApp";
 export * from "./InternalCancelToken";
