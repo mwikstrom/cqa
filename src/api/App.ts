@@ -42,10 +42,22 @@ export class App {
     /**
      * Gets the local realm of the current app instance.
      *
-     * The local realm is a string that provides a namespace for locally shared resources.
+     * App instances with a common local realm may share the same local resources.
      */
     public get localRealm(): string {
         return internalOf(this).localRealm;
+    }
+
+    /**
+     * Gets the qualified realm of the current app instance.
+     *
+     * App instances with a common qualified realm may share the same local, backend and protected resources.
+     *
+     * The qualified realm value is based on the configured local realm value and augmented with a token that
+     * represent the backend realm and the authorized user identity.
+     */
+    public get qualifiedRealm(): string {
+        return internalOf(this).qualifiedRealm;
     }
 
     /**
@@ -143,3 +155,5 @@ export type QueryFactory = (
     descriptor: ReadonlyJsonValue,
     key?: string,
 ) => Query | undefined;
+
+export const isValidLocalRealm = (value: string) => /^[a-z0-9-]{1,50}$$/.test(value);

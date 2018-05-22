@@ -1,5 +1,6 @@
 import {
     action,
+    computed,
     observable,
     when,
 } from "mobx";
@@ -11,6 +12,7 @@ import {
     CommandFactory,
     IAppOptions,
     ISimpleConsole,
+    isValidLocalRealm,
     Query,
     QueryFactory,
     ReadonlyJsonValue,
@@ -61,6 +63,13 @@ export class InternalApp extends InternalBase<App> {
         return this._localRealm;
     }
 
+    @computed
+    public get qualifiedRealm(): string {
+        // TODO: Implement qualified realm
+        // return `${this.localRealm}:${this.realmQualifier}`;
+        return `${this.localRealm}:todo_qualifier`;
+    }
+
     public addCommandFactory(factory: CommandFactory): void {
         this._commandFactories.add(factory);
     }
@@ -81,7 +90,11 @@ export class InternalApp extends InternalBase<App> {
         }
 
         if (localRealm !== undefined) {
-            demand(/^[a-z0-9-]{1,50}$$/.test(localRealm), `Invalid local realm value: ${localRealm}`);
+            demand(
+                isValidLocalRealm(localRealm),
+                `Invalid local realm value: ${localRealm}`,
+            );
+
             this._localRealm = localRealm;
         }
     }
