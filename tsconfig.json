@@ -56,6 +56,5 @@
   },
   "files": [
     "src/index.ts",
-    "src/env.d.ts",
   ]
 }

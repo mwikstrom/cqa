@@ -1,5 +1,7 @@
 # Communication protocol
 
+> *This is a draft copy from v0.1.0 -- It's not current*
+
 The CQA backend communication protocol is a bi-directional websocket subprotocol named `CQA/1.0`. Connections MUST be secured using `wss://`.
 
 ## Message format

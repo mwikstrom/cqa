@@ -1,6 +1,6 @@
 {
   "name": "cqa",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Command Query App",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -55,7 +55,6 @@
     ],
     "collectCoverageFrom": [
       "**/*.{ts,tsx}",
-      "!src/env.d.ts",
       "!src/global.ts",
       "!src/index.ts",
       "!**/dist/**",
