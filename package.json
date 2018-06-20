@@ -2,8 +2,8 @@
   "name": "cqa",
   "version": "0.2.0",
   "description": "Command Query App",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/cqa.js",
+  "types": "dist/cqa.d.ts",
   "scripts": {
     "build": "npm run clean && npm run compile",
     "check": "npm run build && npm run lint && npm run test",
@@ -55,8 +55,6 @@
     ],
     "collectCoverageFrom": [
       "**/*.{ts,tsx}",
-      "!src/global.ts",
-      "!src/index.ts",
       "!**/dist/**",
       "!**/node_modules/**",
       "!**/*.{test,spec}.{ts,tsx}"
