@@ -15,6 +15,11 @@ if (typeof process !== "object") {
     process.env = {};
 }
 
+import {
+    DEBUG,
+    LIB_NAME_SHORT,
+} from "./internal/const";
+
 //
 // Print a warning when a DEBUG mode (non-production) bundle is minified.
 //
@@ -26,11 +31,6 @@ if (typeof process !== "object") {
         console.warn(`[${LIB_NAME_SHORT}]: you should set 'process.env.NODE_ENV' to 'production' in your bundler.`);
     }
 })();
-
-import {
-    DEBUG,
-    LIB_NAME_SHORT,
-} from "./internal/const";
 
 export interface ICommandType<TParam = any> {
     readonly name: string;
