@@ -2,7 +2,7 @@ import {
     DEBUG,
     LIB_NAME_LONG,
     LIB_NAME_SHORT,
-} from "./const";
+} from "./env";
 
 test("Tests are run in a non-production environment", () => {
     expect(DEBUG).toBe(true);
