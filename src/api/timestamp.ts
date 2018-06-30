@@ -36,9 +36,9 @@ export interface ITimestampStatic {
     /**
      * Compares two timestamp values and determines their relative casuality.
      *
-     * @returns `-1` when the first argument happened before the second argument
-     *          `0`  when both arguments are equal
-     *          `1`  when the first argument happened after the second argument
+     * @returns `-1` when the first argument happened before the second argument;
+     *           `0` when there is no difference is casuality between the two arguments;
+     *           `1` when the second argument happened before the first argument.
      */
     compare(first: TimestampComparable, second: TimestampComparable): -1 | 0 | 1;
 
@@ -73,6 +73,9 @@ export interface ITimestampStatic {
     toString(value: Timestamp): string;
 }
 
+/**
+ * Provides access to the timestamp API.
+ */
 export const timestamp = Object.freeze<ITimestampStatic>({
     compare: compareTimestamps,
     max: maxTimestamp,
