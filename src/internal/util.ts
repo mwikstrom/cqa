@@ -4,13 +4,7 @@ export function validateValue<T>(
     what: string,
 ): void {
     if (!test(value)) {
-        let str = JSON.stringify(value);
-
-        if (str === undefined) {
-            str = String(value);
-        }
-
-        throw new TypeError(`Invalid ${what}: ${str}`);
+        throw new TypeError(`Invalid ${what}: ${JSON.stringify(value)}`);
     }
 }
 

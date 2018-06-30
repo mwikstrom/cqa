@@ -36,7 +36,7 @@ export function compareTimestamps(
         const secondAsDate = second instanceof Date ? second : timestampToDate(second);
         return comparePrimitive(first, secondAsDate);
     } else if (second instanceof Date) {
-        const firstAsDate = first instanceof Date ? first : timestampToDate(first);
+        const firstAsDate = timestampToDate(first);
         return comparePrimitive(firstAsDate, second);
     }
 
