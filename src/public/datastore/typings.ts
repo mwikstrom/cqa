@@ -17,6 +17,7 @@ type Clean<T> = Pick<T, keyof T>;
 export type ICommandInput = Clean<t.TypeOf<typeof CommandInputType>>;
 
 export interface IStoredCommand {
+    id: string;
     key: number;
     payload: any;
     target: string;

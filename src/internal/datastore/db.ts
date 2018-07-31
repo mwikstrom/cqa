@@ -7,13 +7,13 @@ export class DB extends Dexie {
         super(name);
 
         this.version(1).stores({
-            commands: "++",
+            commands: "++, &id",
         });
     }
 }
 
-// TODO: Add global id
 export interface ICommandTableValue {
+    id: string;
     payload: any;
     target: string;
     timestamp: number;

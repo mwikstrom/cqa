@@ -19,6 +19,7 @@ describe("Datastore", () => {
     it("can store minimal command", async () => {
         const result = await db.addCommand({ target: "a", type: "minimal" });
 
+        expect(result.id).toMatch(/^[0-9a-zA-Z_-]{22}$/);
         expect(result.key).toBeGreaterThanOrEqual(1);
         expect(result.timestamp).toBeLessThanOrEqual(new Date().getTime());
         expect(result.payload).toBeUndefined();
@@ -29,6 +30,7 @@ describe("Datastore", () => {
     it("can store command with payload", async () => {
         const result = await db.addCommand({ target: "b", type: "with-payload", payload: null });
 
+        expect(result.id).toMatch(/^[0-9a-zA-Z_-]{22}$/);
         expect(result.key).toBeGreaterThanOrEqual(1);
         expect(result.timestamp).toBeLessThanOrEqual(new Date().getTime());
         expect(result.payload).toBeNull();
@@ -36,9 +38,30 @@ describe("Datastore", () => {
         expect(result.type).toBe("with-payload");
     });
 
+    it("can store command with id", async () => {
+        const result = await db.addCommand({ target: "x", type: "with-id", id: "abc123" });
+
+        expect(result.id).toBe("abc123");
+        expect(result.key).toBeGreaterThanOrEqual(1);
+        expect(result.timestamp).toBeLessThanOrEqual(new Date().getTime());
+        expect(result.payload).toBeUndefined();
+        expect(result.target).toBe("x");
+        expect(result.type).toBe("with-id");
+    });
+
+    it("cannot store command with duplicate id", async () => {
+        await db.addCommand({ target: "x", type: "with-id", id: "abc123" });
+        await expect(db.addCommand({ target: "x", type: "with-id", id: "abc123" })).rejects.toThrow();
+    });
+
+    // TODO: test get command by id
+
+    // TODO: test get command by key
+
     it("can store command with timestamp", async () => {
         const result = await db.addCommand({ target: "d", type: "with-timestamp", timestamp: 123 });
 
+        expect(result.id).toMatch(/^[0-9a-zA-Z_-]{22}$/);
         expect(result.key).toBeGreaterThanOrEqual(1);
         expect(result.timestamp).toBe(123);
         expect(result.payload).toBeUndefined();

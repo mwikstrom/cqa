@@ -1,4 +1,5 @@
 import { ICommandInput, IStoredCommand } from "../../public/datastore/typings";
+import { createIdentifier } from "../id";
 import { verify } from "../verify";
 import { CommandInputType } from "./command-input";
 import { DB, ICommandTableValue } from "./db";
@@ -10,15 +11,15 @@ export async function addCommand(
     verify("command input", input, CommandInputType);
 
     const {
+        id = createIdentifier(),
         payload,
         target,
         timestamp = new Date().getTime(),
         type,
     } = input;
 
-    // TODO: Assign global id too
-
     const value: ICommandTableValue = {
+        id,
         payload,
         target,
         timestamp,
@@ -33,6 +34,7 @@ export async function addCommand(
     );
 
     const result: IStoredCommand = {
+        id,
         key,
         payload,
         target,

@@ -7,7 +7,7 @@ export const CommandInputType = t.intersection([
         type: t.string,
     }),
     t.partial({
-        // TODO: Add optional id prop (globally unique)
+        id: t.string,
         payload: JsonValueType,
         timestamp: t.Integer,
     }),
