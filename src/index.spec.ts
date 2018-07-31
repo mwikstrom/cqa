@@ -1,13 +1,12 @@
-import * as api from "./cqa";
+import * as api from ".";
 
-import { timestamp } from "./api/timestamp";
-
-describe("Public API", () => {
+describe("API", () => {
     const expectedFunctions = [
+        "isJsonValue",
+        "openDatastore",
     ];
 
     const exportedObjects = {
-        timestamp,
     };
 
     const exportedNames = new Set(Object.keys(api));
@@ -23,6 +22,6 @@ describe("Public API", () => {
     }));
 
     test("There are no unexpected exports", () => {
-        expect(Array.from(exportedNames).join(", ")).toBe("");
+        expect(Array.from(exportedNames).map(name => `${name} <${typeof api[name]}>`).join(", ")).toBe("");
     });
 });

@@ -7,5 +7,8 @@
 // Run library initialization code first
 import "./internal/init";
 
-// Export API
-export * from "./api/timestamp";
+// Export public API
+export * from "./public/json/is";
+export * from "./public/json/typings";
+export * from "./public/datastore/open";
+export * from "./public/datastore/typings";
