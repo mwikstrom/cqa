@@ -41,7 +41,12 @@
     "tslint": "^5.10.0",
     "typescript": "^2.9.2"
   },
+  "dependencies": {
+    "dexie": "^2.0.4",
+    "io-ts": "^1.2.1"
+  },
   "jest": {
+    "testUrl": "http://localhost/",
     "transform": {
       "^.+\\.tsx?$": "ts-jest"
     },
@@ -60,9 +65,5 @@
       "!**/node_modules/**",
       "!**/*.{test,spec}.{ts,tsx}"
     ]
-  },
-  "dependencies": {
-    "dexie": "^2.0.4",
-    "io-ts": "^1.2.1"
   }
 }
