@@ -43,10 +43,11 @@
   },
   "dependencies": {
     "dexie": "^2.0.4",
-    "io-ts": "^1.2.1"
+    "io-ts": "^1.2.1",
+    "uuid": "^3.3.2"
   },
   "jest": {
-    "testUrl": "http://localhost/",
+    "testURL": "http://localhost/",
     "transform": {
       "^.+\\.tsx?$": "ts-jest"
     },
