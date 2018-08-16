@@ -30,7 +30,7 @@ export async function addCommand(
     const key = await db.transaction(
         "rw",
         db.commands,
-        () => db.commands.add(value),
+        async () => await db.commands.add(value),
     );
 
     const result: IStoredCommand = {

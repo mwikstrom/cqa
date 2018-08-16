@@ -54,9 +54,25 @@ describe("Datastore", () => {
         await expect(db.addCommand({ target: "x", type: "with-id", id: "abc123" })).rejects.toThrow();
     });
 
-    // TODO: test get command by id
+    it("cannot get command by non-existing key", async () => {
+        expect(await db.getCommandByKey(123)).toBeNull();
+    });
 
-    // TODO: test get command by key
+    it("cannot get command by non-existing id", async () => {
+        expect(await db.getCommandById("abc")).toBeNull();
+    });
+
+    it("can get stored command by id", async () => {
+        const added = await db.addCommand({ target: "a", type: "b" });
+        const fetched = await db.getCommandById(added.id);
+        expect(fetched).toEqual(added);
+    });
+
+    it("can get stored command by key", async () => {
+        const added = await db.addCommand({ target: "a", type: "b" });
+        const fetched = await db.getCommandByKey(added.key);
+        expect(fetched).toEqual(added);
+    });
 
     it("can store command with timestamp", async () => {
         const result = await db.addCommand({ target: "d", type: "with-timestamp", timestamp: 123 });

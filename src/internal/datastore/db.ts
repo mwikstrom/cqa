@@ -7,7 +7,7 @@ export class DB extends Dexie {
         super(name);
 
         this.version(1).stores({
-            commands: "++, &id",
+            commands: "++key, &id",
         });
     }
 }

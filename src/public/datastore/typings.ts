@@ -7,10 +7,22 @@ export interface IDatastore {
         input: ICommandInput,
     ): Promise<IStoredCommand>;
 
+    close(): void;
+
+    getCommandById(
+        id: string,
+    ): Promise<IStoredCommand | null>;
+
+    getCommandByKey(
+        key: number,
+    ): Promise<IStoredCommand | null>;
+
     // TODO: Add and implement getPendingCommands(options?)
     // options are { maxTargets?: PositiveInteger, skipTargets?: target => boolean }
 
-    close(): void;
+    // TODO: Add support for purging commands
+
+    // TODO: Add support for marking command as accepted and rejected
 }
 
 type Clean<T> = Pick<T, keyof T>;
