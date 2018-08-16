@@ -5,8 +5,7 @@ export const JsonValueType = new t.Type<JsonValue, any, any>(
     "json value",
     is,
     validate,
-    // istanbul ignore next line
-    value => value,
+    t.identity,
 );
 
 const JsonObjectType = t.dictionary(t.string, JsonValueType);
