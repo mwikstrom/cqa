@@ -1,4 +1,5 @@
-import * as api from ".";
+import * as importedApi from ".";
+const api = importedApi as any;
 
 describe("API", () => {
     const expectedFunctions = [
@@ -6,7 +7,7 @@ describe("API", () => {
         "openDatastore",
     ];
 
-    const exportedObjects = {
+    const exportedObjects: any = {
     };
 
     const exportedNames = new Set(Object.keys(api));

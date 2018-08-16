@@ -4,7 +4,7 @@
 import { isJsonValue } from "./is";
 
 describe("isJsonValue", () => {
-    const legal = {
+    const legal: any = {
         "boolean": true,
         "null": null,
         "integer": 123,
@@ -16,7 +16,7 @@ describe("isJsonValue", () => {
         "nested": [ { "": [ null ] } ],
     };
 
-    const illegal = {
+    const illegal: any = {
         "symbol": Symbol("illegal"),
         "date": new Date(),
         "regex": /illegal/,
