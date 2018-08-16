@@ -1,14 +1,23 @@
 import * as t from "io-ts";
 import { IStoredCommand } from "../../public/datastore/typings";
+import { assert } from "../assert";
+import { DEBUG } from "../env";
 import { verify } from "../verify";
-import { DB, ICommandTableValue } from "./db";
+import { Context } from "./context";
+import { ICommandTableValue } from "./db";
 
-// TODO: ctx instead of db
 export function getCommandByKey(
-    db: DB,
+    context: Context,
     key: number,
 ): Promise<IStoredCommand | null> {
-    // TODO: Debug assert ctx/db
+    // istanbul ignore else
+    if (DEBUG) {
+        assert(context instanceof Context);
+    }
+
+    const {
+        db,
+    } = context;
 
     // TODO: Check key against rtt and return null on bad input instead of verify
     verify("command key", key, t.number);
@@ -22,10 +31,17 @@ export function getCommandByKey(
 
 // TODO: replace with resolveCommandId
 export function getCommandById(
-    db: DB,
+    context: Context,
     id: string,
 ): Promise<IStoredCommand | null> {
-    // TODO: Debug assert ctx/db
+    // istanbul ignore else
+    if (DEBUG) {
+        assert(context instanceof Context);
+    }
+
+    const {
+        db,
+    } = context;
 
     // TODO: Check id against rtt and return null on bad input instead of verify
     verify("command id", id, t.string);

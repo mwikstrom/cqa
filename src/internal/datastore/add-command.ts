@@ -4,17 +4,21 @@ import { DEBUG } from "../env";
 import { createIdentifier } from "../id";
 import { verify } from "../verify";
 import { CommandInputType } from "./command-input";
-import { DB, ICommandTableValue } from "./db";
+import { Context } from "./context";
+import { ICommandTableValue } from "./db";
 
-// TODO: ctx instead of db
 export async function addCommand(
-    db: DB,
+    context: Context,
     input: ICommandInput,
 ): Promise<IStoredCommand> {
     // istanbul ignore else
     if (DEBUG) {
-        assert(db instanceof DB);
+        assert(context instanceof Context);
     }
+
+    const {
+        db,
+    } = context;
 
     verify("command input", input, CommandInputType);
 
