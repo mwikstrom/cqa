@@ -1,11 +1,12 @@
 import { ICommandInput, IStoredCommand } from "../../public/datastore/typings";
 import { assert } from "../assert";
+import { PositiveIntegerType } from "../common-runtime-types";
 import { DEBUG } from "../env";
 import { createIdentifier } from "../id";
 import { verify } from "../verify";
-import { CommandInputType } from "./command-input";
 import { Context } from "./context";
 import { ICommandTableValue } from "./db";
+import { CommandInputType, StoredCommandType } from "./runtime-types";
 
 export async function addCommand(
     context: Context,
@@ -49,8 +50,7 @@ export async function addCommand(
 
     // istanbul ignore else
     if (DEBUG) {
-        // TODO: Use key rtt instead
-        assert(key > 0);
+        assert(PositiveIntegerType.is(key));
     }
 
     const result: IStoredCommand = {
@@ -62,7 +62,10 @@ export async function addCommand(
         type,
     };
 
-    // TODO: debug assert pending stored command
+    // istanbul ignore else
+    if (DEBUG) {
+        assert(StoredCommandType.is(result));
+    }
 
     return result;
 }
