@@ -1,4 +1,4 @@
-import * as t from "io-ts";
+import { CleanTypeOf } from "../../internal/common-runtime-types";
 import { CommandInputType, StoredCommandType } from "../../internal/datastore/runtime-types";
 
 export interface IDatastore {
@@ -25,7 +25,6 @@ export interface IDatastore {
     // TODO: Add support for marking command as accepted and rejected
 }
 
-type Clean<T> = Pick<T, keyof T>;
-export type ICommandInput = Clean<t.TypeOf<typeof CommandInputType>>;
+export type ICommandInput = CleanTypeOf<typeof CommandInputType>;
 
-export type IStoredCommand = Clean<t.TypeOf<typeof StoredCommandType>>;
+export type IStoredCommand = CleanTypeOf<typeof StoredCommandType>;

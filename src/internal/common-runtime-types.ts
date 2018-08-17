@@ -1,5 +1,8 @@
 import * as t from "io-ts";
 
+type Clean<T> = Pick<T, keyof T>;
+export type CleanTypeOf<T extends t.Type<any>> = Clean<t.TypeOf<T>>;
+
 export const PositiveIntegerType = t.refinement(
     t.Integer,
     value => value > 0,
