@@ -1,4 +1,6 @@
 import Dexie from "dexie";
+import { CleanTypeOf } from "../common-runtime-types";
+import { CommandTableValueType } from "./runtime-types";
 
 export class DB extends Dexie {
     public commands!: Dexie.Table<ICommandTableValue, number>;
@@ -12,10 +14,4 @@ export class DB extends Dexie {
     }
 }
 
-export interface ICommandTableValue {
-    id: string;
-    payload: any;
-    target: string;
-    timestamp: number;
-    type: string;
-}
+export type ICommandTableValue = CleanTypeOf<typeof CommandTableValueType>;

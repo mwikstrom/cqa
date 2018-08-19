@@ -1,10 +1,11 @@
 import * as t from "io-ts";
 import { IStoredCommand } from "../../public/datastore/typings";
 import { assert } from "../assert";
+import { PositiveIntegerType } from "../common-runtime-types";
 import { DEBUG } from "../env";
-import { verify } from "../verify";
 import { Context } from "./context";
 import { ICommandTableValue } from "./db";
+import { CommandTableValueType, StoredCommandType } from "./runtime-types";
 
 export function getCommandByKey(
     context: Context,
@@ -19,8 +20,9 @@ export function getCommandByKey(
         db,
     } = context;
 
-    // TODO: Check key against rtt and return null on bad input instead of verify
-    verify("command key", key, t.number);
+    if (!PositiveIntegerType.is(key)) {
+        return Promise.resolve(null);
+    }
 
     return db.transaction(
         "r",
@@ -29,7 +31,6 @@ export function getCommandByKey(
     );
 }
 
-// TODO: replace with resolveCommandId
 export function getCommandById(
     context: Context,
     id: string,
@@ -43,8 +44,9 @@ export function getCommandById(
         db,
     } = context;
 
-    // TODO: Check id against rtt and return null on bad input instead of verify
-    verify("command id", id, t.string);
+    if (!t.string.is(id)) {
+        return Promise.resolve(null);
+    }
 
     return db.transaction(
         "r",
@@ -65,30 +67,40 @@ function makeStoredCommand(
     key: number,
     value: ICommandTableValue | undefined,
 ): IStoredCommand | null {
-    // TODO: Debug assert command table value or undefined
+    // istanbul ignore else: debug assertion
+    if (DEBUG) {
+        assert(value === undefined || CommandTableValueType.is(value));
+    }
 
-    if (!value) {
+    if (value === undefined) {
         return null;
     }
 
     const {
+        commit,
         id,
         payload,
+        status,
         target,
         timestamp,
         type,
     } = value;
 
     const result: IStoredCommand = {
+        commit,
         id,
         key,
         payload,
+        status,
         target,
         timestamp,
         type,
     };
 
-    // TODO: Debug assert stored command
+    // istanbul ignore else: debug assertion
+    if (DEBUG) {
+        assert(StoredCommandType.is(result));
+    }
 
     return result;
 }

@@ -6,7 +6,7 @@ import { createIdentifier } from "../id";
 import { verify } from "../verify";
 import { Context } from "./context";
 import { ICommandTableValue } from "./db";
-import { CommandInputType, StoredCommandType } from "./runtime-types";
+import { CommandInputType, CommandTableValueType, StoredCommandType } from "./runtime-types";
 
 export async function addCommand(
     context: Context,
@@ -31,15 +31,21 @@ export async function addCommand(
         type,
     } = input;
 
+    const status = "pending";
+
     const value: ICommandTableValue = {
         id,
         payload,
+        status,
         target,
         timestamp,
         type,
     };
 
-    // TODO: debug assert pending command table value
+    // istanbul ignore else: debug assertion
+    if (DEBUG) {
+        assert(CommandTableValueType.is(value));
+    }
 
     // TODO: Store encrypted data instead
     const key = await db.transaction(
@@ -57,6 +63,7 @@ export async function addCommand(
         id,
         key,
         payload,
+        status,
         target,
         timestamp,
         type,
