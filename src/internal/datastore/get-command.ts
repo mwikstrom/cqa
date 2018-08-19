@@ -10,7 +10,7 @@ export function getCommandByKey(
     context: Context,
     key: number,
 ): Promise<IStoredCommand | null> {
-    // istanbul ignore else
+    // istanbul ignore else: debug assertion
     if (DEBUG) {
         assert(context instanceof Context);
     }
@@ -34,7 +34,7 @@ export function getCommandById(
     context: Context,
     id: string,
 ): Promise<IStoredCommand | null> {
-    // istanbul ignore else
+    // istanbul ignore else: debug assertion
     if (DEBUG) {
         assert(context instanceof Context);
     }

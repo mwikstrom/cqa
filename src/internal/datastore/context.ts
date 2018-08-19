@@ -6,7 +6,7 @@ export class Context {
     constructor(
         readonly db: DB,
     ) {
-        // istanbul ignore else
+        // istanbul ignore else: debug assertion
         if (DEBUG) {
             assert(db instanceof DB);
         }

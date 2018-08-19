@@ -12,7 +12,7 @@ export async function addCommand(
     context: Context,
     input: ICommandInput,
 ): Promise<IStoredCommand> {
-    // istanbul ignore else
+    // istanbul ignore else: debug assertion
     if (DEBUG) {
         assert(context instanceof Context);
     }
@@ -48,7 +48,7 @@ export async function addCommand(
         async () => await db.commands.add(value),
     );
 
-    // istanbul ignore else
+    // istanbul ignore else: debug assertion
     if (DEBUG) {
         assert(PositiveIntegerType.is(key));
     }
@@ -62,7 +62,7 @@ export async function addCommand(
         type,
     };
 
-    // istanbul ignore else
+    // istanbul ignore else: debug assertion
     if (DEBUG) {
         assert(StoredCommandType.is(result));
     }
