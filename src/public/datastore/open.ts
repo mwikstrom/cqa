@@ -1,3 +1,4 @@
+import { bindFirst, bindThis } from "../../internal/bind";
 import { addCommand } from "../../internal/datastore/add-command";
 import { Context } from "../../internal/datastore/context";
 import { DB } from "../../internal/datastore/db";
@@ -13,13 +14,12 @@ export async function openDatastore(
 
     const context = new Context(db);
 
-    // TODO: Declare and use expose helper function
     const api: IDatastore = {
-        addCommand: addCommand.bind(undefined, context),
-        close: db.close.bind(db),
-        getCommandById: getCommandById.bind(undefined, context),
-        getCommandByKey: getCommandByKey.bind(undefined, context),
-        getPendingCommands: getPendingCommands.bind(undefined, context),
+        addCommand: bindFirst(addCommand, context),
+        close: bindThis(db, db.close),
+        getCommandById: bindFirst(getCommandById, context),
+        getCommandByKey: bindFirst(getCommandByKey, context),
+        getPendingCommands: bindFirst(getPendingCommands, context),
     };
 
     return api;
