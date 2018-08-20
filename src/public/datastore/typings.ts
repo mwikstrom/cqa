@@ -17,8 +17,9 @@ export interface IDatastore {
         key: number,
     ): Promise<IStoredCommand | null>;
 
-    // TODO: Add and implement getPendingCommands(options?)
-    // options are { maxTargets?: PositiveInteger, skipTargets?: target => boolean }
+    getPendingCommands(
+        options?: IPendingCommandOptions,
+    ): Promise<IStoredCommand[]>;
 
     // TODO: Add support for purging commands
 

@@ -1,7 +1,7 @@
 import { addCommand } from "../../internal/datastore/add-command";
 import { Context } from "../../internal/datastore/context";
 import { DB } from "../../internal/datastore/db";
-import { getCommandById, getCommandByKey } from "../../internal/datastore/get-command";
+import { getCommandById, getCommandByKey, getPendingCommands } from "../../internal/datastore/get-command";
 import { IDatastore } from "./typings";
 
 export async function openDatastore(
@@ -18,6 +18,7 @@ export async function openDatastore(
         close: db.close.bind(db),
         getCommandById: getCommandById.bind(undefined, context),
         getCommandByKey: getCommandByKey.bind(undefined, context),
+        getPendingCommands: getPendingCommands.bind(undefined, context),
     };
 
     return api;

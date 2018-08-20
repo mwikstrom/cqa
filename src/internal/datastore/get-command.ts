@@ -1,7 +1,6 @@
-import * as t from "io-ts";
 import { IPendingCommandOptions, IStoredCommand } from "../../public/datastore/typings";
 import { assert } from "../assert";
-import { PositiveIntegerType } from "../common-runtime-types";
+import { NonEmptyString, PositiveIntegerType } from "../common-runtime-types";
 import { DEBUG } from "../env";
 import { verify } from "../verify";
 import { Context } from "./context";
@@ -45,7 +44,7 @@ export function getCommandById(
         db,
     } = context;
 
-    if (!t.string.is(id)) {
+    if (!NonEmptyString.is(id)) {
         return Promise.resolve(null);
     }
 
@@ -93,20 +92,19 @@ export function getPendingCommands(
             await db.commands.where("status").equals("pending").until(
                 () => map.size >= maxTargets,
             ).each(
-                (value, { key }) => {
-                    const castedKey = key as number;
-
+                (value, { primaryKey }) => {
                     // istanbul ignore else: debug assertion
                     if (DEBUG) {
-                        assert(PositiveIntegerType.is(key));
+                        assert(PositiveIntegerType.is(primaryKey));
                         assert(CommandTableValueType.is(value));
+                        assert(value.status === "pending");
 
                         const prev = map.get(value.target);
-                        assert(!prev || prev.key < castedKey);
+                        assert(!prev || prev.key < primaryKey);
                     }
 
                     if (skipTarget(value.target) !== true && !map.has(value.target)) {
-                        const command = makeStoredCommand(castedKey, value);
+                        const command = makeStoredCommand(primaryKey, value);
 
                         // istanbul ignore else: debug assertion
                         if (DEBUG) {

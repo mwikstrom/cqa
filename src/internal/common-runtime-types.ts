@@ -14,3 +14,9 @@ export const SafeIntegerType = t.refinement(
     value => value >= Number.MIN_SAFE_INTEGER && value <= Number.MAX_SAFE_INTEGER,
     "safe integer",
 );
+
+export const NonEmptyString = t.refinement(
+    t.string,
+    value => value.length > 0,
+    "non-empty string",
+);

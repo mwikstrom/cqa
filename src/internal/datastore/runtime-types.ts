@@ -1,5 +1,5 @@
 import * as t from "io-ts";
-import { PositiveIntegerType, SafeIntegerType } from "../common-runtime-types";
+import { NonEmptyString, PositiveIntegerType, SafeIntegerType } from "../common-runtime-types";
 import { JsonValueType } from "../json-value-type";
 
 export const CommandInputType = t.intersection([
@@ -8,7 +8,7 @@ export const CommandInputType = t.intersection([
         type: t.string,
     }),
     t.partial({
-        id: t.string,
+        id: NonEmptyString,
         payload: JsonValueType,
         timestamp: t.Integer,
     }),
@@ -25,23 +25,35 @@ export const CommandStatusType = t.keyof(CommandStatusCodes);
 export const CommandTableValueType = t.refinement(
     t.intersection([
         t.interface({
-            id: t.string,
+            id: NonEmptyString,
             status: CommandStatusType,
             target: t.string,
             timestamp: SafeIntegerType,
             type: t.string,
         }),
         t.partial({
-            commit: t.string,
+            commit: NonEmptyString,
             payload: JsonValueType,
         }),
     ]),
-    cmd => cmd.status === "pending"
-        ? t.undefined.is(cmd.commit)
-        : cmd.status === "accepted"
-        ? t.string.is(cmd.commit)
-        : true,
+    cmd => isValidStatusAndCommit(cmd.status, cmd.commit),
 );
+
+export function isValidStatusAndCommit(
+    status: string,
+    commit: string | undefined,
+) {
+    switch (status) {
+        case "pending":
+            return commit === undefined;
+
+        case "accepted":
+            return NonEmptyString.is(commit);
+
+        default:
+            return status === "rejected" && (commit === undefined || NonEmptyString.is(commit));
+    }
+}
 
 export const StoredCommandType = t.intersection([
         t.interface({
