@@ -38,8 +38,8 @@ describe("isValidStatusAndCommit", () => {
             expect(isValidStatusAndCommit("rejected", "")).toBe(false);
         });
 
-        it("is valid for non-empty commit", () => {
-            expect(isValidStatusAndCommit("rejected", "abc123")).toBe(true);
+        it("is not valid for non-empty commit", () => {
+            expect(isValidStatusAndCommit("rejected", "abc123")).toBe(false);
         });
     });
 
