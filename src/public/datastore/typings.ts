@@ -28,3 +28,10 @@ export interface IDatastore {
 export type ICommandInput = CleanTypeOf<typeof CommandInputType>;
 
 export type IStoredCommand = CleanTypeOf<typeof StoredCommandType>;
+
+export interface IPendingCommandOptions {
+    maxTargets?: number;
+    skipTarget?: SkipTargetPredicate;
+}
+
+export type SkipTargetPredicate = (target: string) => boolean;

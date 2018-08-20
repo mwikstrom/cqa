@@ -49,3 +49,8 @@ export const StoredCommandType = t.intersection([
         }),
         CommandTableValueType,
 ]);
+
+export const PendingCommandOptionsType = t.partial({
+    maxTargets: PositiveIntegerType,
+    skipTargets: t.Function,
+});
