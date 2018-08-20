@@ -2,12 +2,13 @@ import { CleanTypeOf } from "../../internal/common-runtime-types";
 import { CommandInputType, StoredCommandType } from "../../internal/datastore/runtime-types";
 
 export interface IDatastore {
-    // TODO: Add option to specify crypto
     addCommand(
         input: ICommandInput,
     ): Promise<IStoredCommand>;
 
     close(): void;
+
+    // TODO: Add getActiveCommands({ after });
 
     getCommandById(
         id: string,
@@ -21,9 +22,9 @@ export interface IDatastore {
         options?: IPendingCommandOptions,
     ): Promise<IStoredCommand[]>;
 
-    // TODO: Add support for purging commands
+    // TODO: Add purgeCommands({ until })
 
-    // TODO: Add support for marking command as accepted and rejected
+    // TODO: Add setCommandResult({ status, commit })
 }
 
 export type ICommandInput = CleanTypeOf<typeof CommandInputType>;

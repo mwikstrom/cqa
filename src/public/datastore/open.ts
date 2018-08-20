@@ -4,6 +4,7 @@ import { DB } from "../../internal/datastore/db";
 import { getCommandById, getCommandByKey, getPendingCommands } from "../../internal/datastore/get-command";
 import { IDatastore } from "./typings";
 
+// TODO: Add option to specify crypto
 export async function openDatastore(
     name: string,
 ): Promise<IDatastore> {
