@@ -22,12 +22,7 @@ export function getCommand(
         db.commands,
         async () => {
             const key = await resolveCommandKey(context, keyOrId);
-
-            if (key > 0) {
-                return makeStoredCommand(key, await db.commands.get(key));
-            } else {
-                return null;
-            }
+            return makeStoredCommand(key, await db.commands.get(key));
         },
     );
 }

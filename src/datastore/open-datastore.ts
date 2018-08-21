@@ -7,6 +7,8 @@ import { DatastoreDB } from "./datastore-db";
 import { getActiveCommands } from "./get-active-commands";
 import { getCommand } from "./get-command";
 import { getPendingCommands } from "./get-pending-commands";
+import { setCommandAccepted } from "./set-command-accepted";
+import { setCommandRejected } from "./set-command-rejected";
 
 // TODO: Add option to specify crypto
 /** @public */
@@ -24,6 +26,8 @@ export async function openDatastore(
         getActiveCommands: bindFirst(getActiveCommands, context),
         getCommand: bindFirst(getCommand, context),
         getPendingCommands: bindFirst(getPendingCommands, context),
+        setCommandAccepted: bindFirst(setCommandAccepted, context),
+        setCommandRejected: bindFirst(setCommandRejected, context),
     };
 
     return api;

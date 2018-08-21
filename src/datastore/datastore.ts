@@ -15,7 +15,9 @@ export interface IDatastore {
         options?: IActiveCommandOptions,
     ): Promise<IStoredCommand[]>;
 
-    getCommand(keyOrId: string | number): Promise<IStoredCommand | null>;
+    getCommand(
+        keyOrId: number | string,
+    ): Promise<IStoredCommand | null>;
 
     getPendingCommands(
         options?: IPendingCommandOptions,
@@ -23,5 +25,12 @@ export interface IDatastore {
 
     // TODO: Add purgeCommands({ until })
 
-    // TODO: Add setCommandResult({ status, commit })
+    setCommandAccepted(
+        keyOrId: number | string,
+        commit: string,
+    ): Promise<boolean>;
+
+    setCommandRejected(
+        keyOrId: number | string,
+    ): Promise<boolean>;
 }
