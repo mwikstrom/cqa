@@ -1,4 +1,4 @@
-import { assert } from "../src/assert";
+import { assert } from "./assert";
 
 describe("assert", () => {
     it("does not throw when condition is true", () => {

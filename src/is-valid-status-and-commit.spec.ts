@@ -1,4 +1,4 @@
-import { isValidStatusAndCommit } from "../src/is-valid-status-and-commit";
+import { isValidStatusAndCommit } from "./is-valid-status-and-commit";
 
 describe("isValidStatusAndCommit", () => {
     describe("pending", () => {

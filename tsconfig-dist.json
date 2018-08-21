@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig-base.json",
+  "compilerOptions": {
+    "declaration": true,
+    "sourceMap": true,
+    "outDir": "./dist",
+    "inlineSources": true,
+    "stripInternal": true,
+  },
+  "files": [
+    "./src/index.ts"
+  ]
+}

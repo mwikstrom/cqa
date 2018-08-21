@@ -1,4 +1,4 @@
-import { createIdentifier } from "../src/create-identifier";
+import { createIdentifier } from "./create-identifier";
 
 describe("createIdentifier", () => {
     it("creates random 16-byte identifiers using base-64 url encoding", () => {

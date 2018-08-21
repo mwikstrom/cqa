@@ -1,8 +1,8 @@
 import { Dexie } from "dexie";
-import "./helpers/setup-fake-indexeddb";
+import "./test-helpers/setup-fake-indexeddb";
 
-import { IDatastore } from "../src/datastore";
-import { openDatastore } from "../src/open-datastore";
+import { IDatastore } from "./datastore";
+import { openDatastore } from "./open-datastore";
 
 describe("Datastore", () => {
     const dbName = "test-datastore-" + Math.floor(Math.random() * 9999999);

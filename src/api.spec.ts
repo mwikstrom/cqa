@@ -1,4 +1,4 @@
-import * as index from "../src/index";
+import * as index from ".";
 const api = index as any;
 
 describe("API", () => {

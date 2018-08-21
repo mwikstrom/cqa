@@ -1,5 +1,5 @@
 import * as t from "io-ts";
-import { verify } from "../src/verify";
+import { verify } from "./verify";
 
 describe("verify", () => {
     it("throws an error with the expected details", () => {
