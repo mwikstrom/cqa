@@ -52,7 +52,7 @@
     "transform": {
       "^.+\\.tsx?$": "ts-jest"
     },
-    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+    "testRegex": "/test/.*-test\\.ts$",
     "moduleFileExtensions": [
       "ts",
       "tsx",
@@ -62,10 +62,7 @@
       "node"
     ],
     "collectCoverageFrom": [
-      "**/*.{ts,tsx}",
-      "!**/dist/**",
-      "!**/node_modules/**",
-      "!**/*.{test,spec,d}.{ts,tsx}"
+      "src/*.{ts,tsx}"
     ]
   }
 }
