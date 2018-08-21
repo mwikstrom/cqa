@@ -8,6 +8,7 @@ describe("API", () => {
     ];
 
     const expectedDeclarations = [
+        "IActiveCommandOptions",
         "ICommandInput",
         "IDatastore",
         "IJsonArray",

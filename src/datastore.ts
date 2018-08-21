@@ -1,3 +1,4 @@
+import { IActiveCommandOptions } from "./active-command-options";
 import { ICommandInput } from "./command-input";
 import { IPendingCommandOptions } from "./pending-command-options";
 import { IStoredCommand } from "./stored-command";
@@ -10,7 +11,9 @@ export interface IDatastore {
 
     close(): void;
 
-    // TODO: Add getActiveCommands({ after });
+    getActiveCommands(
+        options?: IActiveCommandOptions,
+    ): Promise<IStoredCommand[]>;
 
     getCommandById(
         id: string,

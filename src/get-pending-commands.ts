@@ -37,30 +37,28 @@ export function getPendingCommands(
 
             await db.commands.where("status").equals("pending").until(
                 () => map.size >= maxTargets,
-            ).each(
-                (value, { primaryKey }) => {
+            ).each((value, { primaryKey }) => {
+                // istanbul ignore else: debug assertion
+                if (DEBUG) {
+                    assert(PositiveInteger.is(primaryKey));
+                    assert(CommandTableValueType.is(value));
+                    assert(value.status === "pending");
+
+                    const prev = map.get(value.target);
+                    assert(!prev || prev.key < primaryKey);
+                }
+
+                if (skipTarget(value.target) !== true && !map.has(value.target)) {
+                    const command = makeStoredCommand(primaryKey, value);
+
                     // istanbul ignore else: debug assertion
                     if (DEBUG) {
-                        assert(PositiveInteger.is(primaryKey));
-                        assert(CommandTableValueType.is(value));
-                        assert(value.status === "pending");
-
-                        const prev = map.get(value.target);
-                        assert(!prev || prev.key < primaryKey);
+                        assert(command !== null);
                     }
 
-                    if (skipTarget(value.target) !== true && !map.has(value.target)) {
-                        const command = makeStoredCommand(primaryKey, value);
-
-                        // istanbul ignore else: debug assertion
-                        if (DEBUG) {
-                            assert(command !== null);
-                        }
-
-                        map.set(value.target, command!);
-                    }
-                },
-            );
+                    map.set(value.target, command!);
+                }
+            });
 
             return Array.from(map.values());
         },

@@ -9,6 +9,7 @@
 import "./init";
 
 // Import public API
+export { IActiveCommandOptions } from "./active-command-options";
 export { ICommandInput } from "./command-input";
 export { IDatastore } from "./datastore";
 export { IJsonArray, IJsonObject, isJsonValue, JsonValue } from "./json-value";
