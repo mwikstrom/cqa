@@ -28,7 +28,6 @@ export async function addCommand(
         id = createIdentifier(),
         payload,
         target,
-        timestamp = new Date().getTime(),
         type,
     } = input;
 
@@ -39,7 +38,6 @@ export async function addCommand(
         payload,
         status,
         target,
-        timestamp,
         type,
     };
 
@@ -66,7 +64,6 @@ export async function addCommand(
         payload,
         status,
         target,
-        timestamp,
         type,
     };
 

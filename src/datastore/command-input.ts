@@ -15,6 +15,5 @@ export const CommandInputType = t.intersection([
     t.partial({
         id: NonEmptyString,
         payload: JsonValueType,
-        timestamp: t.Integer,
     }),
 ]);

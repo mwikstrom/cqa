@@ -1,7 +1,6 @@
 import * as t from "io-ts";
 import { JsonValueType } from "../common-types/json-value";
 import { NonEmptyString } from "../common-types/non-empty-string";
-import { SafeInteger } from "../common-types/safe-integer";
 import { CleanTypeOf } from "../utils/clean-type-of";
 import { CommandStatusType } from "./command-status";
 import { isValidStatusAndCommit } from "./is-valid-status-and-commit";
@@ -16,7 +15,6 @@ export const CommandTableValueType = t.refinement(
             id: NonEmptyString,
             status: CommandStatusType,
             target: t.string,
-            timestamp: SafeInteger,
             type: t.string,
         }),
         t.partial({

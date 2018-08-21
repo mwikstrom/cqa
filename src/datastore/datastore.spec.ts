@@ -22,7 +22,6 @@ describe("Datastore", () => {
 
         expect(result.id).toMatch(/^[0-9a-zA-Z_-]{22}$/);
         expect(result.key).toBeGreaterThanOrEqual(1);
-        expect(result.timestamp).toBeLessThanOrEqual(new Date().getTime());
         expect(result.payload).toBeUndefined();
         expect(result.target).toBe("a");
         expect(result.type).toBe("minimal");
@@ -33,7 +32,6 @@ describe("Datastore", () => {
 
         expect(result.id).toMatch(/^[0-9a-zA-Z_-]{22}$/);
         expect(result.key).toBeGreaterThanOrEqual(1);
-        expect(result.timestamp).toBeLessThanOrEqual(new Date().getTime());
         expect(result.payload).toBeNull();
         expect(result.target).toBe("b");
         expect(result.type).toBe("with-payload");
@@ -44,7 +42,6 @@ describe("Datastore", () => {
 
         expect(result.id).toBe("abc123");
         expect(result.key).toBeGreaterThanOrEqual(1);
-        expect(result.timestamp).toBeLessThanOrEqual(new Date().getTime());
         expect(result.payload).toBeUndefined();
         expect(result.target).toBe("x");
         expect(result.type).toBe("with-id");
@@ -81,17 +78,6 @@ describe("Datastore", () => {
         const added = await db.addCommand({ target: "a", type: "b" });
         const fetched = await db.getCommand(added.key);
         expect(fetched).toEqual(added);
-    });
-
-    it("can store command with timestamp", async () => {
-        const result = await db.addCommand({ target: "d", type: "with-timestamp", timestamp: 123 });
-
-        expect(result.id).toMatch(/^[0-9a-zA-Z_-]{22}$/);
-        expect(result.key).toBeGreaterThanOrEqual(1);
-        expect(result.timestamp).toBe(123);
-        expect(result.payload).toBeUndefined();
-        expect(result.target).toBe("d");
-        expect(result.type).toBe("with-timestamp");
     });
 
     it("cannot store payload with unsupported value", async () => {

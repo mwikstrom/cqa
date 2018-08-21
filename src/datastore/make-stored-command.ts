@@ -23,7 +23,6 @@ export function makeStoredCommand(
         payload,
         status,
         target,
-        timestamp,
         type,
     } = value;
 
@@ -34,7 +33,6 @@ export function makeStoredCommand(
         payload,
         status,
         target,
-        timestamp,
         type,
     };
 
