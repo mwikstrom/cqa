@@ -5,8 +5,13 @@
  */
 
 // Run library initialization code first
+/** @internal */
 import "./init";
 
-// Export public API
-export { isJsonValue } from "./json-value";
+// Import public API
+export { ICommandInput } from "./command-input";
+export { IDatastore } from "./datastore";
+export { IJsonArray, IJsonObject, isJsonValue, JsonValue } from "./json-value";
 export { openDatastore } from "./open-datastore";
+export { IPendingCommandOptions, SkipTargetPredicate } from "./pending-command-options";
+export { IStoredCommand } from "./stored-command";
