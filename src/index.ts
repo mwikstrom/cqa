@@ -12,7 +12,7 @@ import "./utils/init";
 export { IActiveCommandOptions } from "./datastore/active-command-options";
 export { ICommandInput } from "./datastore/command-input";
 export { IDatastore } from "./datastore/datastore";
-export { IJsonArray, IJsonObject, isJsonValue, JsonValue } from "./common-types/json-value";
+export { IJsonArray, IJsonObject, isJsonValue, JsonValue } from "./json/json-value";
 export { openDatastore } from "./datastore/open-datastore";
 export { IPendingCommandOptions, SkipTargetPredicate } from "./datastore/pending-command-options";
 export { IStoredCommand } from "./datastore/stored-command";

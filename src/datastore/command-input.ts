@@ -1,6 +1,6 @@
 import * as t from "io-ts";
-import { JsonValueType } from "../common-types/json-value";
 import { NonEmptyString } from "../common-types/non-empty-string";
+import { JsonValueType } from "../json/json-value";
 import { CleanTypeOf } from "../utils/clean-type-of";
 
 /** @public */
