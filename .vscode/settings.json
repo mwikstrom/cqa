@@ -3,6 +3,7 @@
         "**/.git": true,
         "coverage": true,
         "dist": true,
+        "local": true,
         "node_modules": true,
     },
     "todohighlight.keywords": [
