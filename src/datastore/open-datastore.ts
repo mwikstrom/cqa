@@ -1,6 +1,6 @@
+import { bindFirst } from "../utils/bind-first";
+import { bindThis } from "../utils/bind-this";
 import { addCommand } from "./add-command";
-import { bindFirst } from "./bind-first";
-import { bindThis } from "./bind-this";
 import { IDatastore } from "./datastore";
 import { DatastoreContext } from "./datastore-context";
 import { DatastoreDB } from "./datastore-db";

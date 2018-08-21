@@ -1,4 +1,4 @@
-import { NonEmptyString } from "./non-empty-string";
+import { NonEmptyString } from "../common-types/non-empty-string";
 
 /** @internal */
 export function isValidStatusAndCommit(

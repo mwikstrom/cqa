@@ -1,10 +1,10 @@
 import * as t from "io-ts";
-import { CleanTypeOf } from "./clean-type-of";
+import { JsonValueType } from "../common-types/json-value";
+import { NonEmptyString } from "../common-types/non-empty-string";
+import { SafeInteger } from "../common-types/safe-integer";
+import { CleanTypeOf } from "../utils/clean-type-of";
 import { CommandStatusType } from "./command-status";
 import { isValidStatusAndCommit } from "./is-valid-status-and-commit";
-import { JsonValueType } from "./json-value";
-import { NonEmptyString } from "./non-empty-string";
-import { SafeInteger } from "./safe-integer";
 
 /** @internal */
 export type ICommandTableValue = CleanTypeOf<typeof CommandTableValueType>;

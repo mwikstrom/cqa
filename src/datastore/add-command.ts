@@ -1,12 +1,12 @@
-import { assert } from "./assert";
+import { PositiveInteger } from "../common-types/positive-integer";
+import { assert } from "../utils/assert";
+import { createIdentifier } from "../utils/create-identifier";
+import { DEBUG } from "../utils/env";
+import { verify } from "../utils/verify";
 import { CommandInputType, ICommandInput } from "./command-input";
 import { CommandTableValueType, ICommandTableValue } from "./command-table-value";
-import { createIdentifier } from "./create-identifier";
 import { DatastoreContext } from "./datastore-context";
-import { DEBUG } from "./env";
-import { PositiveInteger } from "./positive-integer";
 import { IStoredCommand, StoredCommandType } from "./stored-command";
-import { verify } from "./verify";
 
 /** @internal */
 export async function addCommand(

@@ -1,6 +1,6 @@
-import { assert } from "./assert";
+import { assert } from "../utils/assert";
+import { DEBUG } from "../utils/env";
 import { CommandTableValueType, ICommandTableValue } from "./command-table-value";
-import { DEBUG } from "./env";
 import { IStoredCommand, StoredCommandType } from "./stored-command";
 
 /** @internal */

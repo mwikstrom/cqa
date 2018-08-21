@@ -1,5 +1,5 @@
 import * as t from "io-ts";
-import { PositiveInteger } from "./positive-integer";
+import { PositiveInteger } from "../common-types/positive-integer";
 
 /** @public */
 export interface IPendingCommandOptions {

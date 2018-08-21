@@ -1,5 +1,5 @@
 import { Dexie } from "dexie";
-import "./test-helpers/setup-fake-indexeddb";
+import "../test-helpers/setup-fake-indexeddb";
 
 import { IDatastore } from "./datastore";
 import { openDatastore } from "./open-datastore";

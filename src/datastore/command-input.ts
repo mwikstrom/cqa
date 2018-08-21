@@ -1,7 +1,7 @@
 import * as t from "io-ts";
-import { CleanTypeOf } from "./clean-type-of";
-import { JsonValueType } from "./json-value";
-import { NonEmptyString } from "./non-empty-string";
+import { JsonValueType } from "../common-types/json-value";
+import { NonEmptyString } from "../common-types/non-empty-string";
+import { CleanTypeOf } from "../utils/clean-type-of";
 
 /** @public */
 export type ICommandInput = CleanTypeOf<typeof CommandInputType>;

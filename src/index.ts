@@ -6,13 +6,13 @@
 
 // Run library initialization code first
 /** @internal */
-import "./init";
+import "./utils/init";
 
 // Import public API
-export { IActiveCommandOptions } from "./active-command-options";
-export { ICommandInput } from "./command-input";
-export { IDatastore } from "./datastore";
-export { IJsonArray, IJsonObject, isJsonValue, JsonValue } from "./json-value";
-export { openDatastore } from "./open-datastore";
-export { IPendingCommandOptions, SkipTargetPredicate } from "./pending-command-options";
-export { IStoredCommand } from "./stored-command";
+export { IActiveCommandOptions } from "./datastore/active-command-options";
+export { ICommandInput } from "./datastore/command-input";
+export { IDatastore } from "./datastore/datastore";
+export { IJsonArray, IJsonObject, isJsonValue, JsonValue } from "./common-types/json-value";
+export { openDatastore } from "./datastore/open-datastore";
+export { IPendingCommandOptions, SkipTargetPredicate } from "./datastore/pending-command-options";
+export { IStoredCommand } from "./datastore/stored-command";

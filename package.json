@@ -7,14 +7,14 @@
   "scripts": {
     "build": "rimraf local && tsc",
     "build:dist": "rimraf dist && tsc -p ./tsconfig-dist.json",
-    "check": "npm run build && npm run lint && jest",
+    "check": "npm run build && npm run lint && jest --coverage",
     "test": "npm run build && jest",
     "test:coverage": "jest --coverage",
     "test:watch": "jest --watch",
     "lint": "tslint src/**/*.ts",
     "lint:fix": "tslint --fix src/**/*.ts",
     "preversion": "npm run check",
-    "prepublishOnly": "npm run check",
+    "prepublishOnly": "npm run build:dist",
     "report-coverage": "minicat coverage/lcov.info | coveralls"
   },
   "repository": {
@@ -51,7 +51,7 @@
     "transform": {
       "^.+\\.tsx?$": "ts-jest"
     },
-    "testRegex": "/test/.*\\.spec\\.ts$",
+    "testRegex": "/src/.*\\.spec\\.ts$",
     "moduleFileExtensions": [
       "ts",
       "tsx",
@@ -61,7 +61,9 @@
       "node"
     ],
     "collectCoverageFrom": [
-      "src/*.{ts,tsx}"
+      "src/**/*.ts",
+      "!src/test-helpers/**",
+      "!src/**/*.spec.ts"
     ]
   }
 }

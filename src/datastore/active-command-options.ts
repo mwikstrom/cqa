@@ -1,6 +1,6 @@
 import * as t from "io-ts";
-import { CleanTypeOf } from "./clean-type-of";
-import { NonEmptyString } from "./non-empty-string";
+import { NonEmptyString } from "../common-types/non-empty-string";
+import { CleanTypeOf } from "../utils/clean-type-of";
 
 /** @public */
 export type IActiveCommandOptions = CleanTypeOf<typeof ActiveCommandOptionsType>;

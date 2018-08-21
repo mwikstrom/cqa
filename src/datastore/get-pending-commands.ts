@@ -1,12 +1,12 @@
-import { assert } from "./assert";
+import { PositiveInteger } from "../common-types/positive-integer";
+import { assert } from "../utils/assert";
+import { DEBUG } from "../utils/env";
+import { verify } from "../utils/verify";
 import { CommandTableValueType } from "./command-table-value";
 import { DatastoreContext } from "./datastore-context";
-import { DEBUG } from "./env";
 import { makeStoredCommand } from "./make-stored-command";
 import { IPendingCommandOptions, PendingCommandOptionsType } from "./pending-command-options";
-import { PositiveInteger } from "./positive-integer";
 import { IStoredCommand } from "./stored-command";
-import { verify } from "./verify";
 
 /** @internal */
 export function getPendingCommands(

@@ -1,7 +1,7 @@
 import * as t from "io-ts";
-import { CleanTypeOf } from "./clean-type-of";
+import { PositiveInteger } from "../common-types/positive-integer";
+import { CleanTypeOf } from "../utils/clean-type-of";
 import { CommandTableValueType } from "./command-table-value";
-import { PositiveInteger } from "./positive-integer";
 
 /** @public */
 export type IStoredCommand = CleanTypeOf<typeof StoredCommandType>;

@@ -1,6 +1,6 @@
-import { assert } from "./assert";
+import { assert } from "../utils/assert";
+import { DEBUG } from "../utils/env";
 import { DatastoreDB } from "./datastore-db";
-import { DEBUG } from "./env";
 
 // TODO: Add crypto/cipher
 /** @internal */
