@@ -1,5 +1,5 @@
-import * as importedApi from "../src/index";
-const api = importedApi as any;
+import * as index from "../src/index";
+const api = index as any;
 
 describe("API", () => {
     const expectedFunctions = [
