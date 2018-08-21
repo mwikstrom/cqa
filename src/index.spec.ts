@@ -5,6 +5,7 @@ describe("API", () => {
     const expectedFunctions = [
         "isJsonValue",
         "openDatastore",
+        "createJsonCrypto",
     ];
 
     const expectedDeclarations = [
@@ -17,6 +18,8 @@ describe("API", () => {
         "IPendingCommandOptions",
         "SkipTargetPredicate",
         "IStoredCommand",
+        "IJsonCrypto",
+        "ICreateJsonCryptoOptions",
     ];
 
     const exportedNames = new Set(Object.keys(api));

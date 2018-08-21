@@ -16,3 +16,6 @@ export { IJsonArray, IJsonObject, isJsonValue, JsonValue } from "./json/json-val
 export { openDatastore } from "./datastore/open-datastore";
 export { IPendingCommandOptions, SkipTargetPredicate } from "./datastore/pending-command-options";
 export { IStoredCommand } from "./datastore/stored-command";
+export { IJsonCrypto } from "./json/json-crypto";
+export { ICreateJsonCryptoOptions } from "./json/create-json-crypto-options";
+export { createJsonCrypto } from "./json/create-json-crypto";
