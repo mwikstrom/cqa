@@ -56,30 +56,30 @@ describe("Datastore", () => {
     });
 
     it("cannot get command by non-existing key", async () => {
-        expect(await db.getCommandByKey(123)).toBeNull();
+        expect(await db.getCommand(123)).toBeNull();
     });
 
     it("cannot get command by non-existing id", async () => {
-        expect(await db.getCommandById("abc")).toBeNull();
+        expect(await db.getCommand("abc")).toBeNull();
     });
 
     it("cannot get command by invalid key", async () => {
-        expect(await db.getCommandByKey(0)).toBeNull();
+        expect(await db.getCommand(0)).toBeNull();
     });
 
     it("cannot get command by invalid id", async () => {
-        expect(await db.getCommandById("")).toBeNull();
+        expect(await db.getCommand("")).toBeNull();
     });
 
     it("can get stored command by id", async () => {
         const added = await db.addCommand({ target: "a", type: "b" });
-        const fetched = await db.getCommandById(added.id);
+        const fetched = await db.getCommand(added.id);
         expect(fetched).toEqual(added);
     });
 
     it("can get stored command by key", async () => {
         const added = await db.addCommand({ target: "a", type: "b" });
-        const fetched = await db.getCommandByKey(added.key);
+        const fetched = await db.getCommand(added.key);
         expect(fetched).toEqual(added);
     });
 

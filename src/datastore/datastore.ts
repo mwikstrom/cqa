@@ -15,13 +15,7 @@ export interface IDatastore {
         options?: IActiveCommandOptions,
     ): Promise<IStoredCommand[]>;
 
-    getCommandById(
-        id: string,
-    ): Promise<IStoredCommand | null>;
-
-    getCommandByKey(
-        key: number,
-    ): Promise<IStoredCommand | null>;
+    getCommand(keyOrId: string | number): Promise<IStoredCommand | null>;
 
     getPendingCommands(
         options?: IPendingCommandOptions,
