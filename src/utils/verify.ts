@@ -3,7 +3,7 @@ import * as t from "io-ts";
 /** @internal */
 export function verify<T extends t.Type<any>>(
     what: string,
-    given: t.TypeOf<T>,
+    given: any,
     required: T,
 ): void {
     const result = required.validate(given, []);

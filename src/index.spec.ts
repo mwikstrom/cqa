@@ -12,6 +12,7 @@ describe("API", () => {
         "IActiveCommandOptions",
         "ICommandInput",
         "IDatastore",
+        "IDatastoreOptions",
         "IJsonArray",
         "IJsonObject",
         "JsonValue",

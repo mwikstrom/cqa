@@ -9,7 +9,7 @@ describe("Datastore", () => {
     let db: IDatastore;
 
     beforeEach(async () => {
-        db = await openDatastore(dbName);
+        db = await openDatastore({ name: dbName });
     });
 
     afterEach(async () => {
