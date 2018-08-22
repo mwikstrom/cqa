@@ -9,7 +9,7 @@ export class DatastoreDB extends Dexie {
         super(name);
 
         this.version(1).stores({
-            commands: "++key, &id, status",
+            commands: "++, &id, status",
         });
     }
 }

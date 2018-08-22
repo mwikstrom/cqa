@@ -5,16 +5,17 @@ import { IDatastore } from "./datastore";
 import { openDatastore } from "./open-datastore";
 
 describe("Datastore", () => {
-    const dbName = "test-datastore-" + Math.floor(Math.random() * 9999999);
     let db: IDatastore;
+    let name: string;
 
     beforeEach(async () => {
-        db = await openDatastore({ name: dbName });
+        name = `test-${Math.floor(Math.random() * 9999999)}`;
+        db = await openDatastore({ name });
     });
 
     afterEach(async () => {
         db.close();
-        await Dexie.delete(dbName);
+        await Dexie.delete(name);
     });
 
     it("can store minimal command", async () => {

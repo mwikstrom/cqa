@@ -20,7 +20,7 @@ describe("API", () => {
         "SkipTargetPredicate",
         "IStoredCommand",
         "IJsonCrypto",
-        "ICreateJsonCryptoOptions",
+        "IJsonCryptoOptions",
     ];
 
     const exportedNames = new Set(Object.keys(api));

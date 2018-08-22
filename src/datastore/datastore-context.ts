@@ -13,7 +13,7 @@ export class DatastoreContext {
         // istanbul ignore else: debug assertion
         if (DEBUG) {
             assert(db instanceof DatastoreDB);
-            assert(JsonCryptoType.is(crypto));
+            assert(crypto === undefined || JsonCryptoType.is(crypto));
         }
     }
 }
