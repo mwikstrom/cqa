@@ -1,13 +1,16 @@
-import { verify } from "../utils/verify";
+import { InstanceOf } from "../common-types/instance-of";
+import { verify, withVerification } from "../utils/verify";
 import { IJsonCrypto } from "./json-crypto";
 import { IJsonCryptoOptions, JsonCryptoOptionsType } from "./json-crypto-options";
-import { JsonValue } from "./json-value";
+import { JsonValue, JsonValueType } from "./json-value";
 
 const CRYPTO_ALGORITHM_NAME = "AES-GCM";
 const CRYPTO_ALGORITHM_LENGTH = 256;
 const CRYPTO_KEY_ALGORITHM = { length: CRYPTO_ALGORITHM_LENGTH, name: CRYPTO_ALGORITHM_NAME };
 const KEY_IS_EXTRACTABLE = true;
 const KEY_USAGES = [ "encrypt", "decrypt" ];
+
+const ArrayBufferType = InstanceOf(ArrayBuffer);
 
 /** @public */
 export async function createJsonCrypto(
@@ -20,7 +23,7 @@ export async function createJsonCrypto(
     const key = await importOrGenerateKey(options.key);
     const iv = encode(nonce);
 
-    async function decrypt(
+    async function unverifiedDecrypt(
         data: ArrayBuffer,
         context?: JsonValue,
     ): Promise<JsonValue> {
@@ -29,7 +32,7 @@ export async function createJsonCrypto(
         return decode(decrypted);
     }
 
-    async function encrypt(
+    async function unverifiedEncrypt(
         value: JsonValue,
         context?: JsonValue,
     ): Promise<ArrayBuffer> {
@@ -59,6 +62,26 @@ export async function createJsonCrypto(
 
         return result;
     }
+
+    const decrypt = withVerification(
+        unverifiedDecrypt,
+        (data, context) => {
+            verify("data to decrypt", data, ArrayBufferType);
+            if (context) {
+                verify("encryption context", context, JsonValueType);
+            }
+        },
+    );
+
+    const encrypt = withVerification(
+        unverifiedEncrypt,
+        (value, context) => {
+            verify("value to encrypt", value, JsonValueType);
+            if (context) {
+                verify("decryption context", context, JsonValueType);
+            }
+        },
+    );
 
     return {
         decrypt,

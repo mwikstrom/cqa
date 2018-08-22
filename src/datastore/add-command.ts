@@ -2,8 +2,7 @@ import { PositiveInteger } from "../common-types/positive-integer";
 import { assert } from "../utils/assert";
 import { createIdentifier } from "../utils/create-identifier";
 import { DEBUG } from "../utils/env";
-import { verify } from "../utils/verify";
-import { CommandInputType, ICommandInput } from "./command-input";
+import { ICommandInput } from "./command-input";
 import { CommandTableValueType, ICommandTableValue } from "./command-table-value";
 import { DatastoreContext } from "./datastore-context";
 import { IStoredCommand, StoredCommandType } from "./stored-command";
@@ -21,8 +20,6 @@ export async function addCommand(
     const {
         db,
     } = context;
-
-    verify("command input", input, CommandInputType);
 
     const {
         id = createIdentifier(),

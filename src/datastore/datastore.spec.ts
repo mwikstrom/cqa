@@ -85,18 +85,18 @@ describe("Datastore", () => {
         // TODO: Path should be "payload". See https://github.com/gcanti/io-ts/issues/195
         const path = "payload/0";
 
-        await expect(
-            db.addCommand({ target: "e", type: "bad", payload: /bad/ as any }),
-        ).rejects.toThrow(`Invalid command input. Expected json value in ${path}.`);
+        expect(
+            () => db.addCommand({ target: "e", type: "bad", payload: /bad/ as any }),
+        ).toThrow(`Invalid command input. Expected json value in ${path}.`);
     });
 
     it("cannot store payload with nested unsupported value", async () => {
         // TODO: Path should be "payload/nested". See https://github.com/gcanti/io-ts/issues/195
         const path = "payload/0/nested";
 
-        await expect(
-            db.addCommand({ target: "e", type: "bad-nested", payload: { nested: /bad/ as any } }),
-        ).rejects.toThrow(`Invalid command input. Expected json value in ${path}.`);
+        expect(
+            () => db.addCommand({ target: "e", type: "bad-nested", payload: { nested: /bad/ as any } }),
+        ).toThrow(`Invalid command input. Expected json value in ${path}.`);
     });
 
     it("can provide a list of pending commands", async () => {

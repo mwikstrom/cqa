@@ -1,11 +1,10 @@
 import { PositiveInteger } from "../common-types/positive-integer";
 import { assert } from "../utils/assert";
 import { DEBUG } from "../utils/env";
-import { verify } from "../utils/verify";
 import { CommandTableValueType } from "./command-table-value";
 import { DatastoreContext } from "./datastore-context";
 import { makeStoredCommand } from "./make-stored-command";
-import { IPendingCommandOptions, PendingCommandOptionsType } from "./pending-command-options";
+import { IPendingCommandOptions } from "./pending-command-options";
 import { IStoredCommand } from "./stored-command";
 
 /** @internal */
@@ -18,12 +17,7 @@ export function getPendingCommands(
         assert(context instanceof DatastoreContext);
     }
 
-    const {
-        db,
-    } = context;
-
-    verify("pending command options", options, PendingCommandOptionsType);
-
+    const { db } = context;
     const {
         maxTargets = Infinity,
         skipTarget = () => false,

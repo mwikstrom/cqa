@@ -1,7 +1,5 @@
-import { NonEmptyString } from "../common-types/non-empty-string";
 import { assert } from "../utils/assert";
 import { DEBUG } from "../utils/env";
-import { verify } from "../utils/verify";
 import { CommandTableValueType } from "./command-table-value";
 import { DatastoreContext } from "./datastore-context";
 import { resolveCommandKey } from "./resolve-command-key";
@@ -15,8 +13,6 @@ export function setCommandAccepted(
     if (DEBUG) {
         assert(context instanceof DatastoreContext);
     }
-
-    verify("commit version", commit, NonEmptyString);
 
     const { db } = context;
 

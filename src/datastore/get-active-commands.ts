@@ -1,8 +1,7 @@
 import { NonEmptyString } from "../common-types/non-empty-string";
 import { assert } from "../utils/assert";
 import { DEBUG } from "../utils/env";
-import { verify } from "../utils/verify";
-import { ActiveCommandOptionsType, IActiveCommandOptions } from "./active-command-options";
+import { IActiveCommandOptions } from "./active-command-options";
 import { DatastoreContext } from "./datastore-context";
 import { makeStoredCommand } from "./make-stored-command";
 import { IStoredCommand } from "./stored-command";
@@ -17,15 +16,8 @@ export function getActiveCommands(
         assert(context instanceof DatastoreContext);
     }
 
-    const {
-        db,
-    } = context;
-
-    verify("active command options", options, ActiveCommandOptionsType);
-
-    const {
-        after,
-    } = options;
+    const { db } = context;
+    const { after } = options;
 
     return db.transaction(
         "r",
