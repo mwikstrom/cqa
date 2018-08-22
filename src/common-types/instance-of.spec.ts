@@ -1,6 +1,6 @@
-import { InstanceOf } from "./instance-of";
-
 // tslint:disable:max-classes-per-file
+
+import { InstanceOf } from "./instance-of";
 
 describe("InstanceOf", () => {
     class A { constructor(_: number) { /* no-op */ } }
