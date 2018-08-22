@@ -5,7 +5,7 @@ cache:
   directories:
     - node_modules
 script:
-  - npm run build:dist
+  - npm run compile
   - npm run lint
   - npm run test:coverage
 after_success:

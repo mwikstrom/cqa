@@ -3,7 +3,6 @@ import { assert } from "../utils/assert";
 import { DEBUG } from "../utils/env";
 import { DatastoreDB } from "./datastore-db";
 
-// TODO: Add crypto/cipher
 /** @internal */
 export class DatastoreContext {
     constructor(
