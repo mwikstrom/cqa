@@ -10,8 +10,6 @@ const CRYPTO_KEY_ALGORITHM = { length: CRYPTO_ALGORITHM_LENGTH, name: CRYPTO_ALG
 const KEY_IS_EXTRACTABLE = true;
 const KEY_USAGES = [ "encrypt", "decrypt" ];
 
-const ArrayBufferType = InstanceOf(ArrayBuffer);
-
 /** @public */
 export async function createJsonCrypto(
     options: IJsonCryptoOptions = {},
@@ -66,7 +64,7 @@ export async function createJsonCrypto(
     const decrypt = withVerification(
         unverifiedDecrypt,
         (data, context) => {
-            verify("data to decrypt", data, ArrayBufferType);
+            verify("data to decrypt", data, InstanceOf(ArrayBuffer));
             if (context) {
                 verify("encryption context", context, JsonValueType);
             }

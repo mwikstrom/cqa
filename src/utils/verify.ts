@@ -1,6 +1,6 @@
 import * as t from "io-ts";
 
-const verificationMap = new Map();
+const verificationMap = new WeakMap();
 
 /** @internal */
 export function verify<T extends t.Type<any>>(

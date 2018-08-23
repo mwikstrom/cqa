@@ -1,5 +1,7 @@
 import * as t from "io-ts";
 
+const cache = new WeakMap();
+
 /** @internal */
 export function InstanceOf<
     TClass extends { new (...args: TArgs): TInstance },
@@ -8,11 +10,20 @@ export function InstanceOf<
 >(
     constructor: TClass,
 ) {
-    const test = (thing: any): thing is TClass => thing instanceof constructor;
-    return new t.Type<TClass>(
-        constructor.name,
-        test,
-        (obj, context) => test(obj) ? t.success(obj) : t.failure(obj, context),
-        t.identity,
-    );
+    let type = cache.get(constructor);
+
+    if (!type) {
+        const test = (thing: any): thing is TClass => thing instanceof constructor;
+
+        type = new t.Type<TClass>(
+            constructor.name,
+            test,
+            (obj, context) => test(obj) ? t.success(obj) : t.failure(obj, context),
+            t.identity,
+        );
+
+        cache.set(constructor, type);
+    }
+
+    return type;
 }
