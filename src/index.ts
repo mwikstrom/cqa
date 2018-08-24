@@ -9,14 +9,13 @@
 import "./utils/init";
 
 // Import public API
-export { IActiveCommandOptions } from "./datastore/active-command-options";
 export { ICommandInput } from "./datastore/command-input";
 export { IDatastore } from "./datastore/datastore";
 export { IDatastoreOptions } from "./datastore/datastore-options";
 export { IJsonArray, IJsonObject, isJsonValue, JsonValue } from "./json/json-value";
 export { openDatastore } from "./datastore/open-datastore";
-export { IPendingCommandOptions, SkipTargetPredicate } from "./datastore/pending-command-options";
-export { IStoredCommand } from "./datastore/stored-command";
+export { ICommandData } from "./datastore/command-data";
+export { CommandResult } from "./datastore/command-result";
 export { IJsonCrypto } from "./json/json-crypto";
 export { IJsonCryptoOptions } from "./json/json-crypto-options";
 export { createJsonCrypto } from "./json/create-json-crypto";

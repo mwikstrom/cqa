@@ -7,12 +7,12 @@ import { DatastoreDB } from "./datastore-db";
 export class DatastoreContext {
     constructor(
         readonly db: DatastoreDB,
-        readonly crypto?: IJsonCrypto,
+        readonly crypto: IJsonCrypto,
     ) {
         // istanbul ignore else: debug assertion
         if (DEBUG) {
             assert(db instanceof DatastoreDB);
-            assert(crypto === undefined || JsonCryptoType.is(crypto));
+            assert(JsonCryptoType.is(crypto));
         }
     }
 }

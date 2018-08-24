@@ -1,22 +1,18 @@
 import { NonEmptyString } from "../common-types/non-empty-string";
+import { PositiveInteger } from "../common-types/positive-integer";
 import { JsonCryptoOptionsType } from "../json/json-crypto-options";
 import { bindFirst } from "../utils/bind-first";
 import { bindThis } from "../utils/bind-this";
 import { LIB_NAME_SHORT } from "../utils/env";
 import { unwrapVerifications, verify, withVerification } from "../utils/verify";
-import { ActiveCommandOptionsType } from "./active-command-options";
 import { addCommand as rawAddCommand } from "./add-command";
-import { CommandInputType } from "./command-input";
+import { CommandInputType } from "./command-input-type";
 import { IDatastore } from "./datastore";
 import { DatastoreContext } from "./datastore-context";
 import { DatastoreDB } from "./datastore-db";
 import { IDatastoreOptions } from "./datastore-options";
-import { getActiveCommands as rawGetActiveCommands } from "./get-active-commands";
-import { getCommand as rawGetCommand } from "./get-command";
-import { getPendingCommands as rawGetPendingCommands } from "./get-pending-commands";
-import { PendingCommandOptionsType } from "./pending-command-options";
-import { setCommandAccepted as rawSetCommandAccepted } from "./set-command-accepted";
-import { setCommandRejected as rawSetCommandRejected } from "./set-command-rejected";
+import { getCommandList as rawGetCommandList } from "./get-command-list";
+import { setCommandResolved as rawSetCommandResolved } from "./set-command-resolved";
 
 /** @public */
 export async function openDatastore(
@@ -41,32 +37,28 @@ export async function openDatastore(
     );
 
     const close = bindThis(db, db.close);
-
-    const getActiveCommands = withVerification(
-        bindFirst(rawGetActiveCommands, context),
-        opts => opts && verify("active command options", opts, ActiveCommandOptionsType),
-    );
-
-    const getCommand = bindFirst(rawGetCommand, context);
-
-    const getPendingCommands = withVerification(
-        bindFirst(rawGetPendingCommands, context),
-        opts => opts && verify("pending command options", opts, PendingCommandOptionsType),
-    );
+    const getCommandList = bindFirst(rawGetCommandList, context);
+    const setCommandResolved = bindFirst(rawSetCommandResolved, context);
+    const rawSetCommandRejected: IDatastore["setCommandRejected"] = key => setCommandResolved(key, "");
+    const rawSetCommandAccepted: IDatastore["setCommandAccepted"] = setCommandResolved;
 
     const setCommandAccepted = withVerification(
-        bindFirst(rawSetCommandAccepted, context),
-        (_, commit) => verify("commit version", commit, NonEmptyString),
+        rawSetCommandAccepted,
+        (key, commit) => {
+            verify("command key", key, PositiveInteger);
+            verify("commit version", commit, NonEmptyString);
+        },
     );
 
-    const setCommandRejected = bindFirst(rawSetCommandRejected, context);
+    const setCommandRejected = withVerification(
+        rawSetCommandRejected,
+        key => verify("command key", key, PositiveInteger),
+    );
 
     const api: IDatastore = {
         addCommand,
         close,
-        getActiveCommands,
-        getCommand,
-        getPendingCommands,
+        getCommandList,
         setCommandAccepted,
         setCommandRejected,
     };

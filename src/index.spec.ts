@@ -9,16 +9,14 @@ describe("API", () => {
     ];
 
     const expectedDeclarations = [
-        "IActiveCommandOptions",
         "ICommandInput",
         "IDatastore",
         "IDatastoreOptions",
         "IJsonArray",
         "IJsonObject",
         "JsonValue",
-        "IPendingCommandOptions",
-        "SkipTargetPredicate",
-        "IStoredCommand",
+        "ICommandData",
+        "CommandResult",
         "IJsonCrypto",
         "IJsonCryptoOptions",
     ];

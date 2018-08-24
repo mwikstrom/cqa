@@ -1,15 +1,15 @@
 import Dexie from "dexie";
-import { ICommandTableValue } from "./command-table-value";
+import { ICommandRecord } from "./command-record";
 
 /** @internal */
 export class DatastoreDB extends Dexie {
-    public commands!: Dexie.Table<ICommandTableValue, number>;
+    public commands!: Dexie.Table<ICommandRecord, number>;
 
     constructor(name: string) {
         super(name);
 
         this.version(1).stores({
-            commands: "++, &id, status",
+            commands: "++key",
         });
     }
 }

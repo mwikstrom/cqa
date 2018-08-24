@@ -1,4 +1,5 @@
 import * as t from "io-ts";
+import { FunctionType } from "../common-types/function-type";
 import { JsonValue } from "./json-value";
 
 /** @public */
@@ -9,8 +10,8 @@ export interface IJsonCrypto {
 }
 
 /** @internal */
-export const JsonCryptoType = t.interface({
-    decrypt: t.Function,
-    encrypt: t.Function,
-    exportKey: t.Function,
+export const JsonCryptoType: t.Type<IJsonCrypto> = t.interface({
+    decrypt: FunctionType<IJsonCrypto["decrypt"]>(),
+    encrypt: FunctionType<IJsonCrypto["encrypt"]>(),
+    exportKey: FunctionType<IJsonCrypto["exportKey"]>(),
 });
