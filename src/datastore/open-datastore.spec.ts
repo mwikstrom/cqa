@@ -38,19 +38,19 @@ describe("openDatastore", () => {
                 this.version(1).stores({ dummy: "" });
             }
         }
-        const db = new InvalidDB(`${LIB_NAME_SHORT}-datastore-${name}`);
-        await db.open();
-        db.close();
+        const invalid = new InvalidDB(`${LIB_NAME_SHORT}-datastore-${name}`);
+        await invalid.open();
+        invalid.close();
         await expect(openDatastore({ name, crypto })).rejects
             .toThrow(`'${name}' is not a valid ${LIB_NAME_SHORT} datastore`);
     });
 
-    it("cannot open an existing datastore with incorrect crypto", async () => {
-        const store1 = await openDatastore({ name, crypto });
-        store1.close();
+    it("cannot re-open datastore with other crypto", async () => {
+        const store = await openDatastore({ name, crypto });
+        store.close();
 
-        const incorrect = await createJsonCrypto();
-        await expect(openDatastore({ name, crypto: incorrect })).rejects
+        const other = await createJsonCrypto();
+        await expect(openDatastore({ name, crypto: other })).rejects
             .toThrow(`Incorrect crypto for ${LIB_NAME_SHORT} datastore '${name}'`);
     });
 });
