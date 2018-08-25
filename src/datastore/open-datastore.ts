@@ -2,7 +2,6 @@ import { Dexie } from "dexie";
 import { NonEmptyString } from "../common-types/non-empty-string";
 import { PositiveInteger } from "../common-types/positive-integer";
 import { IJsonCrypto } from "../json/json-crypto";
-import { JsonCryptoOptionsType } from "../json/json-crypto-options";
 import { bindFirst } from "../utils/bind-first";
 import { bindThis } from "../utils/bind-this";
 import { LIB_NAME_SHORT } from "../utils/env";
@@ -13,6 +12,7 @@ import { IDatastore } from "./datastore";
 import { DatastoreContext } from "./datastore-context";
 import { DatastoreDB } from "./datastore-db";
 import { IDatastoreOptions } from "./datastore-options";
+import { DatastoreOptionsType } from "./datastore-options-type";
 import { getCommandList as rawGetCommandList } from "./get-command-list";
 import { setCommandResolved as rawSetCommandResolved } from "./set-command-resolved";
 
@@ -20,7 +20,7 @@ import { setCommandResolved as rawSetCommandResolved } from "./set-command-resol
 export async function openDatastore(
     options: IDatastoreOptions,
 ): Promise<IDatastore> {
-    verify("datastore options", options, JsonCryptoOptionsType);
+    verify("datastore options", options, DatastoreOptionsType);
 
     const {
         name,
