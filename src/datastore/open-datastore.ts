@@ -1,5 +1,7 @@
+import { Dexie } from "dexie";
 import { NonEmptyString } from "../common-types/non-empty-string";
 import { PositiveInteger } from "../common-types/positive-integer";
+import { IJsonCrypto } from "../json/json-crypto";
 import { JsonCryptoOptionsType } from "../json/json-crypto-options";
 import { bindFirst } from "../utils/bind-first";
 import { bindThis } from "../utils/bind-this";
@@ -25,7 +27,11 @@ export async function openDatastore(
         crypto,
     } = options;
 
-    const db = new DatastoreDB(`${LIB_NAME_SHORT}-datastore-${name}`);
+    await checkDatabase(name, crypto);
+
+    const qualifiedName = makeQualifiedName(name);
+    const encryptedName = await crypto.encrypt(name);
+    const db = new DatastoreDB(qualifiedName, encryptedName);
     await db.open();
 
     const unwrappedCrypto = crypto ? unwrapVerifications(crypto) : crypto;
@@ -64,4 +70,43 @@ export async function openDatastore(
     };
 
     return api;
+}
+
+const makeQualifiedName = (name: string) => `${LIB_NAME_SHORT}-datastore-${name}`;
+
+async function checkDatabase(
+    name: string,
+    crypto: IJsonCrypto,
+): Promise<void> {
+    const db = new Dexie(makeQualifiedName(name), { addons: [] });
+
+    let dbExists = true;
+    let dbOk = false;
+    let cryptoOk = false;
+
+    try {
+        await db.open();
+
+        const meta = db.table<any, string>("meta");
+        const encryptedName = await meta.get("encrypted_name");
+        dbOk = db.verno <= DatastoreDB.VERSION && encryptedName instanceof ArrayBuffer;
+        const decryptedName = await crypto.decrypt(encryptedName);
+        cryptoOk = (name === decryptedName);
+    } catch (err) {
+        if (err && err.name === "NoSuchDatabaseError") {
+            dbExists = false;
+        }
+    } finally {
+        db.close();
+    }
+
+    if (dbExists) {
+        if (!dbOk) {
+            throw new Error(`'${name}' is not a valid ${LIB_NAME_SHORT} datastore`);
+        }
+
+        if (!cryptoOk) {
+            throw new Error(`Incorrect crypto for ${LIB_NAME_SHORT} datastore '${name}'`);
+        }
+    }
 }

@@ -13,7 +13,7 @@ export function verify<T extends t.Type<any>>(
     if (result.isLeft()) {
         throw new Error([
             `Invalid ${what}`,
-            ...result.value.map(formatError),
+            ...result.value.map(formatError).filter(error => !!error),
         ].join(". ") + ".");
     }
 }
@@ -85,8 +85,8 @@ function formatError(
     const path = error.context.map(context => context.key).filter(key => !!key).join("/");
     const expected = error.context.slice(-1).map(context => context.type.name)[0];
 
-    if (expected === "never" && path) {
-        return `Unexpected ${path}`;
+    if (!expected || expected === "never") {
+        return path ? `Unexpected ${path}` : "";
     }
 
     let result = `Expected ${expected}`;
