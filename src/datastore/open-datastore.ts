@@ -34,7 +34,7 @@ export async function openDatastore(
     const db = new DatastoreDB(qualifiedName, encryptedName);
     await db.open();
 
-    const unwrappedCrypto = crypto ? unwrapVerifications(crypto) : crypto;
+    const unwrappedCrypto = unwrapVerifications(crypto);
     const context = new DatastoreContext(db, unwrappedCrypto);
 
     const addCommand = withVerification(

@@ -26,7 +26,7 @@ export function setCommandResolved(
             const record = await db.commands.get(key);
 
             if (!record) {
-                throw new Error(`Cannot mark non-existing command ${key} as ${commit ? "accepted" : "rejected"}`);
+                throw new Error(`Unknown command ${key} cannot be ${commit ? "accepted" : "rejected"}`);
             }
 
             // istanbul ignore else: debug assertion
@@ -35,21 +35,22 @@ export function setCommandResolved(
                 assert(record.resolved || !record.commit);
             }
 
-            const changed = !record.resolved;
-            if (changed) {
+            if (!record.resolved) {
                 record.resolved = true;
                 record.commit = commit;
+                await db.commands.put(record);
+                return true;
             } else if (record.commit !== commit) {
                 throw new Error(
                     record.commit ?
                     commit ?
-                    `Command ${key} is already marked as accepted in another commit` :
-                    `Command ${key} is already marked as accepted and cannot be rejected` :
-                    `Command ${key} is already marked as rejected and cannot be accepted`,
+                    `Command ${key} is already accepted in another commit` :
+                    `Command ${key} is accepted and cannot be rejected` :
+                    `Command ${key} is rejected and cannot be accepted`,
                 );
+            } else {
+                return false;
             }
-
-            return changed;
         },
     );
 }
