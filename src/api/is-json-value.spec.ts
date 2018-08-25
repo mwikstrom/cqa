@@ -1,7 +1,7 @@
 // tslint:disable:object-literal-sort-keys
 // tslint:disable:max-classes-per-file
 
-import { isJsonValue } from "./json-value";
+import { isJsonValue } from "./is-json-value";
 
 describe("isJsonValue", () => {
     const legal: any = {

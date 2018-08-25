@@ -1,9 +1,9 @@
+import { ICommandData } from "../api/command-data";
+import { ICommandInput } from "../api/command-input";
 import { assert } from "../utils/assert";
 import { createIdentifier } from "../utils/create-identifier";
 import { DEBUG } from "../utils/env";
-import { ICommandData } from "./command-data";
 import { CommandDataType } from "./command-data-type";
-import { ICommandInput } from "./command-input";
 import { CommandInputType } from "./command-input-type";
 import { ICommandRecord } from "./command-record";
 import { CommandRecordType } from "./command-record-type";

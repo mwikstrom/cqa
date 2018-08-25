@@ -2,9 +2,9 @@ import "../test-helpers/setup-fake-indexeddb";
 import "../test-helpers/setup-text-encoding";
 import "../test-helpers/setup-webcrypto";
 
-import { createJsonCrypto } from "../json/create-json-crypto";
-import { IDatastore } from "./datastore";
-import { openDatastore } from "./open-datastore";
+import { createJsonCrypto } from "../api/create-json-crypto";
+import { IDatastore } from "../api/datastore";
+import { openDatastore } from "../api/open-datastore";
 
 describe("getCommandList", () => {
     let store: IDatastore;

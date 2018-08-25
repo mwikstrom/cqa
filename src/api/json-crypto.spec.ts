@@ -1,7 +1,7 @@
+import { SupportedJsonWebKeyType } from "../json/supported-json-web-key-type";
 import "../test-helpers/setup-text-encoding";
 import "../test-helpers/setup-webcrypto";
 import { createJsonCrypto } from "./create-json-crypto";
-import { SupportedJsonWebKeyType } from "./supported-json-web-key-type";
 
 describe("JsonCrypto", () => {
     it("supports roundtrip encrypt/export/import/decrypt", async () => {

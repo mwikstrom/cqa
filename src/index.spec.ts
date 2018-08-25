@@ -8,25 +8,7 @@ describe("API", () => {
         "createJsonCrypto",
     ];
 
-    const expectedDeclarations = [
-        "ICommandInput",
-        "IDatastore",
-        "IDatastoreOptions",
-        "IJsonArray",
-        "IJsonObject",
-        "JsonValue",
-        "ICommandData",
-        "CommandResult",
-        "IJsonCrypto",
-        "IJsonCryptoOptions",
-    ];
-
     const exportedNames = new Set(Object.keys(api));
-
-    expectedDeclarations.forEach(name => test(`'${name} is an exported declaration`, () => {
-        expect(exportedNames.delete(name)).toBe(true);
-        expect(api[name]).toBeUndefined();
-    }));
 
     expectedFunctions.forEach(name => test(`'${name}' is an exported function`, () => {
         expect(exportedNames.delete(name)).toBe(true);

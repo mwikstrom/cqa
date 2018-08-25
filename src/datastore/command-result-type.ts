@@ -1,5 +1,5 @@
 import * as t from "io-ts";
-import { CommandResult } from "./command-result";
+import { CommandResult } from "../api/command-result";
 
 /** @internal */
 export const CommandResultType: t.Type<CommandResult> = t.keyof({

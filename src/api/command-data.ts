@@ -1,5 +1,5 @@
-import { JsonValue } from "../json/json-value";
 import { CommandResult } from "./command-result";
+import { JsonValue } from "./json-value";
 
 /** @public */
 export interface ICommandData {

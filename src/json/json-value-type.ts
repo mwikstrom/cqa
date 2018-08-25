@@ -1,22 +1,5 @@
 import * as t from "io-ts";
-
-/** @public */
-export type JsonValue = null | boolean | string | number | IJsonArray | IJsonObject;
-
-/** @public */
-export interface IJsonArray extends Array<JsonValue> {}
-
-/** @public */
-export interface IJsonObject {
-    [name: string]: JsonValue;
-}
-
-/** @public */
-export function isJsonValue(
-    thing: any,
-): thing is JsonValue {
-    return JsonValueType.decode(thing).isRight();
-}
+import { JsonValue } from "../api/json-value";
 
 /** @internal */
 export const JsonValueType = new t.Type<JsonValue, any, any>(

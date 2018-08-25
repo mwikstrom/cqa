@@ -1,13 +1,6 @@
 import * as t from "io-ts";
 import { NonEmptyString } from "../common-types/non-empty-string";
-import { JsonValue } from "./json-value";
-import { SupportedJsonWebKeyType } from "./supported-json-web-key-type";
-
-/** @public */
-export interface IJsonCryptoOptions {
-    key?: JsonWebKey;
-    nonce?: JsonValue;
-}
+import { SupportedJsonWebKeyType } from "../json/supported-json-web-key-type";
 
 /** @internal */
 export const JsonCryptoOptionsType = t.partial({

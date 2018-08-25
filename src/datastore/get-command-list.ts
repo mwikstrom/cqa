@@ -1,7 +1,8 @@
-import { IJsonCrypto, JsonCryptoType } from "../json/json-crypto";
+import { ICommandData } from "../api/command-data";
+import { IJsonCrypto } from "../api/json-crypto";
+import { JsonCryptoType } from "../json/json-crypto-type";
 import { assert } from "../utils/assert";
 import { DEBUG } from "../utils/env";
-import { ICommandData } from "./command-data";
 import { CommandDataType } from "./command-data-type";
 import { ICommandRecord } from "./command-record";
 import { CommandRecordType } from "./command-record-type";

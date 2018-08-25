@@ -1,8 +1,9 @@
+import { IJsonCrypto } from "../api/json-crypto";
+import { IJsonCryptoOptions } from "../api/json-crypto-options";
+import { JsonValue } from "../api/json-value";
 import { InstanceOf } from "../common-types/instance-of";
 import { verify, withVerification } from "../utils/verify";
-import { IJsonCrypto } from "./json-crypto";
-import { IJsonCryptoOptions, JsonCryptoOptionsType } from "./json-crypto-options";
-import { JsonValue, JsonValueType } from "./json-value";
+import { JsonValueType } from "./json-value-type";
 
 const CRYPTO_ALGORITHM_NAME = "AES-GCM";
 const CRYPTO_ALGORITHM_LENGTH = 256;
@@ -10,12 +11,10 @@ const CRYPTO_KEY_ALGORITHM = { length: CRYPTO_ALGORITHM_LENGTH, name: CRYPTO_ALG
 const KEY_IS_EXTRACTABLE = true;
 const KEY_USAGES = [ "encrypt", "decrypt" ];
 
-/** @public */
-export async function createJsonCrypto(
-    options: IJsonCryptoOptions = {},
+/** @internal */
+export async function unverifiedCreateJsonCrypto(
+    options: IJsonCryptoOptions,
 ): Promise<IJsonCrypto> {
-    verify("json crypto options", options, JsonCryptoOptionsType);
-
     const { nonce = "JSON_CRYPTO_DUMMY_NONCE" } = options;
 
     const key = await importOrGenerateKey(options.key);

@@ -8,14 +8,17 @@
 /** @internal */
 import "./utils/init";
 
-// Import public API
-export { ICommandInput } from "./datastore/command-input";
-export { IDatastore } from "./datastore/datastore";
-export { IDatastoreOptions } from "./datastore/datastore-options";
-export { IJsonArray, IJsonObject, isJsonValue, JsonValue } from "./json/json-value";
-export { openDatastore } from "./datastore/open-datastore";
-export { ICommandData } from "./datastore/command-data";
-export { CommandResult } from "./datastore/command-result";
-export { IJsonCrypto } from "./json/json-crypto";
-export { IJsonCryptoOptions } from "./json/json-crypto-options";
-export { createJsonCrypto } from "./json/create-json-crypto";
+// Export types
+export * from "./api/command-data";
+export * from "./api/command-input";
+export * from "./api/command-result";
+export * from "./api/datastore";
+export * from "./api/datastore-options";
+export * from "./api/json-crypto";
+export * from "./api/json-crypto-options";
+export * from "./api/json-value";
+
+// Export functions
+export * from "./api/create-json-crypto";
+export * from "./api/is-json-value";
+export * from "./api/open-datastore";

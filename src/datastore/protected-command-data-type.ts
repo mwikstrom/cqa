@@ -1,6 +1,6 @@
 import * as t from "io-ts";
 import { NonEmptyString } from "../common-types/non-empty-string";
-import { JsonValueType } from "../json/json-value";
+import { JsonValueType } from "../json/json-value-type";
 import { IProtectedCommandData } from "./protected-command-data";
 
 /** @internal */

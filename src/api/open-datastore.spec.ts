@@ -4,9 +4,9 @@ import "../test-helpers/setup-fake-indexeddb";
 import "../test-helpers/setup-text-encoding";
 import "../test-helpers/setup-webcrypto";
 
-import { createJsonCrypto } from "../json/create-json-crypto";
-import { IJsonCrypto } from "../json/json-crypto";
 import { LIB_NAME_SHORT } from "../utils/env";
+import { createJsonCrypto } from "./create-json-crypto";
+import { IJsonCrypto } from "./json-crypto";
 import { openDatastore } from "./open-datastore";
 
 describe("openDatastore", () => {

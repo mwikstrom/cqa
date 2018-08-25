@@ -2,10 +2,10 @@ import "../test-helpers/setup-fake-indexeddb";
 import "../test-helpers/setup-text-encoding";
 import "../test-helpers/setup-webcrypto";
 
-import { createJsonCrypto } from "../json/create-json-crypto";
-import { ICommandInput } from "./command-input";
-import { IDatastore } from "./datastore";
-import { openDatastore } from "./open-datastore";
+import { ICommandInput } from "../api/command-input";
+import { createJsonCrypto } from "../api/create-json-crypto";
+import { IDatastore } from "../api/datastore";
+import { openDatastore } from "../api/open-datastore";
 
 describe("addCommand", () => {
     let store: IDatastore;

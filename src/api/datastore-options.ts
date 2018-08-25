@@ -1,4 +1,4 @@
-import { IJsonCrypto } from "../json/json-crypto";
+import { IJsonCrypto } from "./json-crypto";
 
 /** @public */
 export interface IDatastoreOptions {

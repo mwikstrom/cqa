@@ -1,4 +1,4 @@
-import { JsonValue } from "../json/json-value";
+import { JsonValue } from "../api/json-value";
 
 /** @internal */
 export interface IProtectedCommandData {

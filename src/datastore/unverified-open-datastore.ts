@@ -1,27 +1,22 @@
-import { Dexie } from "dexie";
+import Dexie from "dexie";
+import { IDatastore, IDatastoreOptions, IJsonCrypto } from "..";
 import { NonEmptyString } from "../common-types/non-empty-string";
 import { PositiveInteger } from "../common-types/positive-integer";
-import { IJsonCrypto } from "../json/json-crypto";
 import { bindFirst } from "../utils/bind-first";
 import { bindThis } from "../utils/bind-this";
 import { LIB_NAME_SHORT } from "../utils/env";
 import { unwrapVerifications, verify, withVerification } from "../utils/verify";
 import { addCommand as rawAddCommand } from "./add-command";
 import { CommandInputType } from "./command-input-type";
-import { IDatastore } from "./datastore";
 import { DatastoreContext } from "./datastore-context";
 import { DatastoreDB } from "./datastore-db";
-import { IDatastoreOptions } from "./datastore-options";
-import { DatastoreOptionsType } from "./datastore-options-type";
 import { getCommandList as rawGetCommandList } from "./get-command-list";
 import { setCommandResolved as rawSetCommandResolved } from "./set-command-resolved";
 
-/** @public */
-export async function openDatastore(
+/** @internal */
+export async function unverifiedOpenDatastore(
     options: IDatastoreOptions,
 ): Promise<IDatastore> {
-    verify("datastore options", options, DatastoreOptionsType);
-
     const {
         name,
         crypto,

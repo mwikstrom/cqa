@@ -1,4 +1,5 @@
-import { IJsonCrypto, JsonCryptoType } from "../json/json-crypto";
+import { IJsonCrypto } from "../api/json-crypto";
+import { JsonCryptoType } from "../json/json-crypto-type";
 import { assert } from "../utils/assert";
 import { DEBUG } from "../utils/env";
 import { DatastoreDB } from "./datastore-db";

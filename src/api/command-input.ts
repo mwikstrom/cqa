@@ -1,4 +1,4 @@
-import { JsonValue } from "../json/json-value";
+import { JsonValue } from "./json-value";
 
 /** @public */
 export interface ICommandInput {
