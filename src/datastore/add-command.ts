@@ -40,6 +40,7 @@ export async function addCommand(
         type,
     };
 
+    // istanbul ignore else: debug assertion
     if (DEBUG) {
         assert(ProtectedCommandDataType.is(plain));
     }
