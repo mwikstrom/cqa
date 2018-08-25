@@ -86,6 +86,7 @@ function formatError(
     const expected = error.context.slice(-1).map(context => context.type.name)[0];
 
     if (!expected || expected === "never") {
+        // istanbul ignore next
         return path ? `Unexpected ${path}` : "";
     }
 

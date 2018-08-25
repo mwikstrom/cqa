@@ -1,5 +1,5 @@
 import * as t from "io-ts";
-import { verify } from "./verify";
+import { unwrapVerifications, verify, withVerification } from "./verify";
 
 describe("verify", () => {
     it("throws an error with the expected details", () => {
@@ -20,5 +20,44 @@ describe("verify", () => {
             const expected = "Invalid value. Unexpected b/x. Expected \"foo\" in e. Expected number in f/1.";
             expect((error as Error).message).toBe(expected);
         }
+    });
+});
+
+describe("unwrapVerifications", () => {
+    it("unwraps verified members", () => {
+        const rawX = () => "x";
+        const rawY = () => "y";
+        let countX = 0;
+        let countY = 0;
+        const x = withVerification(rawX, () => ++countX);
+        const y = withVerification(rawY, () => ++countY);
+        const z = 123;
+        const obj = { x, y, z };
+        const unwrapped = unwrapVerifications(obj);
+
+        expect(unwrapped.x).toBe(rawX);
+        expect(unwrapped.y).toBe(rawY);
+        expect(unwrapped.z).toBe(obj.z);
+
+        expect(countX).toBe(0);
+        expect(countY).toBe(0);
+
+        expect(unwrapped.x()).toBe("x");
+        expect(unwrapped.y()).toBe("y");
+
+        expect(countX).toBe(0);
+        expect(countY).toBe(0);
+
+        expect(obj.x()).toBe("x");
+        expect(obj.y()).toBe("y");
+
+        expect(countX).toBe(1);
+        expect(countY).toBe(1);
+    });
+
+    it("returns same instance when nothing is unwrapped", () => {
+        const obj = { x: 123 };
+        const result = unwrapVerifications(obj);
+        expect(result).toBe(obj);
     });
 });
