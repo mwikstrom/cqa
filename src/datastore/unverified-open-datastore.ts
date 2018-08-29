@@ -12,8 +12,10 @@ import { CommandInputType } from "./command-input-type";
 import { DatastoreContext } from "./datastore-context";
 import { DatastoreDB } from "./datastore-db";
 import { getCommandList as rawGetCommandList } from "./get-command-list";
+import { getQueryList as rawGetQueryList } from "./get-query-list";
 import { getQueryResult as rawGetQueryResult } from "./get-query-result";
 import { QueryDescriptorType } from "./query-descriptor-type";
+import { QueryListOptionsType } from "./query-list-options-type";
 import { setCommandResolved as rawSetCommandResolved } from "./set-command-resolved";
 import { setQueryResult as rawSetQueryResult } from "./set-query-result";
 
@@ -66,6 +68,11 @@ export async function unverifiedOpenDatastore(
         key => verify("command key", key, PositiveInteger),
     );
 
+    const getQueryList = withVerification(
+        bindFirst(rawGetQueryList, context),
+        opts => opts !== undefined && verify("query list options", opts, QueryListOptionsType),
+    );
+
     const setQueryResult = withVerification(
         bindFirst(rawSetQueryResult, context),
         (query, commit, data) => {
@@ -79,6 +86,7 @@ export async function unverifiedOpenDatastore(
         addCommand,
         close,
         getCommandList,
+        getQueryList,
         getQueryResult,
         setCommandAccepted,
         setCommandRejected,

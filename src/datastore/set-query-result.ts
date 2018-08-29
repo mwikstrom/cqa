@@ -33,6 +33,7 @@ export async function setQueryResult(
     const resultcipher = await crypto.encrypt(data, key);
     const record: IQueryRecord = {
         commit,
+        key,
         paramcipher,
         timestamp,
         type,
@@ -57,7 +58,7 @@ export async function setQueryResult(
             }
 
             await Promise.all([
-                db.queries.put(record, key),
+                db.queries.put(record),
                 db.results.put(resultcipher, key),
             ]);
 
