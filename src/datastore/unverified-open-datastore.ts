@@ -11,8 +11,6 @@ import { CommandInputType } from "./command-input-type";
 import { DatastoreContext } from "./datastore-context";
 import { DatastoreDB } from "./datastore-db";
 import { getCommandList as rawGetCommandList } from "./get-command-list";
-import { getQueryKey as rawGetQueryKey } from "./get-query-key";
-import { QueryDescriptorType } from "./query-descriptor-type";
 import { setCommandResolved as rawSetCommandResolved } from "./set-command-resolved";
 
 /** @internal */
@@ -42,11 +40,6 @@ export async function unverifiedOpenDatastore(
     const close = bindThis(db, db.close);
     const getCommandList = bindFirst(rawGetCommandList, context);
 
-    const getQueryKey = withVerification(
-        rawGetQueryKey,
-        descriptor => verify("query descriptor", descriptor, QueryDescriptorType),
-    );
-
     const setCommandResolved = bindFirst(rawSetCommandResolved, context);
     const unverifiedSetCommandRejected: IDatastore["setCommandRejected"] = key => setCommandResolved(key, "");
     const unverifiedSetCommandAccepted: IDatastore["setCommandAccepted"] = setCommandResolved;
@@ -68,7 +61,6 @@ export async function unverifiedOpenDatastore(
         addCommand,
         close,
         getCommandList,
-        getQueryKey,
         setCommandAccepted,
         setCommandRejected,
     };

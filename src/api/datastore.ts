@@ -1,17 +1,15 @@
 import { ICommandData } from "./command-data";
 import { ICommandInput } from "./command-input";
-import { IQueryDescriptor } from "./query-descriptor";
 
 /** @public */
 export interface IDatastore {
     addCommand(input: ICommandInput): Promise<ICommandData>;
     close(): void;
-    // TODO: findByQueryType(...)
     getCommandList(): Promise<ICommandData[]>;
-    getQueryKey(descriptor: IQueryDescriptor): string;
-    // TODO: getQueryResult(key: string): Promise<IQueryResult | undefined>;
-    // TODO: patchQueryResult(key: string, options: IPatchQueryOptions): Promise<void>;
+    // getQueryList(options: IQueryListOptions): Promise<IQueryData>;
+    // getQueryResult(query: IQueryDescriptor): Promise<IQueryResult | undefined>;
     setCommandAccepted(key: number, commit: string): Promise<boolean>;
     setCommandRejected(key: number): Promise<boolean>;
-    // TODO: setQueryResult(key: string, result: IQueryResult): Promise<void>;
+    // setQueryResult(query: IQueryDescriptor, result: IQueryResult): Promise<void>;
+    // updateQueryResult(query: IQueryDescriptor, options: IPatchQueryOptions): Promise<void>;
 }
