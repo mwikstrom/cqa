@@ -2,6 +2,7 @@ import Dexie from "dexie";
 import { IDatastore, IDatastoreOptions, IJsonCrypto } from "..";
 import { NonEmptyString } from "../common-types/non-empty-string";
 import { PositiveInteger } from "../common-types/positive-integer";
+import { JsonValueType } from "../json/json-value-type";
 import { bindFirst } from "../utils/bind-first";
 import { bindThis } from "../utils/bind-this";
 import { LIB_NAME_SHORT } from "../utils/env";
@@ -11,7 +12,10 @@ import { CommandInputType } from "./command-input-type";
 import { DatastoreContext } from "./datastore-context";
 import { DatastoreDB } from "./datastore-db";
 import { getCommandList as rawGetCommandList } from "./get-command-list";
+import { getQueryResult as rawGetQueryResult } from "./get-query-result";
+import { QueryDescriptorType } from "./query-descriptor-type";
 import { setCommandResolved as rawSetCommandResolved } from "./set-command-resolved";
+import { setQueryResult as rawSetQueryResult } from "./set-query-result";
 
 /** @internal */
 export async function unverifiedOpenDatastore(
@@ -40,6 +44,11 @@ export async function unverifiedOpenDatastore(
     const close = bindThis(db, db.close);
     const getCommandList = bindFirst(rawGetCommandList, context);
 
+    const getQueryResult = withVerification(
+        bindFirst(rawGetQueryResult, context),
+        query => verify("query descriptor", query, QueryDescriptorType),
+    );
+
     const setCommandResolved = bindFirst(rawSetCommandResolved, context);
     const unverifiedSetCommandRejected: IDatastore["setCommandRejected"] = key => setCommandResolved(key, "");
     const unverifiedSetCommandAccepted: IDatastore["setCommandAccepted"] = setCommandResolved;
@@ -57,12 +66,23 @@ export async function unverifiedOpenDatastore(
         key => verify("command key", key, PositiveInteger),
     );
 
+    const setQueryResult = withVerification(
+        bindFirst(rawSetQueryResult, context),
+        (query, commit, data) => {
+            verify("query descriptor", query, QueryDescriptorType);
+            verify("commit version", commit, NonEmptyString);
+            verify("query result data", data, JsonValueType);
+        },
+    );
+
     const api: IDatastore = {
         addCommand,
         close,
         getCommandList,
+        getQueryResult,
         setCommandAccepted,
         setCommandRejected,
+        setQueryResult,
     };
 
     return api;

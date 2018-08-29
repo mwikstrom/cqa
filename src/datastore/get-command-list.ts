@@ -42,13 +42,13 @@ async function createCommandDataFromRecord(
 
     const {
         commit,
-        cipherdata,
+        datacipher,
         key,
         resolved,
         salt,
     } = record;
 
-    const decrypted = await crypto.decrypt(cipherdata, salt);
+    const decrypted = await crypto.decrypt(datacipher, salt);
 
     // istanbul ignore else: debug assertion
     if (DEBUG) {

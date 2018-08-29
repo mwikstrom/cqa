@@ -4,18 +4,18 @@ const cache = new WeakMap();
 
 /** @internal */
 export function InstanceOf<
-    TClass extends { new (...args: TArgs): TInstance },
+    TConstructor extends { new (...args: TArgs): TClass },
     TArgs extends any[],
-    TInstance extends object
+    TClass extends object,
 >(
-    constructor: TClass,
-) {
+    constructor: TConstructor,
+): t.Type<TClass> {
     let type = cache.get(constructor);
 
     if (!type) {
-        const test = (thing: any): thing is TClass => thing instanceof constructor;
+        const test = (thing: any): thing is TConstructor => thing instanceof constructor;
 
-        type = new t.Type<TClass>(
+        type = new t.Type<TConstructor>(
             constructor.name,
             test,
             (obj, context) => test(obj) ? t.success(obj) : t.failure(obj, context),

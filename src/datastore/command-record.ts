@@ -1,7 +1,7 @@
 /** @internal */
 export interface ICommandRecord {
-    cipherdata: ArrayBuffer;
     commit: string;
+    datacipher: ArrayBuffer;
     key: number;
     resolved: boolean;
     salt: string;

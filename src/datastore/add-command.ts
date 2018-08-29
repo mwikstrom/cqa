@@ -46,14 +46,14 @@ export async function addCommand(
     }
 
     const salt = createIdentifier();
-    const cipherdata = await crypto.encrypt(plain, salt);
+    const datacipher = await crypto.encrypt(plain, salt);
     const resolved = false;
     const commit = "";
     let key = 0;
 
     const record: ICommandRecord = {
-        cipherdata,
         commit,
+        datacipher,
         key,
         resolved,
         salt,

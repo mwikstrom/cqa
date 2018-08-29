@@ -6,8 +6,8 @@ import { ICommandRecord } from "./command-record";
 
 /** @internal */
 export const CommandRecordType: t.Type<ICommandRecord> = t.interface({
-    cipherdata: InstanceOf(ArrayBuffer),
     commit: t.string,
+    datacipher: InstanceOf(ArrayBuffer),
     key: PositiveInteger,
     resolved: t.boolean,
     salt: NonEmptyString,
