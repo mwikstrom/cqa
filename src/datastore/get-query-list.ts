@@ -24,7 +24,11 @@ export async function getQueryList(
     }
 
     const { db, crypto } = context;
-    const recordArray = await db.queries.toArray();
+    const { type } = options;
+
+    const recordArray = type === undefined ?
+        await db.queries.toArray() :
+        await db.queries.where("type").equals(type).toArray();
 
     return await Promise.all(
         recordArray.map(

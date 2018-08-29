@@ -23,7 +23,7 @@ describe("getQueryList", () => {
     });
 
     it("returns the single added paramless query", async () => {
-        await store.setQueryResult({ type: "x" }, "y", "z");
+        await store.setQueryResult({ type: "x" }, "y", null);
         const list = await store.getQueryList();
         expect(list.length).toBe(1);
         const data = list[0];
@@ -34,12 +34,24 @@ describe("getQueryList", () => {
     });
 
     it("returns the single added query", async () => {
-        await store.setQueryResult({ type: "x", param: { a: "b" } }, "y", "z");
+        await store.setQueryResult({ type: "x", param: { a: "b" } }, "y", null);
         const list = await store.getQueryList({});
         expect(list.length).toBe(1);
         const data = list[0];
         expect(data.commit).toBe("y");
         expect(data.descriptor.param).toMatchObject({ a: "b" });
+        expect(data.descriptor.type).toBe("x");
+        expect(data.timestamp.getTime()).toBeLessThanOrEqual(new Date().getTime());
+    });
+
+    it("returns the matching query using type filter", async () => {
+        await store.setQueryResult({ type: "x" }, "y", null);
+        await store.setQueryResult({ type: "z" }, "y", null);
+        const list = await store.getQueryList({ type: "x" });
+        expect(list.length).toBe(1);
+        const data = list[0];
+        expect(data.commit).toBe("y");
+        expect(data.descriptor.param).toBeUndefined();
         expect(data.descriptor.type).toBe("x");
         expect(data.timestamp.getTime()).toBeLessThanOrEqual(new Date().getTime());
     });
