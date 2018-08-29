@@ -11,6 +11,8 @@ import { CommandInputType } from "./command-input-type";
 import { DatastoreContext } from "./datastore-context";
 import { DatastoreDB } from "./datastore-db";
 import { getCommandList as rawGetCommandList } from "./get-command-list";
+import { getQueryKey as rawGetQueryKey } from "./get-query-key";
+import { QueryDescriptorType } from "./query-descriptor-type";
 import { setCommandResolved as rawSetCommandResolved } from "./set-command-resolved";
 
 /** @internal */
@@ -39,12 +41,18 @@ export async function unverifiedOpenDatastore(
 
     const close = bindThis(db, db.close);
     const getCommandList = bindFirst(rawGetCommandList, context);
+
+    const getQueryKey = withVerification(
+        rawGetQueryKey,
+        descriptor => verify("query descriptor", descriptor, QueryDescriptorType),
+    );
+
     const setCommandResolved = bindFirst(rawSetCommandResolved, context);
-    const rawSetCommandRejected: IDatastore["setCommandRejected"] = key => setCommandResolved(key, "");
-    const rawSetCommandAccepted: IDatastore["setCommandAccepted"] = setCommandResolved;
+    const unverifiedSetCommandRejected: IDatastore["setCommandRejected"] = key => setCommandResolved(key, "");
+    const unverifiedSetCommandAccepted: IDatastore["setCommandAccepted"] = setCommandResolved;
 
     const setCommandAccepted = withVerification(
-        rawSetCommandAccepted,
+        unverifiedSetCommandAccepted,
         (key, commit) => {
             verify("command key", key, PositiveInteger);
             verify("commit version", commit, NonEmptyString);
@@ -52,7 +60,7 @@ export async function unverifiedOpenDatastore(
     );
 
     const setCommandRejected = withVerification(
-        rawSetCommandRejected,
+        unverifiedSetCommandRejected,
         key => verify("command key", key, PositiveInteger),
     );
 
@@ -60,6 +68,7 @@ export async function unverifiedOpenDatastore(
         addCommand,
         close,
         getCommandList,
+        getQueryKey,
         setCommandAccepted,
         setCommandRejected,
     };
