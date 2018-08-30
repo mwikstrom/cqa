@@ -55,4 +55,27 @@ describe("getQueryList", () => {
         expect(data.descriptor.type).toBe("x");
         expect(data.timestamp.getTime()).toBeLessThanOrEqual(new Date().getTime());
     });
+
+    it("returns the matching query using type and param filter", async () => {
+        for (let i = 0; i < 20; ++i) {
+            await store.setQueryResult(
+                {
+                    param: {
+                        x: String(i % 3),
+                        y: String(i),
+                    },
+                    type: String(i % 2),
+                },
+                String(i),
+                null,
+            );
+        }
+
+        const list = (await store.getQueryList({ type: "0", param: { x: "0" } })).map(r => r.commit);
+        expect(list).toContain("0");
+        expect(list).toContain("6");
+        expect(list).toContain("12");
+        expect(list).toContain("18");
+        expect(list.length).toBe(4);
+    });
 });

@@ -7,6 +7,7 @@ import { JsonValueType } from "../json/json-value-type";
 import { assert } from "../utils/assert";
 import { DEBUG } from "../utils/env";
 import { DatastoreContext } from "./datastore-context";
+import { extractQueryTags } from "./extract-query-tags";
 import { QueryDescriptorType } from "./query-descriptor-type";
 import { IQueryRecord } from "./query-record";
 import { QueryRecordType } from "./query-record-type";
@@ -38,9 +39,7 @@ export async function setQueryResult(
 
     const descriptorcipher = await crypto.encrypt(descriptor, key);
     const resultcipher = await crypto.encrypt(data, key);
-    const tags = await Promise.all([
-        computeJsonHash({ type }),
-    ]);
+    const tags = await Promise.all(extractQueryTags(descriptor).map(computeJsonHash));
     const record: IQueryRecord = {
         commit,
         descriptorcipher,
