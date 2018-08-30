@@ -1,5 +1,5 @@
 import uuid from "uuid/v4";
-import { urlEncodeBase64 } from "./url-encode-base64";
+import { urlEncodeBase64 } from "./base64url";
 
 /** @internal */
 export function createIdentifier(
