@@ -3,11 +3,11 @@
 // production and non-production (DEBUG) bundles.
 //
 // istanbul ignore next
-if (typeof process !== "object") {
+if (typeof (self as any).process !== "object") {
     // @ts-ignore
-    process = { env: { } };
-} else if (typeof process.env !== "object") {
-    process.env = {};
+    (self as any).process = { env: { } };
+} else if (typeof (self as any).process.env !== "object") {
+    (self as any).process.env = {};
 }
 
 import {

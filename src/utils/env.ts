@@ -2,7 +2,7 @@
  * `true` for non-production bundles; otherwise `false`
  * @internal
  */
-export const DEBUG = process.env.NODE_ENV !== "production";
+export const DEBUG = (self as any).process.env.NODE_ENV !== "production";
 
 /**
  * Short name for this library (`cqa`)
