@@ -1,8 +1,8 @@
 /** @internal */
 export interface IQueryRecord {
     commit: string;
+    descriptorcipher: ArrayBuffer;
     key: ArrayBuffer;
-    paramcipher: ArrayBuffer;
+    tags: ArrayBuffer[];
     timestamp: Date;
-    type: string;
 }

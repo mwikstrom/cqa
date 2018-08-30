@@ -30,14 +30,23 @@ export async function setQueryResult(
     const key = await computeJsonHash(query as any as JsonValue);
     const { type, param } = query;
     const timestamp = new Date();
-    const paramcipher = param === undefined ? new ArrayBuffer(0) : await crypto.encrypt(param, key);
+    const descriptor: JsonValue = { type };
+
+    if (param !== undefined) {
+        descriptor.param = param;
+    }
+
+    const descriptorcipher = await crypto.encrypt(descriptor, key);
     const resultcipher = await crypto.encrypt(data, key);
+    const tags = await Promise.all([
+        computeJsonHash({ type }),
+    ]);
     const record: IQueryRecord = {
         commit,
+        descriptorcipher,
         key,
-        paramcipher,
+        tags,
         timestamp,
-        type,
     };
 
     // istanbul ignore else: debug assertion

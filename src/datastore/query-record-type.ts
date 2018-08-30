@@ -7,8 +7,8 @@ import { IQueryRecord } from "./query-record";
 /** @internal */
 export const QueryRecordType: t.Type<IQueryRecord> = t.interface({
     commit: NonEmptyString,
+    descriptorcipher: InstanceOf(ArrayBuffer),
     key: InstanceOf(ArrayBuffer),
-    paramcipher: InstanceOf(ArrayBuffer),
+    tags: t.array(InstanceOf<ArrayBufferConstructor, [number], ArrayBuffer>(ArrayBuffer)),
     timestamp: ValidDateType,
-    type: NonEmptyString,
 });

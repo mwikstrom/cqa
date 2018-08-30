@@ -2,12 +2,13 @@ import { IJsonCrypto } from "../api/json-crypto";
 import { IQueryData } from "../api/query-data";
 import { IQueryDescriptor } from "../api/query-descriptor";
 import { IQueryListOptions } from "../api/query-list-options";
+import { computeJsonHash } from "../json/compute-json-hash";
 import { JsonCryptoType } from "../json/json-crypto-type";
-import { JsonValueType } from "../json/json-value-type";
 import { assert } from "../utils/assert";
 import { DEBUG } from "../utils/env";
 import { DatastoreContext } from "./datastore-context";
 import { QueryDataType } from "./query-data-type";
+import { QueryDescriptorType } from "./query-descriptor-type";
 import { QueryListOptionsType } from "./query-list-options-type";
 import { IQueryRecord } from "./query-record";
 import { QueryRecordType } from "./query-record-type";
@@ -28,7 +29,7 @@ export async function getQueryList(
 
     const recordArray = type === undefined ?
         await db.queries.toArray() :
-        await db.queries.where("type").equals(type).toArray();
+        await db.queries.where("tags").equals(await computeJsonHash({ type })).toArray();
 
     return await Promise.all(
         recordArray.map(
@@ -50,22 +51,16 @@ async function createQueryDataFromRecord(
     const {
         commit,
         key,
-        paramcipher,
+        descriptorcipher,
         timestamp,
-        type,
     } = record;
 
-    const param = paramcipher.byteLength === 0 ? undefined : await crypto.decrypt(paramcipher, key);
+    const descriptor = (await crypto.decrypt(descriptorcipher, key)) as any as IQueryDescriptor;
 
     // istanbul ignore else: debug assertion
     if (DEBUG) {
-        assert(param === undefined || JsonValueType.is(param));
+        assert(QueryDescriptorType.is(descriptor));
     }
-
-    const descriptor: IQueryDescriptor = {
-        param,
-        type,
-    };
 
     const data: IQueryData = {
         commit,
