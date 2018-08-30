@@ -1,3 +1,4 @@
+import "../test-helpers/setup-webcrypto";
 import { createIdentifier } from "./create-identifier";
 
 describe("createIdentifier", () => {

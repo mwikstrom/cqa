@@ -1,19 +1,8 @@
-import uuid from "uuid/v4";
-import { urlEncodeBase64 } from "./base64url";
+import { uint8ArrayToBase64Url } from "./uint8-array-to-base64-url";
 
 /** @internal */
 export function createIdentifier(
     byteLength: number = 16,
 ): string {
-    return urlEncodeBase64(
-        btoa(
-            String.fromCharCode.apply(
-                null,
-                uuid(
-                    null,
-                    new Uint8Array(byteLength),
-                ),
-            ),
-        ),
-    );
+    return uint8ArrayToBase64Url(crypto.getRandomValues(new Uint8Array(byteLength)));
 }

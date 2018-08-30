@@ -1,2 +1,2 @@
 import webcrypto from "@trust/webcrypto";
-(global as any).crypto = webcrypto;
+(window as any).crypto = webcrypto;
