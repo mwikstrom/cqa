@@ -1,9 +1,11 @@
+import { JsonValue } from "../api/json-value";
 import { IQueryDescriptor } from "../api/query-descriptor";
 import { IQueryResult } from "../api/query-result";
 import { InstanceOf } from "../common-types/instance-of";
+import { computeJsonHash } from "../json/compute-json-hash";
+import { JsonValueType } from "../json/json-value-type";
 import { assert } from "../utils/assert";
 import { DEBUG } from "../utils/env";
-import { computeQueryKey } from "./compute-query-key";
 import { DatastoreContext } from "./datastore-context";
 import { DatastoreDB } from "./datastore-db";
 import { QueryDescriptorType } from "./query-descriptor-type";
@@ -19,10 +21,11 @@ export async function getQueryResult(
     if (DEBUG) {
         assert(context instanceof DatastoreContext);
         assert(QueryDescriptorType.is(query));
+        assert(JsonValueType.is(query));
     }
 
     const { db, crypto } = context;
-    const key = computeQueryKey(query);
+    const key = await computeJsonHash(query as any as JsonValue);
 
     const tx = await db.transaction(
         "r",
@@ -70,7 +73,7 @@ interface ITransactionResult {
 
 async function runTransaction(
     db: DatastoreDB,
-    key: string,
+    key: ArrayBuffer,
 ): Promise<ITransactionResult | undefined> {
     const [
         record,

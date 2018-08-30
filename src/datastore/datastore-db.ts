@@ -8,8 +8,8 @@ export class DatastoreDB extends Dexie {
 
     public readonly commands!: Dexie.Table<ICommandRecord, number>;
     public readonly meta!: Dexie.Table<any, string>;
-    public readonly queries!: Dexie.Table<IQueryRecord, string>;
-    public readonly results!: Dexie.Table<ArrayBuffer, string>;
+    public readonly queries!: Dexie.Table<IQueryRecord, ArrayBuffer>;
+    public readonly results!: Dexie.Table<ArrayBuffer, ArrayBuffer>;
 
     constructor(name: string, encryptedName: ArrayBuffer) {
         super(name);

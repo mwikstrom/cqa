@@ -3,6 +3,8 @@ import { IJsonCryptoOptions } from "../api/json-crypto-options";
 import { JsonValue } from "../api/json-value";
 import { InstanceOf } from "../common-types/instance-of";
 import { verify, withVerification } from "../utils/verify";
+import { decodeJson } from "./decode-json";
+import { encodeJson } from "./encode-json";
 import { JsonValueType } from "./json-value-type";
 
 const CRYPTO_ALGORITHM_NAME = "AES-GCM";
@@ -18,7 +20,7 @@ export async function unverifiedCreateJsonCrypto(
     const { nonce = "JSON_CRYPTO_DUMMY_NONCE" } = options;
 
     const key = await importOrGenerateKey(options.key);
-    const iv = encode(nonce);
+    const iv = encodeJson(nonce);
 
     async function unverifiedDecrypt(
         data: ArrayBuffer,
@@ -26,14 +28,14 @@ export async function unverifiedCreateJsonCrypto(
     ): Promise<JsonValue> {
         const params = createCryptoParams(context);
         const decrypted = await crypto.subtle.decrypt(params, key, data);
-        return decode(decrypted);
+        return decodeJson(decrypted);
     }
 
     async function unverifiedEncrypt(
         value: JsonValue,
         context?: JsonValue,
     ): Promise<ArrayBuffer> {
-        const encoded = encode(value);
+        const encoded = encodeJson(value);
         const params = createCryptoParams(context);
         return await crypto.subtle.encrypt(params, key, encoded);
     }
@@ -54,7 +56,7 @@ export async function unverifiedCreateJsonCrypto(
         };
 
         if (context) {
-            result.additionalData = encode(context);
+            result.additionalData = encodeJson(context);
         }
 
         return result;
@@ -95,20 +97,4 @@ async function importOrGenerateKey(
     } else {
         return await crypto.subtle.generateKey(CRYPTO_KEY_ALGORITHM, KEY_IS_EXTRACTABLE, KEY_USAGES);
     }
-}
-
-function encode(
-    value: JsonValue,
-): Uint8Array {
-    const encoder = new TextEncoder();
-    const str = JSON.stringify(value);
-    return encoder.encode(str);
-}
-
-function decode(
-    data: ArrayBuffer,
-): JsonValue {
-    const decoder = new TextDecoder();
-    const str = decoder.decode(data);
-    return JSON.parse(str);
 }

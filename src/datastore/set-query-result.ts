@@ -2,10 +2,10 @@ import { JsonValue } from "../api/json-value";
 import { IQueryDescriptor } from "../api/query-descriptor";
 import { InstanceOf } from "../common-types/instance-of";
 import { NonEmptyString } from "../common-types/non-empty-string";
+import { computeJsonHash } from "../json/compute-json-hash";
 import { JsonValueType } from "../json/json-value-type";
 import { assert } from "../utils/assert";
 import { DEBUG } from "../utils/env";
-import { computeQueryKey } from "./compute-query-key";
 import { DatastoreContext } from "./datastore-context";
 import { QueryDescriptorType } from "./query-descriptor-type";
 import { IQueryRecord } from "./query-record";
@@ -21,12 +21,13 @@ export async function setQueryResult(
     if (DEBUG) {
         assert(context instanceof DatastoreContext);
         assert(QueryDescriptorType.is(query));
+        assert(JsonValueType.is(query));
         assert(NonEmptyString.is(commit));
         assert(JsonValueType.is(data));
     }
 
     const { db, crypto } = context;
-    const key = computeQueryKey(query);
+    const key = await computeJsonHash(query as any as JsonValue);
     const { type, param } = query;
     const timestamp = new Date();
     const paramcipher = param === undefined ? new ArrayBuffer(0) : await crypto.encrypt(param, key);
