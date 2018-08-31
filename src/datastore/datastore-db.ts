@@ -15,7 +15,7 @@ export class DatastoreDB extends Dexie {
         super(name);
 
         this.version(1).stores({
-            commands: "++key, commit",
+            commands: "++key, commit, timestamp",
             meta: "",
             queries: "key, commit, *tags, timestamp",
             results: "",

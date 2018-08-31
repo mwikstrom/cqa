@@ -49,6 +49,7 @@ export async function addCommand(
     const datacipher = await crypto.encrypt(plain, salt);
     const resolved = false;
     const commit = "";
+    const timestamp = new Date();
     let key = 0;
 
     const record: ICommandRecord = {
@@ -57,6 +58,7 @@ export async function addCommand(
         key,
         resolved,
         salt,
+        timestamp,
     };
 
     delete record.key;
@@ -76,6 +78,7 @@ export async function addCommand(
         payload,
         result,
         target,
+        timestamp,
         type,
     };
 

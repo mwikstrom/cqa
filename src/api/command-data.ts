@@ -9,5 +9,6 @@ export interface ICommandData {
     payload: JsonValue;
     result: CommandResult;
     target: string;
+    timestamp: Date;
     type: string;
 }

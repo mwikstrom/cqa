@@ -46,6 +46,7 @@ async function createCommandDataFromRecord(
         key,
         resolved,
         salt,
+        timestamp,
     } = record;
 
     const decrypted = await crypto.decrypt(datacipher, salt);
@@ -71,6 +72,7 @@ async function createCommandDataFromRecord(
         payload,
         result,
         target,
+        timestamp,
         type,
     };
 

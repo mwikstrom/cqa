@@ -38,6 +38,7 @@ export function setCommandResolved(
             if (!record.resolved) {
                 record.resolved = true;
                 record.commit = commit;
+                record.timestamp = new Date();
                 await db.commands.put(record);
                 return true;
             } else if (record.commit !== commit) {

@@ -5,4 +5,5 @@ export interface ICommandRecord {
     key: number;
     resolved: boolean;
     salt: string;
+    timestamp: Date;
 }
