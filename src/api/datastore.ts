@@ -5,6 +5,7 @@ import { IQueryData } from "./query-data";
 import { IQueryDescriptor } from "./query-descriptor";
 import { IQueryListOptions } from "./query-list-options";
 import { IQueryResult } from "./query-result";
+import { IUpdateQueryOptions } from "./update-query-options";
 
 /** @public */
 export interface IDatastore {
@@ -16,5 +17,5 @@ export interface IDatastore {
     setCommandAccepted(key: number, commit: string): Promise<boolean>;
     setCommandRejected(key: number): Promise<boolean>;
     setQueryResult(query: IQueryDescriptor, commit: string, data: JsonValue): Promise<string | undefined>;
-    // updateQueryResult(query: IQueryDescriptor, options: IQueryUpdateOptions): Promise<boolean>;
+    updateQueryResult(query: IQueryDescriptor, options: IUpdateQueryOptions): Promise<void>;
 }

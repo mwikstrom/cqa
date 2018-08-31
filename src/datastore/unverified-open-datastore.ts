@@ -18,6 +18,7 @@ import { QueryDescriptorType } from "./query-descriptor-type";
 import { QueryListOptionsType } from "./query-list-options-type";
 import { setCommandResolved as rawSetCommandResolved } from "./set-command-resolved";
 import { setQueryResult as rawSetQueryResult } from "./set-query-result";
+import { updateQueryResult as rawUpdateQueryResult } from "./update-query-result";
 
 /** @internal */
 export async function unverifiedOpenDatastore(
@@ -82,6 +83,9 @@ export async function unverifiedOpenDatastore(
         },
     );
 
+    // TODO: Validation
+    const updateQueryResult = bindFirst(rawUpdateQueryResult, context);
+
     const api: IDatastore = {
         addCommand,
         close,
@@ -91,6 +95,7 @@ export async function unverifiedOpenDatastore(
         setCommandAccepted,
         setCommandRejected,
         setQueryResult,
+        updateQueryResult,
     };
 
     return api;
