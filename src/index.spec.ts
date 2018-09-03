@@ -6,6 +6,7 @@ describe("API", () => {
         "isJsonValue",
         "openDatastore",
         "createJsonCrypto",
+        "patchJson",
     ];
 
     const exportedNames = new Set(Object.keys(api));
