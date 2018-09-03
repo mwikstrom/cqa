@@ -14,6 +14,7 @@ import { DatastoreDB } from "./datastore-db";
 import { getCommandList as rawGetCommandList } from "./get-command-list";
 import { getQueryList as rawGetQueryList } from "./get-query-list";
 import { getQueryResult as rawGetQueryResult } from "./get-query-result";
+import { purge as rawPurge } from "./purge";
 import { QueryDescriptorType } from "./query-descriptor-type";
 import { QueryListOptionsType } from "./query-list-options-type";
 import { setCommandResolved as rawSetCommandResolved } from "./set-command-resolved";
@@ -52,6 +53,9 @@ export async function unverifiedOpenDatastore(
         bindFirst(rawGetQueryResult, context),
         query => verify("query descriptor", query, QueryDescriptorType),
     );
+
+    // TODO: Add verification for purge options
+    const purge = bindFirst(rawPurge, context);
 
     const setCommandResolved = bindFirst(rawSetCommandResolved, context);
     const unverifiedSetCommandRejected: IDatastore["setCommandRejected"] = key => setCommandResolved(key, "");
@@ -93,6 +97,7 @@ export async function unverifiedOpenDatastore(
         getCommandList,
         getQueryList,
         getQueryResult,
+        purge,
         setCommandAccepted,
         setCommandRejected,
         setQueryResult,

@@ -1,6 +1,7 @@
 import { ICommandData } from "./command-data";
 import { ICommandInput } from "./command-input";
 import { JsonValue } from "./json-value";
+import { IPurgeOptions } from "./purge-options";
 import { IQueryData } from "./query-data";
 import { IQueryDescriptor } from "./query-descriptor";
 import { IQueryListOptions } from "./query-list-options";
@@ -14,6 +15,7 @@ export interface IDatastore {
     getCommandList(): Promise<ICommandData[]>;
     getQueryList(options?: IQueryListOptions): Promise<IQueryData[]>;
     getQueryResult(query: IQueryDescriptor): Promise<IQueryResult | undefined>;
+    purge(options?: IPurgeOptions): Promise<void>;
     setCommandAccepted(key: number, commit: string): Promise<boolean>;
     setCommandRejected(key: number): Promise<boolean>;
     setQueryResult(query: IQueryDescriptor, commit: string, data: JsonValue): Promise<string | undefined>;

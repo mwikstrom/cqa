@@ -18,6 +18,7 @@ export * from "./api/json-crypto";
 export * from "./api/json-crypto-options";
 export * from "./api/json-patch";
 export * from "./api/json-value";
+export * from "./api/purge-options";
 export * from "./api/query-data";
 export * from "./api/query-descriptor";
 export * from "./api/query-result";
