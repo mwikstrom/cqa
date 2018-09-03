@@ -27,6 +27,7 @@ export async function unverifiedOpenDatastore(
     const {
         name,
         crypto,
+        now = () => new Date(),
     } = options;
 
     await checkDatabase(name, crypto);
@@ -37,7 +38,7 @@ export async function unverifiedOpenDatastore(
     await db.open();
 
     const unwrappedCrypto = unwrapVerifications(crypto);
-    const context = new DatastoreContext(db, unwrappedCrypto);
+    const context = new DatastoreContext(db, unwrappedCrypto, now);
 
     const addCommand = withVerification(
         bindFirst(rawAddCommand, context),

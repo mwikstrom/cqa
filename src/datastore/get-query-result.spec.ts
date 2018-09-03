@@ -31,13 +31,11 @@ describe("getQueryResult", () => {
         expect(result1).toBeDefined();
         expect(result1!.commit).toBe("abc123");
         expect(result1!.data).toBe("hello world!");
-        expect(result1!.timestamp.getTime()).toBeLessThanOrEqual(new Date().getTime());
 
         expect(await store.setQueryResult(query, "abc456", "hello again!"));
         const result2 = await store.getQueryResult(query);
         expect(result2).toBeDefined();
         expect(result2!.commit).toBe("abc456");
         expect(result2!.data).toBe("hello again!");
-        expect(result2!.timestamp.getTime()).toBeLessThanOrEqual(new Date().getTime());
     });
 });

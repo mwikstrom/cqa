@@ -17,7 +17,7 @@ export function setCommandResolved(
         assert(typeof commit === "string");
     }
 
-    const { db } = context;
+    const { db, now } = context;
 
     return db.transaction(
         "rw",
@@ -38,7 +38,7 @@ export function setCommandResolved(
             if (!record.resolved) {
                 record.resolved = true;
                 record.commit = commit;
-                record.timestamp = new Date();
+                record.timestamp = now();
                 await db.commands.put(record);
                 return true;
             } else if (record.commit !== commit) {

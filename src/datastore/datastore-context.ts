@@ -9,11 +9,13 @@ export class DatastoreContext {
     constructor(
         readonly db: DatastoreDB,
         readonly crypto: IJsonCrypto,
+        readonly now: () => Date,
     ) {
         // istanbul ignore else: debug assertion
         if (DEBUG) {
             assert(db instanceof DatastoreDB);
             assert(JsonCryptoType.is(crypto));
+            assert(typeof now === "function");
         }
     }
 }

@@ -24,6 +24,7 @@ export async function addCommand(
     const {
         db,
         crypto,
+        now,
     } = context;
 
     const {
@@ -49,7 +50,7 @@ export async function addCommand(
     const datacipher = await crypto.encrypt(plain, salt);
     const resolved = false;
     const commit = "";
-    const timestamp = new Date();
+    const timestamp = now();
     let key = 0;
 
     const record: ICommandRecord = {

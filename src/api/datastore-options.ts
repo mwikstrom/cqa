@@ -4,4 +4,5 @@ import { IJsonCrypto } from "./json-crypto";
 export interface IDatastoreOptions {
     crypto: IJsonCrypto;
     name: string;
+    now?: () => Date;
 }

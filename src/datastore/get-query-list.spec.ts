@@ -8,11 +8,13 @@ import { openDatastore } from "../api/open-datastore";
 
 describe("getQueryList", () => {
     let store: IDatastore;
+    let now: Date;
 
     beforeEach(async () => {
         const name = `test-${Math.floor(Math.random() * 9999999)}`;
         const crypto = await createJsonCrypto();
-        store = await openDatastore({ name, crypto });
+        now = new Date();
+        store = await openDatastore({ name, crypto, now: () => now });
     });
 
     afterEach(() => store.close());
@@ -30,7 +32,7 @@ describe("getQueryList", () => {
         expect(data.commit).toBe("y");
         expect(data.descriptor.param).toBeUndefined();
         expect(data.descriptor.type).toBe("x");
-        expect(data.timestamp.getTime()).toBeLessThanOrEqual(new Date().getTime());
+        expect(data.timestamp.getTime()).toBe(now.getTime());
     });
 
     it("returns the single added query", async () => {
@@ -41,7 +43,7 @@ describe("getQueryList", () => {
         expect(data.commit).toBe("y");
         expect(data.descriptor.param).toMatchObject({ a: "b" });
         expect(data.descriptor.type).toBe("x");
-        expect(data.timestamp.getTime()).toBeLessThanOrEqual(new Date().getTime());
+        expect(data.timestamp.getTime()).toBe(now.getTime());
     });
 
     it("returns the matching query using type filter", async () => {
@@ -53,7 +55,7 @@ describe("getQueryList", () => {
         expect(data.commit).toBe("y");
         expect(data.descriptor.param).toBeUndefined();
         expect(data.descriptor.type).toBe("x");
-        expect(data.timestamp.getTime()).toBeLessThanOrEqual(new Date().getTime());
+        expect(data.timestamp.getTime()).toBe(now.getTime());
     });
 
     it("returns the matching query using type and param filter", async () => {

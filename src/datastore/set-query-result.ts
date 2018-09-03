@@ -27,10 +27,10 @@ export async function setQueryResult(
         assert(JsonValueType.is(data));
     }
 
-    const { db, crypto } = context;
+    const { db, crypto, now } = context;
     const key = await computeJsonHash(query as any as JsonValue);
     const { type, param } = query;
-    const timestamp = new Date();
+    const timestamp = now();
     const descriptor: JsonValue = { type };
 
     if (param !== undefined) {

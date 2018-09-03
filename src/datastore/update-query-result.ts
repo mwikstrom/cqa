@@ -22,7 +22,7 @@ export async function updateQueryResult(
     }
 
     const { commitBefore, commitAfter, patch } = options;
-    const { db, crypto } = context;
+    const { db, crypto, now } = context;
     const key = await computeJsonHash(query as any as JsonValue);
     let encryptedDataAfter: ArrayBuffer | undefined;
 
@@ -55,7 +55,7 @@ export async function updateQueryResult(
             }
 
             record.commit = commitAfter;
-            record.timestamp = new Date();
+            record.timestamp = now();
 
             const todo: Array<Promise<any>> = [db.queries.put(record)];
 
