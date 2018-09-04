@@ -33,6 +33,7 @@ module.exports = function(config) {
         reports: {
           "lcovonly": "./coverage/lcov.info",
           "text-summary": null,
+          "html": { directory: "coverage", subdirectory: "." }
         },
         tsconfig: "./tsconfig.json"
       }

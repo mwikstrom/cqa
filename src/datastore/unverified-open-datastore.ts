@@ -1,10 +1,11 @@
 import Dexie from "dexie";
-import { IDatastore, IDatastoreOptions, IJsonCrypto } from "..";
+import { IDatastore } from "../api/datastore";
+import { IDatastoreOptions } from "../api/datastore-options";
+import { IJsonCrypto } from "../api/json-crypto";
 import { NonEmptyString } from "../common-types/non-empty-string";
 import { PositiveInteger } from "../common-types/positive-integer";
 import { JsonValueType } from "../json/json-value-type";
 import { bindFirst } from "../utils/bind-first";
-import { bindThis } from "../utils/bind-this";
 import { LIB_NAME_SHORT } from "../utils/env";
 import { unwrapVerifications, verify, withVerification } from "../utils/verify";
 import { addCommand as rawAddCommand } from "./add-command";
@@ -29,6 +30,7 @@ export async function unverifiedOpenDatastore(
         name,
         crypto,
         now = () => new Date(),
+        on,
     } = options;
 
     await checkDatabase(name, crypto);
@@ -38,7 +40,18 @@ export async function unverifiedOpenDatastore(
     const db = new DatastoreDB(qualifiedName, encryptedName);
 
     const isMaster = () => !!db._localSyncNode && db._localSyncNode.isMaster === 1;
-    const whenMaster = new Promise<void>(resolve => db.on("cleanup", () => isMaster() && resolve()));
+    let notifiedIsMaster = false;
+    const whenMaster = new Promise<void>(resolve => db.on("cleanup", () => {
+        if (!notifiedIsMaster && isMaster()) {
+            notifiedIsMaster = true;
+
+            resolve();
+
+            if (on && typeof on.master === "function") {
+                on.master();
+            }
+        }
+    }));
 
     await db.open();
 
@@ -50,7 +63,14 @@ export async function unverifiedOpenDatastore(
         input => verify("command input", input, CommandInputType),
     );
 
-    const close = bindThis(db, db.close);
+    const close = () => {
+        db.close();
+
+        if (on && typeof on.close === "function") {
+            on.close();
+        }
+    };
+
     const getCommandList = bindFirst(rawGetCommandList, context);
 
     const getQueryResult = withVerification(
@@ -97,6 +117,7 @@ export async function unverifiedOpenDatastore(
 
     const api: IDatastore = {
         get isMaster() { return isMaster(); },
+        get isOpen() { return db.isOpen(); },
         get whenMaster() { return whenMaster; },
         addCommand,
         close,

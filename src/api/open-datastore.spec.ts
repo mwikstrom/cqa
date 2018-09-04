@@ -18,7 +18,17 @@ describe("openDatastore", () => {
 
     it("can open a non-existing datastore", async () => {
         const store = await openDatastore({ name, crypto });
+        expect(store.isOpen).to.be.eq(true);
         store.close();
+        expect(store.isOpen).to.be.eq(false);
+    });
+
+    it("can notify when datastore is closed", async () => {
+        let isClosed = 0;
+        const store = await openDatastore({ name, crypto, on: { close: () => ++isClosed } });
+        expect(isClosed).to.be.eq(0);
+        store.close();
+        expect(isClosed).to.be.eq(1);
     });
 
     it("can re-open an existing datastore", async () => {
@@ -72,6 +82,27 @@ describe("openDatastore", () => {
 
         await store2.whenMaster;
         expect(store2.isMaster).to.be.eq(true);
+
+        store2.close();
+    });
+
+    it("can notify when datastore become master", async () => {
+        let store1IsMaster = 0;
+        let store2IsMaster = 0;
+
+        const store1 = await openDatastore({ name, crypto, on: { master: () => ++store1IsMaster } });
+        const store2 = await openDatastore({ name, crypto, on: { master: () => ++store2IsMaster } });
+
+        await store1.whenMaster;
+
+        expect(store1IsMaster).to.be.eq(1);
+        expect(store2IsMaster).to.be.eq(0);
+
+        store1.close();
+        await store2.whenMaster;
+
+        expect(store1IsMaster).to.be.eq(1);
+        expect(store2IsMaster).to.be.eq(1);
 
         store2.close();
     });
