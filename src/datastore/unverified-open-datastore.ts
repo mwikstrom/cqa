@@ -36,6 +36,10 @@ export async function unverifiedOpenDatastore(
     const qualifiedName = makeQualifiedName(name);
     const encryptedName = await crypto.encrypt(name);
     const db = new DatastoreDB(qualifiedName, encryptedName);
+
+    const isMaster = () => !!db._localSyncNode && db._localSyncNode.isMaster === 1;
+    const whenMaster = new Promise<void>(resolve => db.on("cleanup", () => isMaster() && resolve()));
+
     await db.open();
 
     const unwrappedCrypto = unwrapVerifications(crypto);
@@ -92,6 +96,8 @@ export async function unverifiedOpenDatastore(
     const updateQueryResult = bindFirst(rawUpdateQueryResult, context);
 
     const api: IDatastore = {
+        get isMaster() { return isMaster(); },
+        get whenMaster() { return whenMaster; },
         addCommand,
         close,
         getCommandList,

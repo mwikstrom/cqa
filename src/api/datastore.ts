@@ -10,6 +10,8 @@ import { IUpdateQueryOptions } from "./update-query-options";
 
 /** @public */
 export interface IDatastore {
+    readonly isMaster: boolean;
+    readonly whenMaster: Promise<void>;
     addCommand(input: ICommandInput): Promise<ICommandData>;
     close(): void;
     getCommandList(): Promise<ICommandData[]>;

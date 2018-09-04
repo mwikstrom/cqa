@@ -57,4 +57,22 @@ describe("openDatastore", () => {
                 .eq(`Incorrect crypto for ${LIB_NAME_SHORT} datastore '${name}'`),
         );
     });
+
+    it("mastership is transferred when original master is closed", async () => {
+        const store1 = await openDatastore({ name, crypto });
+        const store2 = await openDatastore({ name, crypto });
+
+        expect(store1.isMaster).to.be.eq(true);
+        expect(store2.isMaster).to.be.eq(false);
+
+        store1.close();
+
+        expect(store1.isMaster).to.be.eq(false);
+        expect(store2.isMaster).to.be.eq(false);
+
+        await store2.whenMaster;
+        expect(store2.isMaster).to.be.eq(true);
+
+        store2.close();
+    });
 });

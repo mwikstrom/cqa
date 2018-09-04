@@ -1,4 +1,6 @@
 import Dexie from "dexie";
+import "dexie-observable";
+
 import { ICommandRecord } from "./command-record";
 import { IQueryRecord } from "./query-record";
 
