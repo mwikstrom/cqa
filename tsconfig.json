@@ -2,6 +2,7 @@
   "extends": "./tsconfig-base.json",
   "compilerOptions": {
     "outDir": "./local",
+    "sourceMap": true
   },
   "include": [
     "./src/**/*.ts"

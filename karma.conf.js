@@ -20,23 +20,21 @@ module.exports = function(config) {
       // singleRun: false, // Karma captures browsers, runs the tests and exits
       concurrency: Infinity,
       karmaTypescriptConfig: {
-          compilerOptions: {
-            target: "es5",
-            module: "commonjs",
-            lib: [ "es2015", "dom" ],
-            strict: true,
-            noUnusedLocals: true,
-            noUnusedParameters: true,
-            noImplicitReturns: true,
-            noFallthroughCasesInSwitch: true,
-            moduleResolution: "node",
-            esModuleInterop: true,
-            sourceMap: true
+        coverageOptions: {
+          threshold: {
+            global: {
+              statements: 100,
+              branches: 100,
+              functions: 100,
+              lines: 100,
+            }
+          }
         },
         reports: {
           "lcovonly": "./coverage/lcov.info",
-          "text": null,
-        }
+          "text-summary": null,
+        },
+        tsconfig: "./tsconfig.json"
       }
     });
   };
