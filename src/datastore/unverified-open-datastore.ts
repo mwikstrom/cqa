@@ -20,6 +20,7 @@ import { QueryDescriptorType } from "./query-descriptor-type";
 import { QueryListOptionsType } from "./query-list-options-type";
 import { setCommandResolved as rawSetCommandResolved } from "./set-command-resolved";
 import { setQueryResult as rawSetQueryResult } from "./set-query-result";
+import { setupCommandListener } from "./setup-command-listener";
 import { updateQueryResult as rawUpdateQueryResult } from "./update-query-result";
 
 /** @internal */
@@ -52,6 +53,10 @@ export async function unverifiedOpenDatastore(
             }
         }
     }));
+
+    if (on && on.command) {
+        setupCommandListener(db, crypto, on.command);
+    }
 
     await db.open();
 

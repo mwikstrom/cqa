@@ -1,5 +1,8 @@
+import { ICommandListener } from "./command-listener";
+
 /** @public */
 export interface IDatastoreListener {
-    master?: () => void;
     close?: () => void;
+    command?: ICommandListener;
+    master?: () => void;
 }
