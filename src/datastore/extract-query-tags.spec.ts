@@ -1,5 +1,7 @@
 import { extractQueryTags } from "./extract-query-tags";
 
+const expect = chai.expect;
+
 describe("extractQueryTags", () => {
     it("returns the expected result", () => {
         const input = {
@@ -21,6 +23,6 @@ describe("extractQueryTags", () => {
         ];
 
         const actual = extractQueryTags(input);
-        expect(actual).toMatchObject(expected);
+        expect(actual).to.deep.eq(expected);
     });
 });

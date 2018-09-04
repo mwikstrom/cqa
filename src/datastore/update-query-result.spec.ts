@@ -1,13 +1,11 @@
-import "../test-helpers/setup-fake-indexeddb";
-import "../test-helpers/setup-text-encoding";
-import "../test-helpers/setup-webcrypto";
-
 import { createJsonCrypto } from "../api/create-json-crypto";
 import { IDatastore } from "../api/datastore";
 import { JsonPatch } from "../api/json-patch";
 import { openDatastore } from "../api/open-datastore";
 import { IQueryDescriptor } from "../api/query-descriptor";
 import { IUpdateQueryOptions } from "../api/update-query-options";
+
+const expect = chai.expect;
 
 describe("updateQueryResult", () => {
     let store: IDatastore;
@@ -23,20 +21,32 @@ describe("updateQueryResult", () => {
     it("cannot upgrade missing query", async () => {
         const query: IQueryDescriptor = { type: "x" };
         const options: IUpdateQueryOptions = { commitBefore: "a", commitAfter: "b" };
-        await expect(store.updateQueryResult(query, options)).rejects.toThrow();
+        await store.updateQueryResult(query, options).then(
+            expect.fail,
+            error => expect(error).to.have.property("message").that
+                .eq("Cannot update missing query"),
+        );
     });
 
     it("cannot patch missing query", async () => {
         const query: IQueryDescriptor = { type: "x" };
         const options: IUpdateQueryOptions = { commitBefore: "a", commitAfter: "b", patch: [] };
-        await expect(store.updateQueryResult(query, options)).rejects.toThrow();
+        await store.updateQueryResult(query, options).then(
+            expect.fail,
+            error => expect(error).to.have.property("message").that
+                .eq("Cannot update missing query"),
+        );
     });
 
     it("cannot upgrade conflicting commit version", async () => {
         const query: IQueryDescriptor = { type: "x" };
         await store.setQueryResult(query, "x", null);
         const options: IUpdateQueryOptions = { commitBefore: "a", commitAfter: "b" };
-        await expect(store.updateQueryResult(query, options)).rejects.toThrow();
+        await store.updateQueryResult(query, options).then(
+            expect.fail,
+            error => expect(error).to.have.property("message").that
+                .eq("Commit version conflict"),
+        );
     });
 
     it("can upgrade query result", async () => {
@@ -45,9 +55,9 @@ describe("updateQueryResult", () => {
         const options: IUpdateQueryOptions = { commitBefore: "a", commitAfter: "b" };
         await store.updateQueryResult(query, options);
         const result = await store.getQueryResult(query);
-        expect(result).toBeDefined();
-        expect(result!.commit).toBe("b");
-        expect(result!.data).toMatchObject({ a: 1, b: 2 });
+        expect(result).to.not.eq(undefined);
+        expect(result!.commit).to.eq("b");
+        expect(result!.data).to.deep.eq({ a: 1, b: 2 });
     });
 
     it("can patch query result", async () => {
@@ -57,8 +67,8 @@ describe("updateQueryResult", () => {
         const options: IUpdateQueryOptions = { commitBefore: "a", commitAfter: "b", patch };
         await store.updateQueryResult(query, options);
         const result = await store.getQueryResult(query);
-        expect(result).toBeDefined();
-        expect(result!.commit).toBe("b");
-        expect(result!.data).toMatchObject({ a: 1, b: 3 });
+        expect(result).to.not.eq(undefined);
+        expect(result!.commit).to.eq("b");
+        expect(result!.data).to.deep.eq({ a: 1, b: 3 });
     });
 });

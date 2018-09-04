@@ -1,6 +1,8 @@
 import * as t from "io-ts";
 import { unwrapVerifications, verify, withVerification } from "./verify";
 
+const expect = chai.expect;
+
 describe("verify", () => {
     it("throws an error with the expected details", () => {
         try {
@@ -14,11 +16,11 @@ describe("verify", () => {
                     f: t.array(t.number),
                 }),
             );
-            fail();
+            chai.assert.fail();
         } catch (error) {
-            expect(error).toBeInstanceOf(Error);
+            expect(error).to.be.instanceof(Error);
             const expected = "Invalid value. Unexpected b/x. Expected \"foo\" in e. Expected number in f/1.";
-            expect((error as Error).message).toBe(expected);
+            expect((error as Error).message).to.eq(expected);
         }
     });
 });
@@ -35,29 +37,29 @@ describe("unwrapVerifications", () => {
         const obj = { x, y, z };
         const unwrapped = unwrapVerifications(obj);
 
-        expect(unwrapped.x).toBe(rawX);
-        expect(unwrapped.y).toBe(rawY);
-        expect(unwrapped.z).toBe(obj.z);
+        expect(unwrapped.x).to.eq(rawX);
+        expect(unwrapped.y).to.eq(rawY);
+        expect(unwrapped.z).to.eq(obj.z);
 
-        expect(countX).toBe(0);
-        expect(countY).toBe(0);
+        expect(countX).to.eq(0);
+        expect(countY).to.eq(0);
 
-        expect(unwrapped.x()).toBe("x");
-        expect(unwrapped.y()).toBe("y");
+        expect(unwrapped.x()).to.eq("x");
+        expect(unwrapped.y()).to.eq("y");
 
-        expect(countX).toBe(0);
-        expect(countY).toBe(0);
+        expect(countX).to.eq(0);
+        expect(countY).to.eq(0);
 
-        expect(obj.x()).toBe("x");
-        expect(obj.y()).toBe("y");
+        expect(obj.x()).to.eq("x");
+        expect(obj.y()).to.eq("y");
 
-        expect(countX).toBe(1);
-        expect(countY).toBe(1);
+        expect(countX).to.eq(1);
+        expect(countY).to.eq(1);
     });
 
     it("returns same instance when nothing is unwrapped", () => {
         const obj = { x: 123 };
         const result = unwrapVerifications(obj);
-        expect(result).toBe(obj);
+        expect(result).to.eq(obj);
     });
 });

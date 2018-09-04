@@ -4,11 +4,15 @@ import {
     LIB_NAME_SHORT,
 } from "./env";
 
-test("Tests are run in a non-production environment", () => {
-    expect(DEBUG).toBe(true);
-});
+const expect = chai.expect;
 
-test("We're using the expected library name", () => {
-    expect(LIB_NAME_SHORT).toBe("cqa");
-    expect(LIB_NAME_LONG).toBe("Command Query App");
+describe("environment", () => {
+    it("is debug", () => {
+        expect(DEBUG).to.eq(true);
+    });
+
+    it("has the expected library name", () => {
+        expect(LIB_NAME_SHORT).to.eq("cqa");
+        expect(LIB_NAME_LONG).to.eq("Command Query App");
+    });
 });

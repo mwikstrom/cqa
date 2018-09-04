@@ -2,6 +2,8 @@
 
 import { InstanceOf } from "./instance-of";
 
+const expect = chai.expect;
+
 describe("InstanceOf", () => {
     class A { constructor(_: number) { /* no-op */ } }
     class B extends A {}
@@ -16,23 +18,23 @@ describe("InstanceOf", () => {
     const c = new C();
 
     it("exposes the expected name", () => {
-        expect(TA.name).toBe("A");
-        expect(TB.name).toBe("B");
-        expect(TC.name).toBe("C");
+        expect(TA.name).to.eq("A");
+        expect(TB.name).to.eq("B");
+        expect(TC.name).to.eq("C");
     });
 
     it("can successfully decode an instance", () => {
-        expect(TA.decode(a).isRight()).toBe(true);
-        expect(TA.decode(b).isRight()).toBe(true);
-        expect(TB.decode(b).isRight()).toBe(true);
-        expect(TC.decode(c).isRight()).toBe(true);
+        expect(TA.decode(a).isRight()).to.eq(true);
+        expect(TA.decode(b).isRight()).to.eq(true);
+        expect(TB.decode(b).isRight()).to.eq(true);
+        expect(TC.decode(c).isRight()).to.eq(true);
     });
 
     it("cannot decode another instance", () => {
-        expect(TA.decode(c).isRight()).toBe(false);
-        expect(TB.decode(a).isRight()).toBe(false);
-        expect(TB.decode(c).isRight()).toBe(false);
-        expect(TC.decode(a).isRight()).toBe(false);
-        expect(TC.decode(b).isRight()).toBe(false);
+        expect(TA.decode(c).isRight()).to.eq(false);
+        expect(TB.decode(a).isRight()).to.eq(false);
+        expect(TB.decode(c).isRight()).to.eq(false);
+        expect(TC.decode(a).isRight()).to.eq(false);
+        expect(TC.decode(b).isRight()).to.eq(false);
     });
 });

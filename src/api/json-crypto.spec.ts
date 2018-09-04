@@ -1,7 +1,7 @@
 import { SupportedJsonWebKeyType } from "../json/supported-json-web-key-type";
-import "../test-helpers/setup-text-encoding";
-import "../test-helpers/setup-webcrypto";
 import { createJsonCrypto } from "./create-json-crypto";
+
+const expect = chai.expect;
 
 describe("JsonCrypto", () => {
     it("supports roundtrip encrypt/export/import/decrypt", async () => {
@@ -11,7 +11,7 @@ describe("JsonCrypto", () => {
         const key = await crypto.exportKey();
         const imported = await createJsonCrypto({ key });
         const decrypted = await imported.decrypt(encrypted);
-        expect(decrypted).toMatchObject(plain);
+        expect(decrypted).to.deep.eq(plain);
     });
 
     it("does not support roundtrip encrypt/export/import/decrypt with incompatible nonce", async () => {
@@ -20,7 +20,10 @@ describe("JsonCrypto", () => {
         const encrypted = await crypto.encrypt(plain);
         const key = await crypto.exportKey();
         const imported = await createJsonCrypto({ key, nonce: "bad" });
-        await expect(imported.decrypt(encrypted)).rejects.toThrow();
+        await imported.decrypt(encrypted).then(
+            expect.fail,
+            error => expect(error).to.have.property("name").that.eq("OperationError"),
+        );
     });
 
     it("does not support roundtrip encrypt/export/import/decrypt with incompatible context", async () => {
@@ -29,13 +32,16 @@ describe("JsonCrypto", () => {
         const encrypted = await crypto.encrypt(plain, "good context");
         const key = await crypto.exportKey();
         const imported = await createJsonCrypto({ key });
-        await expect(imported.decrypt(encrypted, "bad conext")).rejects.toThrow();
+        await imported.decrypt(encrypted, "bad conext").then(
+            expect.fail,
+            error => expect(error).to.have.property("name").that.eq("OperationError"),
+        );
     });
 
     it("generates supported json web keys", async () => {
         const crypto = await createJsonCrypto();
         const key = await crypto.exportKey();
-        expect(SupportedJsonWebKeyType.is(key)).toBe(true);
+        expect(SupportedJsonWebKeyType.is(key)).to.eq(true);
     });
 
     it("can import/export pre-baked json web key", async () => {
@@ -49,6 +55,6 @@ describe("JsonCrypto", () => {
 
         const crypto = await createJsonCrypto({ key });
         const exported = await crypto.exportKey();
-        expect(exported).toMatchObject(key);
+        expect(exported).to.deep.eq(key);
     });
 });

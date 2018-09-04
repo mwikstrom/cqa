@@ -1,15 +1,17 @@
 import { jsonEquals } from "./json-equals";
 
+const expect = chai.expect;
+
 describe("jsonEquals", () => {
-    test("array and null", () => {
-        expect(jsonEquals([], null)).toBe(false);
+    it("can test array and null", () => {
+        expect(jsonEquals([], null)).to.eq(false);
     });
 
-    test("array of different lengths", () => {
-        expect(jsonEquals([], [1])).toBe(false);
+    it("can test array of different lengths", () => {
+        expect(jsonEquals([], [1])).to.eq(false);
     });
 
-    test("diff in array", () => {
-        expect(jsonEquals([1], [2])).toBe(false);
+    it("can test diff in array", () => {
+        expect(jsonEquals([1], [2])).to.eq(false);
     });
 });

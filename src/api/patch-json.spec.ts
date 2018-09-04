@@ -5,6 +5,8 @@ import { patchJson } from "./patch-json";
 
 // tslint:disable:object-literal-sort-keys
 
+const expect = chai.expect;
+
 // test data from https://github.com/json-patch/json-patch-tests/blob/master/tests.json
 const testData = [
     { comment: "empty list, empty docs",
@@ -665,14 +667,14 @@ const testData = [
 ];
 
 describe("patchJson", () => {
-    testData.filter(t => t.disabled !== true).forEach((t, i) => test(`#${i} ${t.comment || t.error}`, () => {
+    testData.filter(t => t.disabled !== true).forEach((t, i) => it(`#${i} ${t.comment || t.error}`, () => {
         if (t.error !== undefined) {
-            expect(() => patchJson(t.doc as JsonValue, t.patch as JsonPatch)).toThrow();
+            expect(() => patchJson(t.doc as JsonValue, t.patch as JsonPatch)).to.throw();
         } else {
             const actual = patchJson(t.doc as JsonValue, t.patch as JsonPatch);
 
             if (t.expected !== undefined) {
-                expect(jsonEquals(actual, t.expected as JsonValue)).toBe(true);
+                expect(jsonEquals(actual, t.expected as JsonValue)).to.eq(true);
             }
         }
     }));

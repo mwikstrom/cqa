@@ -1,7 +1,9 @@
 import * as index from "./index";
 const api = index as any;
 
-describe("API", () => {
+const expect = chai.expect;
+
+describe("Public API", () => {
     const expectedFunctions = [
         "isJsonValue",
         "openDatastore",
@@ -11,12 +13,12 @@ describe("API", () => {
 
     const exportedNames = new Set(Object.keys(api));
 
-    expectedFunctions.forEach(name => test(`'${name}' is an exported function`, () => {
-        expect(exportedNames.delete(name)).toBe(true);
-        expect(typeof api[name]).toBe("function");
+    expectedFunctions.forEach(name => it(`exports a function named '${name}'`, () => {
+        expect(exportedNames.delete(name)).to.eq(true);
+        expect(typeof api[name]).to.eq("function");
     }));
 
-    test("There are no unexpected exports", () => {
-        expect(Array.from(exportedNames).map(name => `${name} <${typeof api[name]}>`).join(", ")).toBe("");
+    it("has no unexpected exports", () => {
+        expect(Array.from(exportedNames).map(name => `${name} <${typeof api[name]}>`).join(", ")).to.eq("");
     });
 });

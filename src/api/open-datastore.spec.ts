@@ -1,13 +1,11 @@
 import { Dexie } from "dexie";
 
-import "../test-helpers/setup-fake-indexeddb";
-import "../test-helpers/setup-text-encoding";
-import "../test-helpers/setup-webcrypto";
-
 import { LIB_NAME_SHORT } from "../utils/env";
 import { createJsonCrypto } from "./create-json-crypto";
 import { IJsonCrypto } from "./json-crypto";
 import { openDatastore } from "./open-datastore";
+
+const expect = chai.expect;
 
 describe("openDatastore", () => {
     let name: string;
@@ -41,8 +39,11 @@ describe("openDatastore", () => {
         const invalid = new InvalidDB(`${LIB_NAME_SHORT}-datastore-${name}`);
         await invalid.open();
         invalid.close();
-        await expect(openDatastore({ name, crypto })).rejects
-            .toThrow(`'${name}' is not a valid ${LIB_NAME_SHORT} datastore`);
+        await openDatastore({ name, crypto }).then(
+            expect.fail,
+            error => expect(error).to.have.property("message").that
+                .eq(`'${name}' is not a valid ${LIB_NAME_SHORT} datastore`),
+        );
     });
 
     it("cannot re-open datastore with other crypto", async () => {
@@ -50,7 +51,10 @@ describe("openDatastore", () => {
         store.close();
 
         const other = await createJsonCrypto();
-        await expect(openDatastore({ name, crypto: other })).rejects
-            .toThrow(`Incorrect crypto for ${LIB_NAME_SHORT} datastore '${name}'`);
+        await openDatastore({ name, crypto: other }).then(
+            expect.fail,
+            error => expect(error).to.have.property("message").that
+                .eq(`Incorrect crypto for ${LIB_NAME_SHORT} datastore '${name}'`),
+        );
     });
 });

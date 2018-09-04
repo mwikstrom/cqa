@@ -3,6 +3,8 @@
 
 import { isJsonValue } from "./is-json-value";
 
+const expect = chai.expect;
+
 describe("isJsonValue", () => {
     const legal: any = {
         "boolean": true,
@@ -32,11 +34,11 @@ describe("isJsonValue", () => {
 
     Object.keys(legal).forEach(key => it(
         `is true for ${key}`,
-        () => expect(isJsonValue(legal[key])).toBe(true),
+        () => expect(isJsonValue(legal[key])).to.eq(true),
     ));
 
     Object.keys(illegal).forEach(key => it(
         `is false for ${key}`,
-        () => expect(isJsonValue(illegal[key])).toBe(false),
+        () => expect(isJsonValue(illegal[key])).to.eq(false),
     ));
 });

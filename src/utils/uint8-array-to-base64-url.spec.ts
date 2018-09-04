@@ -1,5 +1,6 @@
-import "../test-helpers/setup-webcrypto";
 import { uint8ArrayToBase64Url } from "./uint8-array-to-base64-url";
+
+const expect = chai.expect;
 
 describe("uint8ArrayToBase64Url", () => {
     [ 99, 100, 101 ].forEach(len => {
@@ -9,7 +10,7 @@ describe("uint8ArrayToBase64Url", () => {
             const charmap: { [c: string]: string; } = { "+": "-", "/": "_" };
             const expected = btoa(String.fromCharCode.apply(null, array)).replace(/[+/=]/g, c => charmap[c] || "");
             const actual = uint8ArrayToBase64Url(array);
-            expect(actual).toBe(expected);
+            expect(actual).to.eq(expected);
         });
     });
 });
